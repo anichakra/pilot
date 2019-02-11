@@ -1,6 +1,7 @@
 server:
   port: ${PORT:8080}
 
+# Remove this configuration if want to run with in memory database called H2.
 spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -15,9 +16,6 @@ spring:
     username: ${POSTGRES_USER:anirbanchakraborty}
     password: ${POSTGRES_PASSWORD:postgres123}
     driver-class-name: org.postgresql.Driver
-
-service:
-  context-path: /@project.name@/@project.version@
 
 # Path of vehicle.xls file containing the rule template
 rule:
