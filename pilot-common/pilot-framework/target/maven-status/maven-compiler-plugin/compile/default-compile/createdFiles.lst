@@ -1,6 +1,0 @@
-me/anichakra/poc/springboot/pilot/framework/web/CorsFilter.class
-META-INF/spring-configuration-metadata.json
-me/anichakra/poc/springboot/pilot/framework/web/WebserverCustomizer.class
-me/anichakra/poc/springboot/pilot/framework/rule/RuleService.class
-me/anichakra/poc/springboot/pilot/framework/rule/impl/OpenlTabletRuleService.class
-me/anichakra/poc/springboot/pilot/framework/rule/InvalidRuleTemplatePathException.class
