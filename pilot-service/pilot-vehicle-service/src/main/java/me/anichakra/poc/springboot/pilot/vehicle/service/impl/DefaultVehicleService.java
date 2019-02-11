@@ -1,6 +1,5 @@
 package me.anichakra.poc.springboot.pilot.vehicle.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,13 +37,15 @@ public class DefaultVehicleService implements VehicleService {
 
     @Override
     public Vehicle saveVehicle(Vehicle vehicle) {
-        return vehicleRepository.saveAndFlush(vehicle);
+        Vehicle v = vehicleRepository.saveAndFlush(vehicle);
+        return v;
     }
 
     @Transactional
     @Override
     public List<Vehicle> saveVehicles(List<Vehicle> vehicles) {
-        return vehicleRepository.saveAll(vehicles);
+        List<Vehicle> v= vehicleRepository.saveAll(vehicles);
+        return v;
 
     }
 

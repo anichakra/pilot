@@ -8,54 +8,57 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Entity
-public class Vehicle implements Serializable{
+public class Vehicle implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
-	private Long id;
-	private String manufacturer;
-	private int year;
-	private String model;
-	
-	@Transient
-	private Integer price;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+    private String manufacturer;
+    private int year;
+    private String model;
 
-	public Long getId() {
-		return id;
-	}
+    @Transient
+    private Integer price;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getManufacturer() {
-		return manufacturer;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setManufacturer(String manufacturer) {
-		this.manufacturer = manufacturer;
-	}
+    public String getManufacturer() {
+        return manufacturer;
+    }
 
-	public int getYear() {
-		return year;
-	}
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
 
-	public void setYear(int year) {
-		this.year = year;
-	}
+    public int getYear() {
+        return year;
+    }
 
-	public String getModel() {
-		return model;
-	}
+    public void setYear(int year) {
+        this.year = year;
+    }
 
-	public void setModel(String model) {
-		this.model = model;
-	}
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
 
     public Integer getPrice() {
         return price;
@@ -63,5 +66,16 @@ public class Vehicle implements Serializable{
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper mapperObj = new ObjectMapper();
+        try {
+            return mapperObj.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+           return "id:" + id;
+        }
+
     }
 }

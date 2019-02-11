@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class VehicleController {
     private VehicleService vehicleService;
 
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('read')")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     @ResponseBody
     public Vehicle getVehicle(@PathVariable("id") Long id) {
@@ -50,18 +52,20 @@ public class VehicleController {
     public List<Vehicle> saveVehicles(@RequestBody List<Vehicle> vehicles) {
         return vehicleService.saveVehicles(vehicles);
     }
-
+    
     @DeleteMapping
-    public HttpStatus deleteVehicle(@RequestBody Vehicle vehicle) {
-        vehicleService.deleteVehicle(vehicle.getId());
-        return HttpStatus.OK;
+    public ResponseEntity<Void> deleteVehicle(@RequestParam("id") Long id) {
+        vehicleService.deleteVehicle(id);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/search")
     public List<Vehicle> searchVehicle(@RequestParam("manufacturer") String manufacturer) {
         return vehicleService.searchVehicle(manufacturer);
     }
-
+    
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/preference")
     public Vehicle getPreference(@RequestBody Category category) {
         return vehicleService.getPreference(category);

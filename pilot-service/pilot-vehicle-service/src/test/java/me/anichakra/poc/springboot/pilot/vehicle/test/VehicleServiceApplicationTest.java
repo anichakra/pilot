@@ -24,9 +24,13 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 public class VehicleServiceApplicationTest {
 
-	private static String JSON_INPUT_V1 = "{\"id\":10,\"manufacturer\":\"Nissan\",\"year\":2015,\"model\":\"Ultima\"}";
-	private static String JSON_INPUT_V2 = "{\"id\":12,\"manufacturer\":\"Toyota\",\"year\":2016,\"model\":\"Camri\"}";
+	private static String JSON_INPUT_V1 = "{\"id\":1,\"manufacturer\":\"Nissan\",\"year\":2015,\"model\":\"Altima\"}";
+	private static String JSON_INPUT_V2 = "{\"id\":2,\"manufacturer\":\"Toyota\",\"year\":2016,\"model\":\"Camri\"}";
+	private static String JSON_INPUT_PREF = "{\"segment\":\"compact\",\"type\":\"sedan\"}";
+	private static String JSON_INPUT_V = "[{\"id\":3,\"manufacturer\":\"Nissan\",\"year\":2015,\"model\":\"Altima\"},"
+	        + "{\"id\":4,\"manufacturer\":\"Toyota\",\"year\":2016,\"model\":\"Camri\"}]";
 
+	
 	private MockMvc mockMvc;
 
 	@Autowired
@@ -42,30 +46,28 @@ public class VehicleServiceApplicationTest {
 	@Test
 	public void retrievetest_ok() throws Exception {
 		saveVehicle_ok();
-		mockMvc.perform(get("/vehicle/10")).andDo(print()).andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(10))
+		mockMvc.perform(get("/vehicle/1")).andDo(print()).andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.manufacturer").value("Nissan"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.year").value(2015))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.model").value("Ultima"));
-
+				.andExpect(MockMvcResultMatchers.jsonPath("$.model").value("Altima"));
 	}
 
 	@Test
 	public void saveVehicle_ok() throws Exception {
 		mockMvc.perform(post("/vehicle")// .andDo(print())
 				.content(JSON_INPUT_V1).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 		mockMvc.perform(post("/vehicle")// .andDo(print())
 				.content(JSON_INPUT_V2).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void deleteVehicle_ok() throws Exception {
 		saveVehicle_ok();
-		mockMvc.perform(delete("/vehicle?id=10")// .andDo(print())
+		mockMvc.perform(delete("/vehicle?id=1")// .andDo(print())
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
-
 	}
 
 	@Test
@@ -74,5 +76,20 @@ public class VehicleServiceApplicationTest {
 		mockMvc.perform(get("/vehicle/search?manufacturer=Nissan")).andDo(print()).andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().json("[" + JSON_INPUT_V1 + "]"));
 	}
+	
+	@Test
+    public void getPreference_ok() throws Exception {
+        saveVehicle_ok();
+        mockMvc.perform(post("/vehicle/preference")// .andDo(print())
+                .content(JSON_INPUT_PREF).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+	
+	@Test
+    public void saveAll() throws Exception {
+        mockMvc.perform(post("/vehicle/save")// .andDo(print())
+                .content(JSON_INPUT_V).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
 
 }
