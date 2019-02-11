@@ -68,7 +68,7 @@ POST Method to create a vehicle:
   http://localhost:8080/vehicle
  
 ```
-Run the src/main/resources/vehicle.json to load the sample vehicles in database. Use the bulk save method:
+Use the src/main/resources/vehicle.json to load the sample vehicles in database. Run the multiple vehicle save method:
 ```
  curl --header "Content-Type: application/json" \
   --request POST \
