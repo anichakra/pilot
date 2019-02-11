@@ -96,10 +96,10 @@ Get Preference for a vehicle
   --request POST \
   --data '{
    "segment": "large",   "type": "suv"}' \
-  http://localhost:8080/vehicle
+  http://localhost:8080/vehicle/preference
  
 ```
-Check the 3 rules in both the worksheets to understand.
+Check the 3 rules in both the worksheets to understand. The preference rule takes a category comprises of segment like large, compact, midsize and type like suv, sedan, truck etc. and fetches a preferred vehicle (manufacturer and model) against the preference as mentioned in worksheet-1 from vehicle-rules.xls. Then it retrieves the details of the vehicle from database using the manufacturer and model. After that the price of the vehicle is found from the lookup table in worksheet-2 and then the discounted price is calculated from worksheet-1 rule.
 
 
 
