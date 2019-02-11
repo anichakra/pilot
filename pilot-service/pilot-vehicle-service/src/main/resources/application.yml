@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+      
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/postgres
+    username: anirbanchakraborty
+    password: postgres123
+    driver-class-name: org.postgresql.Driver
+
+service:
+  context-path: /@project.name@/@project.version@
+
+rule:
+  template-path: file:///Users/anirbanchakraborty/git/springboot-poc/pilot-vehicle-service/src/main/resources/vehicle-rules.xls

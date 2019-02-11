@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "service",
+      "type": "me.anichakra.poc.springboot.pilot.framework.web.WebserverCustomizer",
+      "sourceType": "me.anichakra.poc.springboot.pilot.framework.web.WebserverCustomizer"
+    }
+  ],
+  "properties": [
+    {
+      "name": "service.context-path",
+      "type": "java.lang.String",
+      "sourceType": "me.anichakra.poc.springboot.pilot.framework.web.WebserverCustomizer"
+    }
+  ],
+  "hints": []
+}

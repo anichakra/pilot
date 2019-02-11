@@ -1,0 +1,7 @@
+server:
+  port: ${PORT:8080}
+spring: 
+  h2: 
+    console:
+      enabled: true
+      path: /h2-console
