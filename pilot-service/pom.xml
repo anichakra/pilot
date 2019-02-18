@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pilot-service</artifactId>
-	<name>Pilot Common</name>
+	<name>pilot-service</name>
 	<packaging>pom</packaging>
-	<description>Common parent pom</description>
+	<description>Pilot Service Modules</description>
 	<parent>
 		<groupId>me.anichakra.poc</groupId>
 		<artifactId>pilot</artifactId>
@@ -18,8 +18,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>me.anichakra.poc</groupId>
-			<artifactId>pilot-framework</artifactId>
-			<version>0.0.1.BUILD-SNAPSHOT</version>
+			<artifactId>pilot-framework-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>me.anichakra.poc</groupId>
+			<artifactId>pilot-framework-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>

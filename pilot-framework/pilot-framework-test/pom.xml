@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>pilot-framework-test</artifactId>
+	<name>pilot-framework-test</name>
+	<packaging>jar</packaging>
+	<parent>
+		<groupId>me.anichakra.poc</groupId>
+		<artifactId>pilot-framework</artifactId>
+		<version>0.0.1.BUILD-SNAPSHOT</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<groupId>me.anichakra.poc</groupId>
+			<artifactId>pilot-framework</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+	</dependencies>
+</project>

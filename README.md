@@ -11,7 +11,7 @@ The [openl-tablet.org](openl-tablet.org) based business rules are kept in src/ma
 
 ```
 rule:
-  template-path: file://${RULE_TEMPLATE_PATH:/Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
+  template-path: file://${RULE_TEMPLATE_PATH:/Users/anichakra/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
 ```
 
 or pass the new path as part of command line.

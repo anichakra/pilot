@@ -1,0 +1,17 @@
+spring:
+  aop:
+    auto: true
+    proxy-target-class: false
+framework:
+  instrumentation:
+    rootCauseOnly: true
+    durationToIgnore: 10
+    includeMethodParams: true
+    includeMethodFullSignature: false
+    ignoreQueryParameters: false
+    handlers:
+      log:
+        enabled: true
+      newrelic:
+        enabled: false
+

@@ -12,11 +12,14 @@ spring:
 
 # Postgres connectivity details here      
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/postgres
-    username: ${POSTGRES_USER:anirbanchakraborty}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DATABASE:postgres}
+    username: ${POSTGRES_USER:anichakra}
     password: ${POSTGRES_PASSWORD:postgres123}
     driver-class-name: org.postgresql.Driver
 
 # Path of vehicle.xls file containing the rule template
 rule:
-  template-path: file://${RULE_TEMPLATE_PATH:/Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
+  template-path: file://${RULE_TEMPLATE_PATH:/Users/anichakra/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
+
+api:
+  context-path: /@project.name@/@project.version@

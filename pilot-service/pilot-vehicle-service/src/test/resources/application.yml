@@ -6,4 +6,8 @@ spring:
       enabled: true
       path: /h2-console
 rule:
-  template-path: file://${RULE_TEMPLATE_PATH:/Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
+  template-path: file:///Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources/vehicle-rules.xls
+
+
+api:
+  context-path: /@project.name@/@project.version@

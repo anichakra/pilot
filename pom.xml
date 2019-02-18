@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 	<description>Application parent pom</description>
 	<modules>
-		<module>pilot-common</module>
+		<module>pilot-framework</module>
 		<module>pilot-service</module>
 	</modules>
 	<properties>
@@ -76,11 +76,6 @@
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

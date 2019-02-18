@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://com/ge/cse/commons/framework/instrumentation/mock/model"
+	xmlns:tns="http://com/ge/cse/commons/framework/instrumentation/mock/model"
+	elementFormDefault="qualified">
+	<xsd:element name="MockRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="input" type="xsd:string"></xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TestResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="output" type="xsd:integer"></xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
