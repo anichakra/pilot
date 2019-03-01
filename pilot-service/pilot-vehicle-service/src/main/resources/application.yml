@@ -19,7 +19,7 @@ spring:
 
 # Path of vehicle.xls file containing the rule template
 rule:
-  template-path: file://${RULE_TEMPLATE_PATH:/Users/anichakra/git/pilot/pilot-service/pilot-vehicle-service/src/main/resources}/vehicle-rules.xls
+  template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
 
 api:
   context-path: /@project.name@/@project.version@

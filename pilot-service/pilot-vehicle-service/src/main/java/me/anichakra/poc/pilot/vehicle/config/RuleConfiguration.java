@@ -2,6 +2,7 @@ package me.anichakra.poc.pilot.vehicle.config;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,9 @@ public class RuleConfiguration {
 
     @NotNull
     String templatePath;
+    
+    @Autowired
+    OpenlTabletRuleService<VehicleRuleTemplate> vehicleRuleService;
 
     public String getTemplatePath() {
         return templatePath;
@@ -29,7 +33,6 @@ public class RuleConfiguration {
 
     @Bean(value = "vehicle")
     public RuleService<VehicleRuleTemplate> getVehicleRuleTemplate() {
-        RuleService<VehicleRuleTemplate> vehicleRuleService = new OpenlTabletRuleService<VehicleRuleTemplate>();
         vehicleRuleService.loadRuleTemplate(templatePath, VehicleRuleTemplate.class);
         return vehicleRuleService;
     }
