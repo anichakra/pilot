@@ -2,19 +2,21 @@ package me.anichakra.poc.pilot.framework.test.mock;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.assertj.core.util.Files;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,8 +28,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 @Component
@@ -40,23 +40,37 @@ public class MockApi {
 	@Autowired
 	private WebApplicationContext context;
 
-	private Map<HttpStatus, ResultMatcher> resultActionStatusMap = new HashMap<HttpStatus, ResultMatcher>();
+	private static Map<HttpStatus, ResultMatcher> resultActionStatusMap = new HashMap<HttpStatus, ResultMatcher>();
 
 	boolean isInitialize = false;
 
-	public void init() {
-		isInitialize = true;
-		initResultActionStatusMap();
+	private static final Map<HttpMethod, Function<String, MockHttpServletRequestBuilder>> map = new HashMap<>();
 
-	}
+	static {
 
-	private void initResultActionStatusMap() {
 		resultActionStatusMap.put(HttpStatus.OK, status().isOk());
 		resultActionStatusMap.put(HttpStatus.ACCEPTED, status().isAccepted());
 		resultActionStatusMap.put(HttpStatus.CREATED, status().isCreated());
 		resultActionStatusMap.put(HttpStatus.UNAUTHORIZED, status().isUnauthorized());
 		resultActionStatusMap.put(HttpStatus.FOUND, status().isFound());
 		resultActionStatusMap.put(HttpStatus.FORBIDDEN, status().isForbidden());
+
+		Function<String, MockHttpServletRequestBuilder> getFunc = (String url) -> {
+			return get(url);
+		};
+		Function<String, MockHttpServletRequestBuilder> postFunc = (String url) -> {
+			return post(url);
+		};
+		Function<String, MockHttpServletRequestBuilder> putFunc = (String url) -> {
+			return put(url);
+		};
+		Function<String, MockHttpServletRequestBuilder> deleteFunc = (String url) -> {
+			return delete(url);
+		};
+		map.put(HttpMethod.GET, getFunc);
+		map.put(HttpMethod.POST, postFunc);
+		map.put(HttpMethod.PUT, putFunc);
+		map.put(HttpMethod.DELETE, deleteFunc);
 	}
 
 	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus) throws Exception {
@@ -65,15 +79,7 @@ public class MockApi {
 
 	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers)
 			throws Exception {
-		if (!isInitialize) {
-			init();
-		}
-		RequestBuilder requestBuilder = null;
-		requestBuilder = populateRequestBuilder(url, httpMethod, requestBuilder, null, headers);
-
-		ResultActions resultActions = mockMvc.perform(requestBuilder).andDo(print());
-		performResultActionStatus(httpStatus, resultActions);
-
+		procerssCall(url, httpMethod, httpStatus, headers, null, null, null);
 	}
 
 	public void assertCallWithJSON(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInput,
@@ -83,126 +89,96 @@ public class MockApi {
 
 	public void assertCallWithJSON(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInput,
 			String jsonOutput, Map<String, String> headers) throws Exception {
-		if (!isInitialize) {
-			init();
-		}
-		RequestBuilder requestBuilder = null;
-		requestBuilder = populateRequestBuilder(url, httpMethod, requestBuilder, jsonInput, headers);
-		ResultActions resultActions = mockMvc.perform(requestBuilder);
-		resultActions = performResultActionStatus(httpStatus, resultActions);
-		resultActions = performResultMatch(jsonOutput, resultActions);
+		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, null);
 	}
 
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInputFile,
+	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, String ioFile,
 			String jsonOutputFile) throws Exception {
-		assertCall(url, httpMethod, httpStatus, jsonInputFile, jsonOutputFile, null);
+		assertCall(url, httpMethod, httpStatus, null, ioFile, jsonOutputFile);
 
 	}
 
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInputFile,
-			String jsonOutputFile, Map<String, String> headers) throws Exception {
-		if (!isInitialize) {
-			init();
-		}
-		RequestBuilder requestBuilder = null;
-		String jsonInput = null, jsonOutput = null;
-		if (!StringUtils.isEmpty(jsonInputFile)) {
-			// jsonInput =
-			// Files.contentOf(resourceUtils.getFile("classpath:"+jsonInputFile), "UTF-8");
-			jsonInputFile = "io/" + jsonInputFile + ".json";
-			jsonInput = Files.contentOf(context.getResource("classpath:" + jsonInputFile).getFile(), "UTF-8");
-		}
-		if (!StringUtils.isEmpty(jsonOutputFile)) {
-			// jsonOutput =
-			// Files.contentOf(resourceUtils.getFile("classpath:"+jsonOutputFile), "UTF-8");
-			jsonOutputFile = "io/" + jsonOutputFile + ".json";
-			jsonOutput = Files.contentOf(context.getResource("classpath:" + jsonOutputFile).getFile(), "UTF-8");
-		}
-		requestBuilder = populateRequestBuilder(url, httpMethod, requestBuilder, jsonInput, headers);
-		ResultActions resultActions = mockMvc.perform(requestBuilder);
-		resultActions = performResultActionStatus(httpStatus, resultActions);
-		resultActions = performResultMatch(jsonOutput, resultActions);
+	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
+			String ioFile, String jsonOutputFile) throws Exception {
+		String jsonInput = readJSONDataFromFile(ioFile);
+		String jsonOutput = readJSONDataFromFile(jsonOutputFile);
+		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, null);
 	}
 
-	private ResultActions performResultMatch(String jsonOutput, ResultActions resultActions) throws Exception {
-		ResultActions resultActionsReturn = null;
-		if (!StringUtils.isEmpty(jsonOutput)) {
-			// resultActionsReturn =
-			// resultActions.andExpect(MockMvcResultMatchers.content().json("[" + jsonOutput
-			// + "]"));
-			resultActionsReturn = resultActions.andExpect(MockMvcResultMatchers.content().json(jsonOutput));
-		} else {
-			resultActionsReturn = resultActions;
-		}
-		return resultActionsReturn;
+	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
+			String jsonIntputFile, String jsonOutputFile, Map<String, Object> inclusionCheck) throws Exception {
+		String jsonInput = readJSONDataFromFile(jsonIntputFile);
+		String jsonOutput = readJSONDataFromFile(jsonOutputFile);
+		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, inclusionCheck);
 	}
 
-	private RequestBuilder populateRequestBuilder(String url, HttpMethod httpMethod, RequestBuilder requestBuilder,
-			String jsonInput, Map<String, String> headers) {
-		switch (httpMethod) {
-		case GET:
-			requestBuilder = get(url);
-			break;
-		case POST:
-			if (!StringUtils.isEmpty(jsonInput)) {
-				requestBuilder = post(url).content(jsonInput).contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON);
-			} else {
-				requestBuilder = post(url);
-			}
-			break;
-		case PUT:
-			if (!StringUtils.isEmpty(jsonInput)) {
-				requestBuilder = put(url).content(jsonInput).contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON);
-			} else {
-				requestBuilder = put(url);
-			}
-			break;
-		case DELETE:
-			requestBuilder = delete(url);
-			break;
-		case HEAD:
-			requestBuilder = head(url);
-			break;
-		case PATCH:
-			requestBuilder = head(url);
-			break;
-		case OPTIONS:
-			requestBuilder = head(url);
-			break;
-		default:
-			// throw new SystemException("Method not supported");
-			throw new RuntimeException("Method not supported");
+	private void procerssCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
+			String jsonInput, String jsonOutput, Map<String, Object> inclusionCheck) throws Exception {
+		RequestBuilder requestBuilder = populateRequestBuilder(url, httpMethod, jsonInput, headers);
+		ResultActions resultActions = mockMvc.perform(requestBuilder).andDo(print());
+		performResultActionStatus(httpStatus, resultActions);
+		performResultMatch(resultActions, jsonOutput, inclusionCheck);
+	}
+
+	private String readJSONDataFromFile(String ioFile) throws IOException {
+		
+		return Optional.ofNullable(ioFile).map(c -> loadIoFile(c)).orElse(null);
+	}
+
+	private String loadIoFile(String ioFile) {
+		System.out.println("ioFile "+ioFile);
+		File ioDir = new File("io");
+		File io = new File(ioDir,ioFile+".json");
+		try {
+			String json =  Files.contentOf(context.getResource("classpath:" + io.getPath()).getFile(), "UTF-8");
+			System.out.println("json "+json);
+			return json;
+		} catch (IOException e) {
+			throw new IOFileNotFoundException(ioFile, e);
 		}
-		HttpHeaders httpHeaders = getHttpHeaders(headers);
-		if (null != httpHeaders) {
-			MockHttpServletRequestBuilder mockHttpServletRequestBuilder = (MockHttpServletRequestBuilder) requestBuilder;
-			requestBuilder = mockHttpServletRequestBuilder.headers(httpHeaders);
+	}
+
+	private void performResultMatch(final ResultActions resultActions, String jsonOutput,
+			Map<String, Object> inclusionCheck) throws Exception {
+		Optional.ofNullable(jsonOutput).ifPresent(c -> matchJson(resultActions, c));
+
+		Optional.ofNullable(inclusionCheck)
+				.ifPresent(c -> c.entrySet().forEach(e -> validateJson(resultActions, jsonOutput, e)));
+	}
+
+	private void matchJson(final ResultActions resultActions, String jsonOutput) {
+		try {
+			resultActions.andExpect(MockMvcResultMatchers.content().json(jsonOutput));
+		} catch (Exception e) {
+			throw new RuntimeException(jsonOutput, e);
 		}
+	}
+
+	private void validateJson(final ResultActions resultActions, String jsonOutput, Entry<String, Object> e) {
+		try {
+			resultActions.andExpect(MockMvcResultMatchers.jsonPath("$." + e.getKey()).value(e.getValue()));
+		} catch (Exception e1) {
+			throw new RuntimeException(jsonOutput, e1);
+		}
+	}
+
+	private RequestBuilder populateRequestBuilder(String url, HttpMethod httpMethod, String jsonInput,
+			Map<String, String> headers) {
+		MockHttpServletRequestBuilder requestBuilder = map.get(httpMethod).apply(url);
+		Optional.ofNullable(jsonInput).ifPresent(c -> requestBuilder.content(c).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
+		Optional.ofNullable(headers)
+				.ifPresent(c -> c.entrySet().forEach(e -> requestBuilder.header(e.getKey(), e.getValue())));
 		return requestBuilder;
 	}
 
-	private HttpHeaders getHttpHeaders(Map<String, String> headers) {
-		HttpHeaders httpHeaders = null;
-		if (null != headers && !CollectionUtils.isEmpty(headers.keySet())) {
-			httpHeaders = new HttpHeaders();
-			for (String headerName : headers.keySet()) {
-				httpHeaders.add(headerName, headers.get(headerName));
+	private void performResultActionStatus(HttpStatus httpStatus, ResultActions resultActions) throws Exception {
+		Optional.ofNullable(resultActionStatusMap.get(httpStatus)).ifPresent(c -> {
+			try {
+				resultActions.andExpect(c);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		}
-		return httpHeaders;
+		});
 	}
-
-	private ResultActions performResultActionStatus(HttpStatus httpStatus, ResultActions resultActions)
-			throws Exception {
-		ResultActions resultActionReturn = null;
-		if (resultActionStatusMap.containsKey(httpStatus)) {
-			resultActionReturn = resultActions.andExpect(resultActionStatusMap.get(httpStatus));
-		} else {
-			resultActionReturn = resultActions;
-		}
-		return resultActionReturn;
-	}
-
 }

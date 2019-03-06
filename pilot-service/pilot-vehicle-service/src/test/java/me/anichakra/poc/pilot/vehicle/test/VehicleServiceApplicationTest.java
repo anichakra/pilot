@@ -1,5 +1,8 @@
 package me.anichakra.poc.pilot.vehicle.test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +27,29 @@ public class VehicleServiceApplicationTest {
     @Autowired
     private MockApi mockApi;
 
-    @Test
+    //@Test
     public void save() throws Exception {
         mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, "save_in", "save_out");
+    	//mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, "save_in", null);
+    }
+
+   // @Test
+    public void retrieve() throws Exception {
+        save();
+        //mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, "save_in", null);
+        mockApi.assertCall("/vehicle/1", HttpMethod.GET, HttpStatus.OK, null, "retrieve_out2");
     }
 
     @Test
-    public void retrieve() throws Exception {
+    public void retrieve_inclusionCheck() throws Exception {
         save();
-        mockApi.assertCall("/vehicle/1", HttpMethod.GET, HttpStatus.OK, null, "retrieve_out");
+        //mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, "save_in", null);
+        Map<String,Object> inclusionCHeckMap = new HashMap<String,Object>();
+        inclusionCHeckMap.put("year", "2018");
+        inclusionCHeckMap.put("model", "Altima");
+        mockApi.assertCall("/vehicle/1", HttpMethod.GET, HttpStatus.OK, null, null, null,inclusionCHeckMap);
     }
-
+    
   //  @Test
     public void deleteVehicle() throws Exception {
         save();

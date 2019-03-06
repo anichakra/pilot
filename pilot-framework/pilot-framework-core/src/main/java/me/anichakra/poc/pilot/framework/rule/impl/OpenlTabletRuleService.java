@@ -30,7 +30,6 @@ public class OpenlTabletRuleService<T> implements RuleService<T> {
             try {
                 this.ruleEngineFactory = new RulesEngineFactory<T>(new URL(ruleTemplatePath), clazz);
             } catch (MalformedURLException e) {
-            	e.printStackTrace();
             	System.out.println("ResourceLoader:" + resourceLoader);
             	Resource resource = resourceLoader.getResource("classpath:" + ruleTemplatePath);
             	try {
