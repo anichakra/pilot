@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -30,6 +29,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+/**
+ * This mocks a microservice environment based on ReST API. Using this one can
+ * declaratively compose a test method by mentioning only the API URI, input and
+ * expected JSON.
+ * 
+ * @author anirbanchakraborty
+ *
+ */
 @Component
 @WebAppConfiguration
 public class MockApi {
@@ -42,8 +49,6 @@ public class MockApi {
 
 	private static Map<HttpStatus, ResultMatcher> resultActionStatusMap = new HashMap<HttpStatus, ResultMatcher>();
 
-	boolean isInitialize = false;
-
 	private static final Map<HttpMethod, Function<String, MockHttpServletRequestBuilder>> map = new HashMap<>();
 
 	static {
@@ -55,17 +60,17 @@ public class MockApi {
 		resultActionStatusMap.put(HttpStatus.FOUND, status().isFound());
 		resultActionStatusMap.put(HttpStatus.FORBIDDEN, status().isForbidden());
 
-		Function<String, MockHttpServletRequestBuilder> getFunc = (String url) -> {
-			return get(url);
+		Function<String, MockHttpServletRequestBuilder> getFunc = (String uri) -> {
+			return get(uri);
 		};
-		Function<String, MockHttpServletRequestBuilder> postFunc = (String url) -> {
-			return post(url);
+		Function<String, MockHttpServletRequestBuilder> postFunc = (String uri) -> {
+			return post(uri);
 		};
-		Function<String, MockHttpServletRequestBuilder> putFunc = (String url) -> {
-			return put(url);
+		Function<String, MockHttpServletRequestBuilder> putFunc = (String uri) -> {
+			return put(uri);
 		};
-		Function<String, MockHttpServletRequestBuilder> deleteFunc = (String url) -> {
-			return delete(url);
+		Function<String, MockHttpServletRequestBuilder> deleteFunc = (String uri) -> {
+			return delete(uri);
 		};
 		map.put(HttpMethod.GET, getFunc);
 		map.put(HttpMethod.POST, postFunc);
@@ -73,98 +78,101 @@ public class MockApi {
 		map.put(HttpMethod.DELETE, deleteFunc);
 	}
 
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus) throws Exception {
-		assertCall(url, httpMethod, httpStatus, null);
+	/**
+	 * Asserts a ReST API call using the URI
+	 * 
+	 * @param uri        The URI of the ReST API
+	 * @param httpMethod The ReST Method
+	 * @param httpStatus The response HTTP Status to assert with
+	 * @throws Exception Any exception thrown
+	 */
+	public void assertCall(String uri, HttpMethod httpMethod, HttpStatus httpStatus) throws Exception {
+		assertCall(uri, httpMethod, httpStatus, null);
 	}
 
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers)
+	/**
+	 * Asserts a ReST API call using the URI and sending necessary inputs and test
+	 * data.
+	 * 
+	 * @param uri        The URI of the ReST API
+	 * @param httpMethod The ReST Method
+	 * @param httpStatus The response HTTP Status to assert with
+	 * @param testData   This containing the json input and expected output
+	 *                   information
+	 * @throws Exception Any exception thrown
+	 */
+	public void assertCall(String uri, HttpMethod httpMethod, HttpStatus httpStatus, TestData testData)
 			throws Exception {
-		procerssCall(url, httpMethod, httpStatus, headers, null, null, null);
-	}
-
-	public void assertCallWithJSON(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInput,
-			String jsonOutput) throws Exception {
-		assertCallWithJSON(url, httpMethod, httpStatus, jsonInput, jsonOutput, null);
-	}
-
-	public void assertCallWithJSON(String url, HttpMethod httpMethod, HttpStatus httpStatus, String jsonInput,
-			String jsonOutput, Map<String, String> headers) throws Exception {
-		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, null);
-	}
-
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, String ioFile,
-			String jsonOutputFile) throws Exception {
-		assertCall(url, httpMethod, httpStatus, null, ioFile, jsonOutputFile);
-
-	}
-
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
-			String ioFile, String jsonOutputFile) throws Exception {
-		String jsonInput = readJSONDataFromFile(ioFile);
-		String jsonOutput = readJSONDataFromFile(jsonOutputFile);
-		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, null);
-	}
-
-	public void assertCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
-			String jsonIntputFile, String jsonOutputFile, Map<String, Object> inclusionCheck) throws Exception {
-		String jsonInput = readJSONDataFromFile(jsonIntputFile);
-		String jsonOutput = readJSONDataFromFile(jsonOutputFile);
-		procerssCall(url, httpMethod, httpStatus, headers, jsonInput, jsonOutput, inclusionCheck);
-	}
-
-	private void procerssCall(String url, HttpMethod httpMethod, HttpStatus httpStatus, Map<String, String> headers,
-			String jsonInput, String jsonOutput, Map<String, Object> inclusionCheck) throws Exception {
-		RequestBuilder requestBuilder = populateRequestBuilder(url, httpMethod, jsonInput, headers);
-		ResultActions resultActions = mockMvc.perform(requestBuilder).andDo(print());
+		ResultActions resultActions = call(uri, httpMethod, Optional.ofNullable(testData).orElse(new TestData())).getResultActions();
 		performResultActionStatus(httpStatus, resultActions);
-		performResultMatch(resultActions, jsonOutput, inclusionCheck);
+
+		Optional.ofNullable(testData).ifPresent(
+				c -> performResultMatch(resultActions, readJSONDataFromFile(c.getJsonOutputFileName(), c.getPath())));
+
 	}
 
-	private String readJSONDataFromFile(String ioFile) throws IOException {
-		
-		return Optional.ofNullable(ioFile).map(c -> loadIoFile(c)).orElse(null);
-	}
-
-	private String loadIoFile(String ioFile) {
-		System.out.println("ioFile "+ioFile);
-		File ioDir = new File("io");
-		File io = new File(ioDir,ioFile+".json");
+	/**
+	 * Call or invoke the API using the URI and method by sending the test data. But
+	 * this does not assert the call.
+	 * 
+	 * @param uri        The URI of the ReST API
+	 * @param httpMethod The ReST Method
+	 * @param testData   This contains the json input and expected output
+	 * @return
+	 * @throws Exception
+	 */
+	public <T> ApiResult<T> call(String uri, HttpMethod httpMethod, TestData testData) {
+		RequestBuilder requestBuilder = populateRequestBuilder(
+				uri, httpMethod, readJSONDataFromFile(testData.getJsonInputFileName(), testData.getPath()), testData.getHeaders());
+		ResultActions resultActions;
 		try {
-			String json =  Files.contentOf(context.getResource("classpath:" + io.getPath()).getFile(), "UTF-8");
-			System.out.println("json "+json);
+			resultActions = mockMvc.perform(requestBuilder).andDo(print());
+		} catch (Exception e) {
+			throw new MvcException("Cannot perform call", e);
+		}
+		return new ApiResult<>(resultActions);
+	}
+
+	/**
+	 * Reads the test data files from some path
+	 * 
+	 * @param ioFile
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	protected String readJSONDataFromFile(String ioFile, String path) {
+		return Optional.ofNullable(ioFile).map(c -> loadIoFile(c, path)).orElse(null);
+	}
+
+	private String loadIoFile(String ioFile, String path) {
+		System.out.println("ioFile " + ioFile);
+		File ioDir = new File(path);
+		File io = new File(ioDir, ioFile + ".json");
+		try {
+			String json = Files.contentOf(context.getResource("classpath:" + io.getPath()).getFile(), "UTF-8");
+			System.out.println("json " + json);
 			return json;
 		} catch (IOException e) {
 			throw new IOFileNotFoundException(ioFile, e);
 		}
 	}
 
-	private void performResultMatch(final ResultActions resultActions, String jsonOutput,
-			Map<String, Object> inclusionCheck) throws Exception {
+	private void performResultMatch(final ResultActions resultActions, String jsonOutput) {
 		Optional.ofNullable(jsonOutput).ifPresent(c -> matchJson(resultActions, c));
-
-		Optional.ofNullable(inclusionCheck)
-				.ifPresent(c -> c.entrySet().forEach(e -> validateJson(resultActions, jsonOutput, e)));
 	}
 
 	private void matchJson(final ResultActions resultActions, String jsonOutput) {
 		try {
 			resultActions.andExpect(MockMvcResultMatchers.content().json(jsonOutput));
 		} catch (Exception e) {
-			throw new RuntimeException(jsonOutput, e);
+			throw new MvcException("Cannot perform match", e);
 		}
 	}
 
-	private void validateJson(final ResultActions resultActions, String jsonOutput, Entry<String, Object> e) {
-		try {
-			resultActions.andExpect(MockMvcResultMatchers.jsonPath("$." + e.getKey()).value(e.getValue()));
-		} catch (Exception e1) {
-			throw new RuntimeException(jsonOutput, e1);
-		}
-	}
-
-	private RequestBuilder populateRequestBuilder(String url, HttpMethod httpMethod, String jsonInput,
+	private RequestBuilder populateRequestBuilder(String uri, HttpMethod httpMethod, String jsonInput,
 			Map<String, String> headers) {
-		MockHttpServletRequestBuilder requestBuilder = map.get(httpMethod).apply(url);
+		MockHttpServletRequestBuilder requestBuilder = map.get(httpMethod).apply(uri);
 		Optional.ofNullable(jsonInput).ifPresent(c -> requestBuilder.content(c).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON));
 		Optional.ofNullable(headers)
@@ -177,7 +185,7 @@ public class MockApi {
 			try {
 				resultActions.andExpect(c);
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new MvcException("Cannot perform status match", e);
 			}
 		});
 	}

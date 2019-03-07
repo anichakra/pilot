@@ -7,28 +7,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 @SpringBootTest
 @AutoConfigureMockMvc
+
+/**
+ * Apply this annotation on all Test classes. This opinionates a microservice environment.
+ * @author anirbanchakraborty
+ *
+ */
 public @interface MicroserviceTest {
-    /**
-     * The <em>annotated classes</em> to use for loading an
-     * {@link org.springframework.context.ApplicationContext ApplicationContext}. Can also
-     * be specified using
-     * {@link ContextConfiguration#classes() @ContextConfiguration(classes=...)}. If no
-     * explicit classes are defined the test will look for nested
-     * {@link Configuration @Configuration} classes, before falling back to a
-     * {@link SpringBootConfiguration} search.
-     * @see ContextConfiguration#classes()
-     * @return the annotated classes used to load the application context
-     */
+
+	
     Class<?>[] classes() default {};
 }

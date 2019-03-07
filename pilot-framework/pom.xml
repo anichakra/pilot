@@ -6,7 +6,7 @@
 	<artifactId>pilot-framework</artifactId>
 	<name>pilot-framework</name>
 	<packaging>pom</packaging>
-	<description>Pilot Framework</description>
+	<description>Pilot Framework Parent POM</description>
 	<parent>
 		<groupId>me.anichakra.poc</groupId>
 		<artifactId>pilot</artifactId>
@@ -14,9 +14,9 @@
 	</parent>
 	<modules>
 		<module>pilot-framework-core</module>
+		<module>pilot-framework-util</module>
+		<!-- <module>pilot-framework-instrumentation</module> -->
 		<module>pilot-framework-test</module>
-		<module>pilot-framework-instrumentation</module>
-
 	</modules>
 	<build>
 		<plugins>

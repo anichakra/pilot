@@ -9,11 +9,15 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          lob.non_contextual_creation: true
 
 # Postgres connectivity details here      
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DATABASE:postgres}
-    username: ${POSTGRES_USER:anichakra}
+    username: ${POSTGRES_USER:anirbanchakraborty}
     password: ${POSTGRES_PASSWORD:postgres123}
     driver-class-name: org.postgresql.Driver
 
@@ -22,4 +26,4 @@ rule:
   template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
 
 api:
-  context-path: /@project.name@/@project.version@
+  context-path: /pilot-vehicle-service/0.0.1.BUILD_SNAPSHOT

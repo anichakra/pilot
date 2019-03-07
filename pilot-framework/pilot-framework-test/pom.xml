@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>me.anichakra.poc</groupId>
-			<artifactId>pilot-framework</artifactId>
+			<artifactId>pilot-framework-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->

@@ -11,19 +11,5 @@
 		<artifactId>pilot-framework</artifactId>
 		<version>0.0.1.BUILD-SNAPSHOT</version>
 	</parent>
-	<properties>
-		<openl-tablets.version>5.21.12</openl-tablets.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.openl</groupId>
-			<artifactId>org.openl.core</artifactId>
-			<version>${openl-tablets.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openl.rules</groupId>
-			<artifactId>org.openl.rules</artifactId>
-			<version>${openl-tablets.version}</version>
-		</dependency>
-	</dependencies>
+
 </project>
