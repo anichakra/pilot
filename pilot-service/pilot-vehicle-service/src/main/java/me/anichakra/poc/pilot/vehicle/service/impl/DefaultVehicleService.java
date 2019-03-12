@@ -19,7 +19,6 @@ import me.anichakra.poc.pilot.vehicle.service.VehicleService;
 public class DefaultVehicleService implements VehicleService {
 
 	@Autowired
-	@Qualifier("vehicle")
 	private RuleService<VehicleRuleTemplate> ruleService;
 
 	private VehicleRuleTemplate getRuleTemplate() {

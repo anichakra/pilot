@@ -5,6 +5,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  profiles:
+    active: test
 rule:
   template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
 

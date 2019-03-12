@@ -31,7 +31,7 @@ public class RuleConfiguration {
         this.templatePath = templatePath;
     }
 
-    @Bean(value = "vehicle")
+    @Bean
     public RuleService<VehicleRuleTemplate> getVehicleRuleTemplate() {
         vehicleRuleService.loadRuleTemplate(templatePath, VehicleRuleTemplate.class);
         return vehicleRuleService;
