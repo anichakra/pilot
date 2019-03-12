@@ -5,8 +5,7 @@ import java.util.Map;
 
 /**
  * The TestData contains the name of the json files for input and expected
- * output along with the request headers. This will be send as part of the
- * MockAPI.
+ * output along with the request headers. 
  * 
  * @author anirbanchakraborty
  * @see MockApi

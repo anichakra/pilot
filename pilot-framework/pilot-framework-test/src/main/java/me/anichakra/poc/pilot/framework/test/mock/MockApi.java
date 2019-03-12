@@ -33,6 +33,57 @@ import org.springframework.web.context.WebApplicationContext;
  * This mocks a microservice environment based on ReST API. Using this one can
  * declaratively compose a test method by mentioning only the API URI, input and
  * expected JSON.
+ * <p>
+ * Examples of how to write the test cases:
+ * <p>
+ * 
+ * <pre>
+ * <code>
+ * &#64;MicroserviceTest
+&#64;RunWith(MicroserviceTestRunner.class)
+&#64;FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class VehicleServiceApplicationTest {
+
+	&#64;Autowired
+	private MockApi mockApi;
+
+	&#64;Test
+		public void a_saveAll() throws Exception {
+			mockApi.assertCall("/vehicle/save", HttpMethod.POST, HttpStatus.CREATED,
+					new TestData("saveAll_in", "saveAll_out"));
+		}
+
+
+	&#64;Test
+	public void b_deleteVehicle() throws Exception {
+		Vehicle v = mockApi.<Vehicle>call("/vehicle", HttpMethod.POST, new TestData("save_in", null))
+				.getResultBean(Vehicle.class);
+		mockApi.assertCall("/vehicle?id=" + v.getId(), HttpMethod.DELETE, HttpStatus.NO_CONTENT);
+	}
+	
+	&#64;Test
+	public void c_retrieve() throws Exception {
+		mockApi.assertCall("/vehicle/1", HttpMethod.GET, HttpStatus.OK, new TestData("retrieve_out"));
+	}
+
+	&#64;Test()
+	public void d_searchVehicle() throws Exception {
+		mockApi.assertCall("/vehicle/search?manufacturer=Nissan", HttpMethod.GET, HttpStatus.OK,
+				new TestData("searchVehicle_out"));
+	}
+
+	&#64;Test
+	public void e_getPreference() throws Exception {
+		mockApi.assertCall("/vehicle/preference", HttpMethod.POST, HttpStatus.OK,
+				new TestData("getPreference_in", "getPreference_out"));
+	}
+
+	&#64;Test
+	public void f_save() throws Exception {
+		mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, new TestData("save_in", "save_out"));
+	}
+</code>
+ * </pre>
  * 
  * @author anirbanchakraborty
  *
@@ -103,7 +154,8 @@ public class MockApi {
 	 */
 	public void assertCall(String uri, HttpMethod httpMethod, HttpStatus httpStatus, TestData testData)
 			throws Exception {
-		ResultActions resultActions = call(uri, httpMethod, Optional.ofNullable(testData).orElse(new TestData())).getResultActions();
+		ResultActions resultActions = call(uri, httpMethod, Optional.ofNullable(testData).orElse(new TestData()))
+				.getResultActions();
 		performResultActionStatus(httpStatus, resultActions);
 
 		Optional.ofNullable(testData).ifPresent(
@@ -122,13 +174,13 @@ public class MockApi {
 	 * @throws Exception
 	 */
 	public <T> ApiResult<T> call(String uri, HttpMethod httpMethod, TestData testData) {
-		RequestBuilder requestBuilder = populateRequestBuilder(
-				uri, httpMethod, readJSONDataFromFile(testData.getJsonInputFileName(), testData.getPath()), testData.getHeaders());
+		RequestBuilder requestBuilder = populateRequestBuilder(uri, httpMethod,
+				readJSONDataFromFile(testData.getJsonInputFileName(), testData.getPath()), testData.getHeaders());
 		ResultActions resultActions;
 		try {
 			resultActions = mockMvc.perform(requestBuilder).andDo(print());
 		} catch (Exception e) {
-			throw new MvcException("Cannot perform call", e);
+			throw new ApiException(e);
 		}
 		return new ApiResult<>(resultActions);
 	}
@@ -136,25 +188,25 @@ public class MockApi {
 	/**
 	 * Reads the test data files from some path
 	 * 
-	 * @param ioFile
+	 * @param testDataFile
 	 * @param path
 	 * @return
 	 * @throws IOException
 	 */
-	protected String readJSONDataFromFile(String ioFile, String path) {
-		return Optional.ofNullable(ioFile).map(c -> loadIoFile(c, path)).orElse(null);
+	protected String readJSONDataFromFile(String testDataFile, String path) {
+		return Optional.ofNullable(testDataFile).map(c -> loadIoFile(c, path)).orElse(null);
 	}
 
-	private String loadIoFile(String ioFile, String path) {
-		System.out.println("ioFile " + ioFile);
+	private String loadIoFile(String testDataFile, String path) {
+		System.out.println("ioFile " + testDataFile);
 		File ioDir = new File(path);
-		File io = new File(ioDir, ioFile + ".json");
+		File io = new File(ioDir, testDataFile + ".json");
 		try {
 			String json = Files.contentOf(context.getResource("classpath:" + io.getPath()).getFile(), "UTF-8");
 			System.out.println("json " + json);
 			return json;
 		} catch (IOException e) {
-			throw new IOFileNotFoundException(ioFile, e);
+			throw new TestDataParsingException(testDataFile, e);
 		}
 	}
 
@@ -166,7 +218,7 @@ public class MockApi {
 		try {
 			resultActions.andExpect(MockMvcResultMatchers.content().json(jsonOutput));
 		} catch (Exception e) {
-			throw new MvcException("Cannot perform match", e);
+			throw new AssertionException("Cannot perform response match", e);
 		}
 	}
 
@@ -185,7 +237,7 @@ public class MockApi {
 			try {
 				resultActions.andExpect(c);
 			} catch (Exception e) {
-				throw new MvcException("Cannot perform status match", e);
+				throw new AssertionException("Cannot perform HTTP Status match", e);
 			}
 		});
 	}

@@ -4,7 +4,7 @@ import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * This abstracts the spring JUnit runner.
+ * This abstracts the {@link SpringJUnit4ClassRunner}]
  * @author anirbanchakraborty
  *
  */

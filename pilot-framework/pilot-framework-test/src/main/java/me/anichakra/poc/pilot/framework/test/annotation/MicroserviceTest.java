@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -17,12 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 @AutoConfigureMockMvc
 
 /**
- * Apply this annotation on all Test classes. This opinionates a microservice environment.
+ * Apply this annotation on all Test classes, so that the test framework
+ * understands to run this as a microservice.
+ * 
  * @author anirbanchakraborty
  *
  */
 public @interface MicroserviceTest {
 
-	
-    Class<?>[] classes() default {};
+	Class<?>[] classes() default {};
 }
