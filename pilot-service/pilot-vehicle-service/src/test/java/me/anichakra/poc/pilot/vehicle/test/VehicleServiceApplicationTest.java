@@ -5,13 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
+import me.anichakra.poc.pilot.framework.test.mock.AssertableHttpStatusCode;
+import me.anichakra.poc.pilot.framework.test.mock.AssertionData;
+import me.anichakra.poc.pilot.framework.test.mock.InputData;
 import me.anichakra.poc.pilot.framework.test.mock.MockApi;
-import me.anichakra.poc.pilot.framework.test.mock.TestData;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 
 @MicroserviceTest
@@ -23,39 +23,40 @@ public class VehicleServiceApplicationTest {
 	private MockApi mockApi;
 
 	@Test
-		public void a_saveAll() throws Exception {
-			mockApi.assertCall("/vehicle/save", HttpMethod.POST, HttpStatus.CREATED,
-					new TestData("saveAll_in", "saveAll_out"));
-		}
-
+	public void a_saveAll() throws Exception {
+		mockApi.assertPostCall("/vehicle/save", new InputData("saveAll_in"),
+				new AssertionData(AssertableHttpStatusCode.CREATED, "saveAll_out"));
+	}
 
 	@Test
 	public void b_deleteVehicle() throws Exception {
-		Vehicle v = mockApi.<Vehicle>call("/vehicle", HttpMethod.POST, new TestData("save_in", null))
-				.getResultBean(Vehicle.class);
-		mockApi.assertCall("/vehicle?id=" + v.getId(), HttpMethod.DELETE, HttpStatus.NO_CONTENT);
+		Vehicle v = mockApi.<Vehicle>postCall("/vehicle", new InputData("save_in")).getResultBean(Vehicle.class);
+		mockApi.assertDeleteCall("/vehicle?id={id}", new InputData().setUriVariables(v.getId()),
+				new AssertionData(AssertableHttpStatusCode.NO_CONTENT));
 	}
-	
+
 	@Test
 	public void c_retrieve() throws Exception {
-		mockApi.assertCall("/vehicle/1", HttpMethod.GET, HttpStatus.OK, new TestData("retrieve_out"));
+		mockApi.assertGetCall("/vehicle/{id}", new InputData().setUriVariables(1),
+				new AssertionData(AssertableHttpStatusCode.OK, "retrieve_out"));
 	}
 
 	@Test()
 	public void d_searchVehicle() throws Exception {
-		mockApi.assertCall("/vehicle/search?manufacturer=Nissan", HttpMethod.GET, HttpStatus.OK,
-				new TestData("searchVehicle_out"));
+		mockApi.assertGetCall("/vehicle/search?manufacturer={manufacturer}", new InputData().setUriVariables("Nissan"),
+				new AssertionData(AssertableHttpStatusCode.OK, "searchVehicle_out"));
 	}
 
 	@Test
 	public void e_getPreference() throws Exception {
-		mockApi.assertCall("/vehicle/preference", HttpMethod.POST, HttpStatus.OK,
-				new TestData("getPreference_in", "getPreference_out"));
+		mockApi.assertPostCall("/vehicle/preference", new InputData("getPreference_in"),
+				new AssertionData(AssertableHttpStatusCode.OK, "getPreference_out"));
 	}
 
 	@Test
 	public void f_save() throws Exception {
-		mockApi.assertCall("/vehicle", HttpMethod.POST, HttpStatus.CREATED, new TestData("save_in", "save_out"));
+		mockApi.assertPostCall("/vehicle", new InputData("save_in"),
+				new AssertionData(AssertableHttpStatusCode.CREATED, "save_out"));
 	}
 
 }
