@@ -24,6 +24,7 @@ spring:
 # Path of vehicle.xls file containing the rule template
 rule:
   template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
-
+  engine: OPENL_TABLETS_ORG
+  
 api:
   context-path: /pilot-vehicle-service/0.0.1.BUILD_SNAPSHOT

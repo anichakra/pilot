@@ -2,8 +2,6 @@ package me.anichakra.poc.pilot.vehicle.web;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.anichakra.poc.pilot.framework.annotation.Inject;
 import me.anichakra.poc.pilot.vehicle.domain.Category;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 import me.anichakra.poc.pilot.vehicle.service.VehicleService;
@@ -25,8 +24,7 @@ import me.anichakra.poc.pilot.vehicle.service.VehicleService;
 @RequestMapping("/vehicle")
 public class VehicleController {
 
-    @Autowired
-    @Qualifier("default")
+    @Inject
     private VehicleService vehicleService;
 
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('read')")

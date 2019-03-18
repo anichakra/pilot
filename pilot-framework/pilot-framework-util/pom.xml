@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pilot-framework-util</artifactId>
@@ -11,10 +12,15 @@
 		<artifactId>pilot-framework</artifactId>
 		<version>0.0.1.BUILD-SNAPSHOT</version>
 	</parent>
-		<properties>
+	<properties>
 		<openl-tablets.version>5.21.12</openl-tablets.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>me.anichakra.poc</groupId>
+			<artifactId>pilot-framework-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.openl</groupId>
 			<artifactId>org.openl.core</artifactId>

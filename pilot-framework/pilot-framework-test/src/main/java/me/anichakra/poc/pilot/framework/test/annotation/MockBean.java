@@ -7,11 +7,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.AliasFor;
+
+/**
+ * Apply this annotation on all methods inside the classes annotated with @MicroserviceTestConfiguration to load a
+ * mock bean in the line of dependency wiring.
+ * 
+ * @see MicroserviceTestConfiguration
+ * @author anirbanchakraborty
+ *
+ */
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,22 +27,14 @@ import org.springframework.core.annotation.AliasFor;
 @Primary
 @Bean
 
-/**
- * Apply this annotation on all methods MicroserviceTestConfiguration to load a
- * mock bean in the line of dependency wiring.
- * 
- * @author anirbanchakraborty
- *
- */
 public @interface MockBean {
 	/**
 	 * Alias for {@link #name}.
 	 * <p>
 	 * Intended to be used when no other attributes are needed, for example:
-	 * {@code @Bean("customBeanName")}.
-	 * 
-	 * @since 4.3.3
-	 * @see #name
+	 * {@code @MockBean("customBeanName")}.
+	 * 	
+	 *  @see #name
 	 */
 	@AliasFor("name")
 	String[] value() default {};

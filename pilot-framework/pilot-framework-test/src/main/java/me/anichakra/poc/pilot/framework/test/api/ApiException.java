@@ -1,7 +1,7 @@
-package me.anichakra.poc.pilot.framework.test.mock;
+package me.anichakra.poc.pilot.framework.test.api;
 
 /**
- * This exception is thrown when there is an exception in either calling the API or during assertion.
+ * This exception is thrown when there is an exception in either calling the API.
  * @author anirbanchakraborty
  *
  */

@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.mock;
+package me.anichakra.poc.pilot.framework.test.util;
 
 /**
  * The exception is thrown when reading the test data.

@@ -1,10 +1,12 @@
 package me.anichakra.poc.pilot.framework.rule;
 
+import java.util.Map;
+
 public interface RuleService<T> {
-    public void loadRuleTemplate(String templatePath, Class<T> clazz);
+	
+	public T getRuleTemplate();
 
-    public T getRuleTemplate();
+	public T getRuleTemplate(String contextName);
 
-    public T getRuleTemplate(String parameter);
+	public T getRuleTemplate(String contextName, Map<String, Object> params);
 }
-

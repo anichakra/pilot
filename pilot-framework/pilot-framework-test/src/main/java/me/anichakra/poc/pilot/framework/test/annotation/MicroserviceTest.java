@@ -20,8 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 @AutoConfigureMockMvc
 
 /**
- * Apply this annotation on all Test classes, so that the test framework
- * understands to run this as a microservice.
+ * Apply this annotation on all microservice test classes, for the test framework to identify.
  * 
  * @author anirbanchakraborty
  *

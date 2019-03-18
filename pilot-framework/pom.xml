@@ -15,8 +15,8 @@
 	<modules>
 		<module>pilot-framework-core</module>
 		<module>pilot-framework-util</module>
-		<!-- <module>pilot-framework-instrumentation</module> -->
-		<module>pilot-framework-test</module>
+<!-- 		<module>pilot-framework-instrumentation</module>
+ -->		<module>pilot-framework-test</module>
 	</modules>
 	<build>
 		<plugins>

@@ -3,11 +3,10 @@ package me.anichakra.poc.pilot.vehicle.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.anichakra.poc.pilot.framework.annotation.Inject;
+import me.anichakra.poc.pilot.framework.annotation.StatelessService;
 import me.anichakra.poc.pilot.framework.rule.RuleService;
 import me.anichakra.poc.pilot.vehicle.domain.Category;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
@@ -15,24 +14,24 @@ import me.anichakra.poc.pilot.vehicle.repo.VehicleRepository;
 import me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate;
 import me.anichakra.poc.pilot.vehicle.service.VehicleService;
 
-@Service("default")
+@StatelessService
 public class DefaultVehicleService implements VehicleService {
 
-	@Autowired
+	@Inject
 	private RuleService<VehicleRuleTemplate> ruleService;
+	
+	@Inject
+	private VehicleRepository vehicleRepository;
 
 	private VehicleRuleTemplate getRuleTemplate() {
-		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate();
+		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(null, null);
 		return vehicleRuleTemplate;
 	}
 
 	private VehicleRuleTemplate getRuleTemplate(String manufacturer) {
-		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(manufacturer);
+		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(manufacturer, null);
 		return vehicleRuleTemplate;
 	}
-
-	@Autowired
-	private VehicleRepository vehicleRepository;
 
 	@Override
 	public Vehicle saveVehicle(Vehicle vehicle) {

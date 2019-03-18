@@ -12,7 +12,7 @@
 		<version>0.0.1.BUILD-SNAPSHOT</version> 
 	</parent>
 	<dependencies>
-		<!-- <dependency>
+		 <dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
@@ -20,10 +20,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
@@ -61,7 +61,7 @@
     		<artifactId>newrelic-api</artifactId>
     		<version>3.29.0</version>
 		</dependency>
-		-->
+
 		<dependency>
 			<groupId>me.anichakra.poc</groupId>
 			<artifactId>pilot-framework-core</artifactId>

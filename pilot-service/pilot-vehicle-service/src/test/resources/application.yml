@@ -9,7 +9,6 @@ spring:
     active: test
 rule:
   template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
-
-
+  engine: OPENL_TABLETS_ORG
 api:
   context-path: /@project.name@/@project.version@
