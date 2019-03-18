@@ -15,16 +15,26 @@ import me.anichakra.poc.pilot.framework.rule.InvalidRuleTemplatePathException;
 import me.anichakra.poc.pilot.framework.rule.RuleEngine;
 import me.anichakra.poc.pilot.framework.rule.RuleService;
 
+/**
+ * This is the implementation of the abstraction of
+ * <a href="http://openl-tablets.org/">openl-tablets</a> rule engine.
+ * 
+ * @author anirbanchakraborty
+ *
+ * @param <T>
+ */
 @Service
 public class OpenlTabletsRuleEngine<T> implements RuleEngine<T> {
-	
 
 	@Autowired
 	ResourceLoader resourceLoader;
 
+	/**
+	 * This returns a RuleService that wraps a {@link RulesEngineFactory}.
+	 */
 	@Override
-	public RuleService<T> build(String rulePath, Class<T> ruleInterfaceType) throws FileNotFoundException {
-	 RulesEngineFactory<T> ruleEngineFactory = null;
+	public RuleService<T> configure(String rulePath, Class<T> ruleInterfaceType) throws FileNotFoundException {
+		RulesEngineFactory<T> ruleEngineFactory = null;
 		synchronized (this) {
 			try {
 				ruleEngineFactory = new RulesEngineFactory<T>(new URL(rulePath), ruleInterfaceType);
@@ -36,14 +46,13 @@ public class OpenlTabletsRuleEngine<T> implements RuleEngine<T> {
 					System.out.println("Resource:" + resource);
 					ruleEngineFactory = new RulesEngineFactory<T>(resource.getURL(), ruleInterfaceType);
 				} catch (IOException e1) {
-					throw new InvalidRuleTemplatePathException(
-							"Rule template is invalid or missing: " + rulePath, e);
+					throw new InvalidRuleTemplatePathException("Rule template is invalid or missing: " + rulePath, e);
 				}
 
 			}
 
 		}
 		return new OpenlTabletsRuleService<T>(ruleEngineFactory);
-	}  
-	
+	}
+
 }

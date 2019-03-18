@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 /**
- * Use this annotation to 
+ * Use this annotation to mark a component, i.e. a class or an interface as data
+ * access. All components that access a database should be marked as @DataAccess.
+ * 
  * @author anirbanchakraborty
  *
  */
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Repository;
 @Documented
 @Repository
 public @interface DataAccess {
-	
+
 	@AliasFor(annotation = Component.class)
 	String value() default "";
 }

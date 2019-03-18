@@ -32,7 +32,7 @@ public abstract class RuleConfigService<T> {
 	public RuleService<T> getRuleService() throws FileNotFoundException {
 		switch (engine) {
 		case OPENL_TABLETS_ORG:
-			return openlTablets.build(templatePath, getRuleTemplateClass());
+			return openlTablets.configure(templatePath, getRuleTemplateClass());
 		default:
 			return null;
 		}
@@ -42,7 +42,7 @@ public abstract class RuleConfigService<T> {
 	public T getRuleTemplate() throws FileNotFoundException {
 		switch (engine) {
 		case OPENL_TABLETS_ORG:
-			return openlTablets.build(templatePath, getRuleTemplateClass()).getRuleTemplate();
+			return openlTablets.configure(templatePath, getRuleTemplateClass()).getRuleTemplate();
 		default:
 			return null;
 		}

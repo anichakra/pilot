@@ -12,17 +12,26 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.core.annotation.AliasFor;
 
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+/**
+ * Provide this annotation on the main class of a microservice application. This
+ * is a mandatory annotation.
+ * 
+ * @author anirbanchakraborty
+ *
+ */
+@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@SpringBootApplication (scanBasePackages="me.anichakra.poc.pilot")
-@EntityScan(basePackages="me.anichakra.poc.pilot")
+@SpringBootApplication(scanBasePackages = "me.anichakra.poc.pilot")
+@EntityScan(basePackages = "me.anichakra.poc.pilot")
 public @interface Microservice {
-    /**
-     * Exclude specific auto-configuration classes such that they will never be applied.
-     * @return the classes to exclude
-     */
-    @AliasFor(annotation = EnableAutoConfiguration.class)
-    Class<?>[] exclude() default {};
+	/**
+	 * Exclude specific auto-configuration classes such that they will never be
+	 * applied.
+	 * 
+	 * @return the classes to exclude
+	 */
+	@AliasFor(annotation = EnableAutoConfiguration.class)
+	Class<?>[] exclude() default {};
 }

@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
- * Use this annotation to 
+ * Use this annotation to mark a class as a stateful business service class. All
+ * instances of this class will be created when a new request is made to run any
+ * method of this class.
+ * 
  * @author anirbanchakraborty
  *
  */

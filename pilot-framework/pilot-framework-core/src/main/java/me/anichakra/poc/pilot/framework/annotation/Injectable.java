@@ -9,6 +9,14 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.AliasFor;
 
+/**
+ * Mark this annotation in a method which returns an instance that is required
+ * to be injected in some other component with @Inject annotation.
+ * 
+ * @see Inject
+ * @author anirbanchakraborty
+ *
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
