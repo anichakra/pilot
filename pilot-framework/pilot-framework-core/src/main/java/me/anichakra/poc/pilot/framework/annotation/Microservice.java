@@ -25,6 +25,7 @@ import org.springframework.core.annotation.AliasFor;
 @Inherited
 @SpringBootApplication(scanBasePackages = "me.anichakra.poc.pilot")
 @EntityScan(basePackages = "me.anichakra.poc.pilot")
+
 public @interface Microservice {
 	/**
 	 * Exclude specific auto-configuration classes such that they will never be
@@ -35,3 +36,4 @@ public @interface Microservice {
 	@AliasFor(annotation = EnableAutoConfiguration.class)
 	Class<?>[] exclude() default {};
 }
+

@@ -1,6 +1,7 @@
 package me.anichakra.poc.pilot.framework.test.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @Component
 @WebAppConfiguration
+@Profile("test")
 public class MockApi {
 
 	@Autowired

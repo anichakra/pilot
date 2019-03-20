@@ -1,9 +1,15 @@
 package me.anichakra.poc.pilot.vehicle.test;
 
+import java.lang.reflect.Field;
+import java.util.Properties;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.util.PropertyPlaceholderHelper;
 
 import me.anichakra.poc.pilot.framework.annotation.Inject;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
@@ -20,12 +26,11 @@ public class VehicleServiceApplicationTest {
 
 	@Inject
 	private MockApi mockApi;
-	
-	
+
 	@Test
 	public void a_saveAll() throws Exception {
-		mockApi.post("/vehicle/save").call(new RequestBody("saveAll_in"))
-				.assertResult(AssertableHttpStatusCode.CREATED, "saveAll_out");
+		mockApi.post("/vehicle/save").call(new RequestBody("saveAll_in")).assertResult(AssertableHttpStatusCode.CREATED,
+				"saveAll_out");
 	}
 
 	@Test
@@ -57,6 +62,7 @@ public class VehicleServiceApplicationTest {
 	public void f_save() throws Exception {
 		mockApi.post("/vehicle").call(new RequestBody("save_in")).assertResult(AssertableHttpStatusCode.CREATED,
 				"save_out");
+
 	}
 
 }
