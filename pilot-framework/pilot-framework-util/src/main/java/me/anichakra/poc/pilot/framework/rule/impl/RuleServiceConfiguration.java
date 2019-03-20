@@ -9,7 +9,7 @@ import me.anichakra.poc.pilot.framework.annotation.Injectable;
 import me.anichakra.poc.pilot.framework.rule.RuleEngine;
 import me.anichakra.poc.pilot.framework.rule.RuleService;
 
-public abstract class RuleConfigService<T> {
+public abstract class RuleServiceConfiguration<T> {
 
 	@NotNull
 	String templatePath;
