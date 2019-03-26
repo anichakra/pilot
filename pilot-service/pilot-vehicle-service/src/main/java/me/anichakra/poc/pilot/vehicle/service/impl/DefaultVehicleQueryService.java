@@ -1,0 +1,65 @@
+package me.anichakra.poc.pilot.vehicle.service.impl;
+
+import java.util.List;
+import java.util.Optional;
+
+import me.anichakra.poc.pilot.framework.annotation.InjectDataAccess;
+import me.anichakra.poc.pilot.framework.annotation.InjectService;
+import me.anichakra.poc.pilot.framework.annotation.QueryService;
+import me.anichakra.poc.pilot.framework.rule.api.RuleService;
+import me.anichakra.poc.pilot.vehicle.domain.Category;
+import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
+import me.anichakra.poc.pilot.vehicle.repo.VehicleRepository;
+import me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate;
+import me.anichakra.poc.pilot.vehicle.service.VehicleQueryService;
+
+@QueryService
+public class DefaultVehicleQueryService implements VehicleQueryService {
+
+	@InjectService
+	private RuleService<VehicleRuleTemplate> ruleService;
+	
+	@InjectDataAccess
+	private VehicleRepository vehicleRepository;
+
+	private VehicleRuleTemplate getRuleTemplate() {
+		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(null, null);
+		return vehicleRuleTemplate;
+	}
+
+	private VehicleRuleTemplate getRuleTemplate(String manufacturer) {
+		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(manufacturer, null);
+		return vehicleRuleTemplate;
+	}
+	
+	@Override
+	public Optional<Vehicle> getVehicle(Long id) {
+		System.out.println("id:" + id);
+		Optional<Vehicle> vehicle = vehicleRepository.findById(id);
+		System.out.println(vehicle);
+		return vehicle;
+	}
+
+	@Override
+	public List<Vehicle> searchVehicle(String manufacturer) {
+		return vehicleRepository.findByManufacturer(manufacturer);
+	}
+
+	@Override
+	public Vehicle getPreference(Category category) {
+		final Optional<Vehicle> preferredVehicle = Optional
+				.ofNullable(getRuleTemplate().getPreference(category, new Vehicle()));
+
+		Optional<List<Vehicle>> vehicles = Optional.ofNullable(searchVehicle(preferredVehicle.get().getManufacturer()));
+		Optional<Vehicle> selectedVehicle = Optional.ofNullable(vehicles.get().stream()
+				.filter(c -> c.getModel().equalsIgnoreCase(preferredVehicle.get().getModel())).findAny().orElse(null));
+		int price = getRuleTemplate(preferredVehicle.get().getManufacturer())
+				.getPrice(preferredVehicle.get().getModel());
+
+		int discountedPrice = (int) getRuleTemplate().getDiscountedPrice(preferredVehicle.get().getManufacturer(),
+				price);
+		selectedVehicle.get().setPrice(discountedPrice);
+		return selectedVehicle.get();
+	}
+
+}

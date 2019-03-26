@@ -10,7 +10,7 @@ import org.openl.runtime.IEngineWrapper;
 import org.openl.runtime.IRuntimeContext;
 import org.openl.vm.IRuntimeEnv;
 
-import me.anichakra.poc.pilot.framework.rule.RuleService;
+import me.anichakra.poc.pilot.framework.rule.api.RuleService;
 
 public class OpenlTabletsRuleService<T> implements RuleService<T> {
 

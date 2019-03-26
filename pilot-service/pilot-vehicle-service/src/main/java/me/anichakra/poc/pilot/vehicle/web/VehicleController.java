@@ -15,24 +15,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.anichakra.poc.pilot.framework.annotation.Inject;
+import me.anichakra.poc.pilot.framework.annotation.InjectService;
 import me.anichakra.poc.pilot.vehicle.domain.Category;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
-import me.anichakra.poc.pilot.vehicle.service.VehicleService;
+import me.anichakra.poc.pilot.vehicle.service.VehicleCommandService;
+import me.anichakra.poc.pilot.vehicle.service.VehicleQueryService;
 
 @RestController
 @RequestMapping("/vehicle")
 public class VehicleController {
 
-    @Inject
-    private VehicleService vehicleService;
-
+    @InjectService
+    private VehicleCommandService vehicleCommandService;
+    @InjectService
+    private VehicleQueryService vehicleQueryService;
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('read')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     @ResponseBody
     public Vehicle getVehicle(@PathVariable("id") Long id) {
-        return vehicleService.getVehicle(id).get();
+        return vehicleQueryService.getVehicle(id).get();
     }
 
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('write') and
@@ -41,32 +43,32 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Vehicle saveVehicle(@RequestBody Vehicle vehicle) {
-        return vehicleService.saveVehicle(vehicle);
+        return vehicleCommandService.saveVehicle(vehicle);
     }
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public List<Vehicle> saveVehicles(@RequestBody List<Vehicle> vehicles) {
-        return vehicleService.saveVehicles(vehicles);
+        return vehicleCommandService.saveVehicles(vehicles);
     }
     
     @DeleteMapping
     public ResponseEntity<Void> deleteVehicle(@RequestParam("id") Long id) {
-        vehicleService.deleteVehicle(id);
+        vehicleCommandService.deleteVehicle(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
     public List<Vehicle> searchVehicle(@RequestParam("manufacturer") String manufacturer) {
-        return vehicleService.searchVehicle(manufacturer);
+        return vehicleQueryService.searchVehicle(manufacturer);
     }
     
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/preference")
     public Vehicle getPreference(@RequestBody Category category) {
-        return vehicleService.getPreference(category);
+        return vehicleQueryService.getPreference(category);
     }
 
 }

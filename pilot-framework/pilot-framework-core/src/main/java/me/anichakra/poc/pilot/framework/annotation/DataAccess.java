@@ -7,7 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -23,6 +22,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public @interface DataAccess {
 
-	@AliasFor(annotation = Component.class)
+	@AliasFor(annotation = Repository.class)
 	String value() default "";
 }

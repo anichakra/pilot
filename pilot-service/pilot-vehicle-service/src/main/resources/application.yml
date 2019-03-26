@@ -23,7 +23,8 @@ spring:
 
 # Path of vehicle.xls file containing the rule template
 rule:
-  template-path: ${RULE_TEMPLATE_PATH:vehicle-rules.xls}
+  file-path: ${RULE_FILE_PATH:rule}
+  template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
   
 api:

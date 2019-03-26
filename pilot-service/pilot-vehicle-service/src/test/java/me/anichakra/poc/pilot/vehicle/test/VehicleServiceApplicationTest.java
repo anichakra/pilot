@@ -1,22 +1,17 @@
 package me.anichakra.poc.pilot.vehicle.test;
 
-import java.lang.reflect.Field;
-import java.util.Properties;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.util.PropertyPlaceholderHelper;
 
-import me.anichakra.poc.pilot.framework.annotation.Inject;
+import me.anichakra.poc.pilot.framework.annotation.InjectService;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
 import me.anichakra.poc.pilot.framework.test.api.AssertableHttpStatusCode;
 import me.anichakra.poc.pilot.framework.test.api.MockApi;
 import me.anichakra.poc.pilot.framework.test.api.RequestBody;
+import me.anichakra.poc.pilot.framework.util.StringUtils;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 
 @MicroserviceTest
@@ -24,7 +19,7 @@ import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VehicleServiceApplicationTest {
 
-	@Inject
+	@InjectService
 	private MockApi mockApi;
 
 	@Test
@@ -38,6 +33,9 @@ public class VehicleServiceApplicationTest {
 		Vehicle v = mockApi.post("/vehicle").<Vehicle>call(new RequestBody("save_in")).getResultBean(Vehicle.class);
 		mockApi.delete("/vehicle?id={id}").setUriVariables(v.getId()).call()
 				.assertResult(AssertableHttpStatusCode.NO_CONTENT);
+		String template = "The vehicle with ${id} whose manufacturere is ${manufacturer} with price ${price:0.11} build in ${year} is not available";
+		String value = StringUtils.format(template, v);
+		System.out.println(value);
 	}
 
 	@Test

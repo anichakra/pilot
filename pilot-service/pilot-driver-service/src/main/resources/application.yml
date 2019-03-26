@@ -1,0 +1,36 @@
+server:
+  port: ${PORT:8081}
+
+# Remove this configuration if want to run with in memory database called H2.
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          lob.non_contextual_creation: true
+
+# Postgres connectivity details here      
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DATABASE:postgres}
+    username: ${POSTGRES_USER:anirbanchakraborty}
+    password: ${POSTGRES_PASSWORD:postgres123}
+    driver-class-name: org.postgresql.Driver
+
+# Rest consumer calls
+rest:
+  consumers:
+    - name: vehicle-preference
+      url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/preference
+      secure: false
+      contentType: application/json
+      responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
+      method: POST
+
+api:
+  context-path: /pilot-driver-service/0.0.1.BUILD_SNAPSHOT
+  

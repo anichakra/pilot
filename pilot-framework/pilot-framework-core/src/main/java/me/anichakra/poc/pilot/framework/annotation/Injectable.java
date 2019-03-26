@@ -11,9 +11,9 @@ import org.springframework.core.annotation.AliasFor;
 
 /**
  * Mark this annotation in a method which returns an instance that is required
- * to be injected in some other component with @Inject annotation.
+ * to be injected in controller and service;
  * 
- * @see Inject
+ * @see InjectService
  * @author anirbanchakraborty
  *
  */
@@ -23,6 +23,12 @@ import org.springframework.core.annotation.AliasFor;
 @Bean
 public @interface Injectable {
 
+	/**
+	 * The name of the component. If this is mentioned then during injection, the
+	 * same name need to be mentioned.
+	 * 
+	 * @return
+	 */
 	@AliasFor("name")
 	String[] value() default {};
 
