@@ -5,8 +5,9 @@ import java.util.Optional;
 
 import org.springframework.http.HttpMethod;
 
+import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.rest.api.GetConsumer;
-
+@FrameworkService
 public class DefaultGetConsumer<V> extends AbstractRestConsumer implements GetConsumer<V> {
 
 	private Class<V> responseType;

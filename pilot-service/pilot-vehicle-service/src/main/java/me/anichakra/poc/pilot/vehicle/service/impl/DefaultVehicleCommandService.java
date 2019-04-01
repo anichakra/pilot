@@ -2,8 +2,9 @@ package me.anichakra.poc.pilot.vehicle.service.impl;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import me.anichakra.poc.pilot.framework.annotation.CommandService;
-import me.anichakra.poc.pilot.framework.annotation.InjectDataAccess;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 import me.anichakra.poc.pilot.vehicle.repo.VehicleRepository;
 import me.anichakra.poc.pilot.vehicle.service.VehicleCommandService;
@@ -11,9 +12,8 @@ import me.anichakra.poc.pilot.vehicle.service.VehicleCommandService;
 @CommandService
 public class DefaultVehicleCommandService implements VehicleCommandService {
 
-	@InjectDataAccess
+	@Inject
 	private VehicleRepository vehicleRepository;
-
 
 	@Override
 	public Vehicle saveVehicle(Vehicle vehicle) {

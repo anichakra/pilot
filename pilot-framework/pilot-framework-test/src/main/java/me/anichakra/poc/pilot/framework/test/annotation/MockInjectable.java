@@ -26,7 +26,6 @@ import org.springframework.core.annotation.AliasFor;
 @Inherited
 @Primary
 @Bean
-
 public @interface MockInjectable {
 	/**
 	 * Alias for {@link #name}.

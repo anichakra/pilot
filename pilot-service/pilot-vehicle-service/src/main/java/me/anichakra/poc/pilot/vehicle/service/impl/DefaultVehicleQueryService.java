@@ -3,8 +3,8 @@ package me.anichakra.poc.pilot.vehicle.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import me.anichakra.poc.pilot.framework.annotation.InjectDataAccess;
-import me.anichakra.poc.pilot.framework.annotation.InjectService;
+import javax.inject.Inject;
+
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.rule.api.RuleService;
 import me.anichakra.poc.pilot.vehicle.domain.Category;
@@ -16,10 +16,10 @@ import me.anichakra.poc.pilot.vehicle.service.VehicleQueryService;
 @QueryService
 public class DefaultVehicleQueryService implements VehicleQueryService {
 
-	@InjectService
+	@Inject
 	private RuleService<VehicleRuleTemplate> ruleService;
 	
-	@InjectDataAccess
+	@Inject
 	private VehicleRepository vehicleRepository;
 
 	private VehicleRuleTemplate getRuleTemplate() {

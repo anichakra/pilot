@@ -2,11 +2,11 @@ package me.anichakra.poc.pilot.driver.web;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,32 +15,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.anichakra.poc.pilot.driver.domain.Category;
 import me.anichakra.poc.pilot.driver.domain.Driver;
-import me.anichakra.poc.pilot.driver.domain.Vehicle;
 import me.anichakra.poc.pilot.driver.service.DriverCommandService;
-import me.anichakra.poc.pilot.driver.service.DriverQueryService;
-import me.anichakra.poc.pilot.framework.annotation.InjectService;
 
 @RestController
 @RequestMapping("/driver")
-public class DriverController {
+public class DriverCommandController {
 
-    @InjectService
+    @Inject
     private DriverCommandService driverCommandService;
     
-    @InjectService
-    private DriverQueryService driverQueryService;
-
-
-    // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('read')")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Driver getDriver(@PathVariable("id") Long id) {
-        return driverQueryService.getDriver(id).get();
-    }
-
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('write') and
     // hasRole('ROLE_ADMIN')")
     @PostMapping
@@ -62,19 +46,5 @@ public class DriverController {
     	driverCommandService.deleteDriver(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/search")
-    public List<Driver> searchDrivers(@RequestBody Category category) {
-        return driverQueryService.searchDrivers(category);
-    }
-    
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/assign")
-    public Vehicle assignVehicle(@RequestBody Driver driver) {
-    	Vehicle  v = driverQueryService.assignVehicle(driver);
-        return v;
-    }
-    
 
 }

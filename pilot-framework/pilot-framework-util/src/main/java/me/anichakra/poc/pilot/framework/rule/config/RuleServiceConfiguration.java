@@ -2,6 +2,7 @@ package me.anichakra.poc.pilot.framework.rule.config;
 
 import java.io.FileNotFoundException;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +10,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-import me.anichakra.poc.pilot.framework.annotation.InjectService;
 import me.anichakra.poc.pilot.framework.annotation.Injectable;
 import me.anichakra.poc.pilot.framework.rule.api.RuleEngine;
 import me.anichakra.poc.pilot.framework.rule.api.RuleService;
@@ -53,7 +53,7 @@ public class RuleServiceConfiguration<T> {
 	@NotNull
 	Class<T> templateClass;
 
-	@InjectService
+	@Inject
 	private OpenlTabletsRuleEngine<T> openlTablets;
 
 	/**

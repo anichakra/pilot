@@ -2,12 +2,12 @@ package me.anichakra.poc.pilot.framework.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -24,13 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Service
+@Inherited
+@CqrsService
 @Transactional(readOnly = false)
 public @interface CommandService {
 
-	@AliasFor(annotation = Service.class)
+	@AliasFor(annotation = CqrsService.class)
 	String value() default "";
-
+	@AliasFor(annotation = CqrsService.class)
 	boolean stateful() default false;
 
 }

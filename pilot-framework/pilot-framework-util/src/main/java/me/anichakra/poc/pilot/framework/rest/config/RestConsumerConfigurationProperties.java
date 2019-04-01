@@ -48,7 +48,7 @@ public class RestConsumerConfigurationProperties<T> {
 		return contentType;
 	}
 
-	public void setContenttype(String contentType) {
+	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
 

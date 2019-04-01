@@ -2,20 +2,20 @@ package me.anichakra.poc.pilot.framework.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+
 /**
- * Use this annotation to mark a service class as a of type "Query". This is
+ * Use this annotation to mark a service class as a of type "Command". This is
  * to enforce CQRS pattern implementation in service classes to separate out the
  * command and query based operations. Refer to
  * <a href="https://microservices.io/patterns/data/cqrs.html">CQRS pattern</a>.
- * A query service does not do write operation with the data access and do only
- * query or read operations.
+ * A command service does write operation with the data access and do not do
+ * query operations. All methods in a command service are transactional in nature.
  * 
  * @author anirbanchakraborty
  *
@@ -23,14 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Inherited
-@CqrsService
-@Transactional(readOnly=true)
-public @interface QueryService {
+@Service
+public abstract @interface CqrsService {
 
-	@AliasFor(annotation = CqrsService.class)
+	@AliasFor(annotation = Service.class)
 	String value() default "";
-	
-	@AliasFor(annotation = CqrsService.class)
+
 	boolean stateful() default false;
+
 }

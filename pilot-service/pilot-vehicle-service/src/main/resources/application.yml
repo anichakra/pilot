@@ -26,6 +26,4 @@ rule:
   file-path: ${RULE_FILE_PATH:rule}
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
-  
-api:
-  context-path: /pilot-vehicle-service/0.0.1.BUILD_SNAPSHOT
+ 

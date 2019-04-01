@@ -2,12 +2,12 @@ package me.anichakra.poc.pilot.framework.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.stereotype.Service;
 
 /**
  * Use this annotation to mark a service class which is orchestrating multiple
@@ -20,12 +20,8 @@ import org.springframework.core.annotation.AliasFor;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Inherited
-@CqrsService
-public @interface ApplicationService {
+public @interface FrameworkService {
 
-	@AliasFor(annotation = CqrsService.class)
-	
 	/**
 	 * If the service class has a name then mark that as part of the value in the annotation.
 	 * 
@@ -37,13 +33,11 @@ public @interface ApplicationService {
 	 * Mention if the service class is stateful. By default all service classes are
 	 * stateless. Stateful classes will keep session specific attributes. If a
 	 * service is stateless but keeps attribute which are not annotated as either
-	 * {@link ApplicationService}, {@link CommandService}, {@link QueryService} or
+	 * {@link FrameworkService}, {@link CommandService}, {@link QueryService} or
 	 * {@link DataAccess} then the class will fail to load.
 	 * 
 	 * @return
 	 */
-	@AliasFor(annotation = CqrsService.class)
-
 	boolean stateful() default false;
 
 }

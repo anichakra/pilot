@@ -5,8 +5,9 @@ import java.util.Optional;
 
 import org.springframework.http.HttpMethod;
 
+import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.rest.api.PatchConsumer;
-
+@FrameworkService
 public class DefaultPatchConsumer<K, V> extends AbstractRestConsumer implements PatchConsumer<K, V> {
 	private Class<V> responseType;
 

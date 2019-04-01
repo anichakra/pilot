@@ -2,17 +2,18 @@ package me.anichakra.poc.pilot.driver.service.impl;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import me.anichakra.poc.pilot.driver.domain.Driver;
 import me.anichakra.poc.pilot.driver.repo.DriverRepository;
 import me.anichakra.poc.pilot.driver.service.DriverCommandService;
 import me.anichakra.poc.pilot.framework.annotation.CommandService;
-import me.anichakra.poc.pilot.framework.annotation.InjectDataAccess;
 
 @CommandService
 public class DefaultDriverCommandService implements DriverCommandService {
 
 
-	@InjectDataAccess
+	@Inject
 	private DriverRepository driverRepository;
 
 	@Override

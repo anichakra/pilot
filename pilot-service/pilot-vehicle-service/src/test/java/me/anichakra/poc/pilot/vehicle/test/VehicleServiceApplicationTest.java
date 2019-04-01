@@ -1,11 +1,12 @@
 package me.anichakra.poc.pilot.vehicle.test;
 
+import javax.inject.Inject;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import me.anichakra.poc.pilot.framework.annotation.InjectService;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
 import me.anichakra.poc.pilot.framework.test.api.AssertableHttpStatusCode;
@@ -19,7 +20,7 @@ import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VehicleServiceApplicationTest {
 
-	@InjectService
+	@Inject
 	private MockApi mockApi;
 
 	@Test

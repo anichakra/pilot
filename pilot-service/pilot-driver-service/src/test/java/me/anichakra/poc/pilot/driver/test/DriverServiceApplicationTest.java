@@ -1,11 +1,12 @@
 package me.anichakra.poc.pilot.driver.test;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.DependsOn;
 
 import me.anichakra.poc.pilot.driver.domain.Driver;
-import me.anichakra.poc.pilot.framework.annotation.InjectService;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
 import me.anichakra.poc.pilot.framework.test.api.AssertableHttpStatusCode;
@@ -17,7 +18,7 @@ import me.anichakra.poc.pilot.framework.test.api.RequestBody;
 @DependsOn("vehicle-preference")
 public class DriverServiceApplicationTest {
 
-	@InjectService
+	@Inject
 	private MockApi mockApi;
 
 	@Test

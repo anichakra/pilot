@@ -19,4 +19,6 @@ public class MicroserviceApplication {
 			throw new MicroserviceInitiationException(className);
 		}
 	}
+	
+	
 }

@@ -26,11 +26,8 @@ rest:
   consumers:
     - name: vehicle-preference
       url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/preference
-      secure: false
+      secured: false
       contentType: application/json
       responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
       method: POST
-
-api:
-  context-path: /pilot-driver-service/0.0.1.BUILD_SNAPSHOT
   
