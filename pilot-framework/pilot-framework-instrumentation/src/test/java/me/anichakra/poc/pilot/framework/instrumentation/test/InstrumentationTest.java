@@ -23,8 +23,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
-import me.anichakra.poc.pilot.framework.instrumentation.aspect.InstrumentationConfig;
 import me.anichakra.poc.pilot.framework.instrumentation.aspect.InstrumentationFilter;
+import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationConfiguration;
 import me.anichakra.poc.pilot.framework.instrumentation.mock.controller.MockController;
 import me.anichakra.poc.pilot.framework.instrumentation.mock.controller.TestConfig;
 import me.anichakra.poc.pilot.framework.instrumentation.mock.service.api.MockBusinessException;
@@ -32,7 +32,7 @@ import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
 
 @MicroserviceTest(classes = { TestConfig.class,
-        InstrumentationConfig.class })
+        InstrumentationConfiguration.class })
 @RunWith(MicroserviceTestRunner.class)
 
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)

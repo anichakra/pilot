@@ -91,6 +91,7 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	private String fileName;
 	private Object[] uriVariables;
 	private MockMvc mockMvc;
+	private boolean print;
 
 	/**
 	 * Creates a new instance using {@link MockMvc}, the URI of the API and the HTTP
@@ -100,10 +101,11 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	 * @param uri
 	 * @param method
 	 */
-	public ReSTJsonBasedApiCallable(MockMvc mockMvc, String uri, HttpMethod method) {
+	public ReSTJsonBasedApiCallable(MockMvc mockMvc, String uri, HttpMethod method, boolean print) {
 		this.mockMvc = mockMvc;
 		this.uri = uri;
 		this.method = method;
+		this.print = print;
 	}
 
 	/**
@@ -171,7 +173,9 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 		RequestBuilder requestBuilder = populateRequestBuilder(uri, method, requestBody, requestHeaders);
 		ResultActions resultActions;
 		try {
-			resultActions = mockMvc.perform(requestBuilder).andDo(print());
+			resultActions = mockMvc.perform(requestBuilder);
+			if (print)
+				resultActions = resultActions.andDo(print());
 		} catch (Exception e) {
 			throw new ApiException(e);
 		}

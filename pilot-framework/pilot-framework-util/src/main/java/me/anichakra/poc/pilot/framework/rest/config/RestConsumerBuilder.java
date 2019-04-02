@@ -33,7 +33,7 @@ public class RestConsumerBuilder<K,V> {
 		return consumers.stream().filter(c -> c.getMethod().equals(HttpMethod.POST)).map(c -> {
 			DefaultPostConsumer<K,V> consumer = new DefaultPostConsumer<K,V>(c.getName(), c.getUrl(), c.getSecured(),
 					 c.getResponseType());
-			populateNullableProperties(c, consumer);
+			populateNullableProperties(c, consumer);  
 			return consumer;
 		}).collect(Collectors.toList());
 	}
@@ -63,9 +63,10 @@ public class RestConsumerBuilder<K,V> {
 		}).collect(Collectors.toList());
 	}
 
-	void populateNullableProperties(RestConsumerConfigurationProperties<V> c, RestConsumer consumer) {
+	void populateNullableProperties(RestConsumerConfigurationProperties<V> c, final RestConsumer consumer) {
 		consumer.setAccept(c.getAccept());
 		consumer.setContentType(c.getContentType());
 		consumer.setStatusCode(c.getStatusCode());
+		c.getHeaders().entrySet().stream().forEach(e->consumer.addHeader(e.getKey(), e.getValue()));
 	}
 }

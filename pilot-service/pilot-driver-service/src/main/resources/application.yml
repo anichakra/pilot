@@ -30,4 +30,7 @@ rest:
       contentType: application/json
       responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
       method: POST
+      headers:
+        clientId: abc
+        x-header: xyz
   

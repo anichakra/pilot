@@ -1,5 +1,6 @@
 package me.anichakra.poc.pilot.framework.web;
 
+import org.apache.logging.log4j.util.StackLocatorUtil;
 import org.springframework.boot.SpringApplication;
 
 /**
@@ -12,13 +13,7 @@ import org.springframework.boot.SpringApplication;
 public class MicroserviceApplication {
 
 	public static void start(String[] args) {
-		String className = Thread.currentThread().getStackTrace()[2].getClassName();
-		try {
-			SpringApplication.run(Class.forName(className), args);
-		} catch (ClassNotFoundException e) {
-			throw new MicroserviceInitiationException(className);
-		}
+		SpringApplication.run(StackLocatorUtil.getCallerClass(2), args);
 	}
-	
-	
+
 }

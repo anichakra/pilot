@@ -1,6 +1,7 @@
 package me.anichakra.poc.pilot.framework.test.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,15 @@ import org.springframework.test.web.servlet.MockMvc;
 @Component
 @WebAppConfiguration
 @Profile("test")
+@ConfigurationProperties(prefix = "test")
 public class MockApi {
 
+	private boolean print = false;
+	
+	public void setPrint(boolean print) {
+		this.print = print;
+	}
+	
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -33,7 +41,7 @@ public class MockApi {
 	 * @throws Exception
 	 */
 	public ApiCallable post(String uri) throws Exception {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.POST);
+		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.POST, print);
 	}
 
 	/**
@@ -43,7 +51,7 @@ public class MockApi {
 	 * @throws Exception
 	 */
 	public ApiCallable delete(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.DELETE);
+		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.DELETE, print);
 	}
 
 	/**
@@ -53,7 +61,7 @@ public class MockApi {
 	 * @throws Exception
 	 */
 	public ApiCallable get(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.GET);
+		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.GET, print);
 	}
 
 	/**
@@ -63,7 +71,7 @@ public class MockApi {
 	 * @throws Exception
 	 */
 	public ApiCallable put(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.PUT);
+		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.PUT, print);
 	}
 
 }

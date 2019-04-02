@@ -20,10 +20,32 @@ spring:
     username: ${POSTGRES_USER:anirbanchakraborty}
     password: ${POSTGRES_PASSWORD:postgres123}
     driver-class-name: org.postgresql.Driver
+ # aop:
+ #   auto: true
+ #   proxy-target-class: false
 
 # Path of vehicle.xls file containing the rule template
 rule:
-  file-path: ${RULE_FILE_PATH:rule}
+  file-path: ${RULE_FILE_PATH:rule/vehicle-rules.xls}
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
- 
+  
+instrumentation:
+  enabled: true
+  web: 
+    ignore-uri-variables: false
+  component:
+    ignore-controller: false
+    ignore-service: false
+    ignore-repository: false
+  method:
+    ignore-duration-above: 10
+    ignore-arguments: false
+    ignore-exception-stack: true
+    ignore-signature: false
+  handler:
+    log:
+      enabled: true
+    new-relic:
+      enabled: false
+      

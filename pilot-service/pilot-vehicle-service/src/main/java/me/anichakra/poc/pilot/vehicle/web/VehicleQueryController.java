@@ -25,6 +25,7 @@ public class VehicleQueryController {
 
     @Inject
     private VehicleQueryService vehicleQueryService;
+
     // @PreAuthorize("#oauth2.hasScope('bar') and #oauth2.hasScope('read')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")

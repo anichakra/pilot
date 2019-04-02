@@ -6,9 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Service;
-
 /**
  * Use this annotation to mark a service class which is orchestrating multiple
  * {@link CommandService} or {@link QueryService} annotated classes and is complex. In that

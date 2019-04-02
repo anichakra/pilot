@@ -10,6 +10,7 @@ spring:
 
 # Rest consumer calls
 
-api:
-  context-path: /pilot-driver-service/0.0.1.BUILD-SNAPSHOT
+test:
+  print: false
+ 
  

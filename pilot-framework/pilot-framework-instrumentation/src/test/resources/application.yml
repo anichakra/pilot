@@ -1,0 +1,23 @@
+spring:
+  aop:
+    auto: true
+    proxy-target-class: false
+
+instrumentation:
+  enabled: true
+  web: 
+    ignore-uri-variables: false
+  component:
+    ignore-controller: false
+    ignore-service: false
+    ignore-repository: false
+  method:
+    ignore-duration-above: 10
+    ignore-arguments: false
+    ignore-exception-stack: true
+    ignore-signature: false
+  handler:
+    log:
+      enabled: true
+    new-relic:
+      enabled: false

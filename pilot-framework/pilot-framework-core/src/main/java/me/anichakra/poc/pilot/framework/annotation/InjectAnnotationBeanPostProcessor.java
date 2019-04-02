@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Component
 public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 
-	@Autowired
+	@Autowired(required = false)
 	BuildProperties buildProperties;
 	private ConfigurableListableBeanFactory configurableBeanFactory;
 
@@ -92,25 +93,32 @@ public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 	private final void validateBean(Object b, Supplier<Stream<Field>> supplier, String validationMessage,
 			Class<? extends Annotation>... annotationClass) {
 		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class))
-				.allMatch(c -> isFieldAnnotatedWithEither(c, annotationClass)))
+				.allMatch(c -> isFieldAnnotatedWithEither(b, c, annotationClass)))
 			throw new BeanPostProcessorValidationException(validationMessage, b);
 	}
 
 	@SafeVarargs
-	private final boolean isFieldAnnotatedWithEither(final Field field,
+	private final boolean isFieldAnnotatedWithEither(final Object bean, final Field field,
 			final Class<? extends Annotation>... annotationClass) {
+		field.setAccessible(true);
+		boolean flag = false;
+		flag = Arrays.asList(annotationClass).stream().anyMatch(a -> {
+			try {
+				return field.getType().isAnnotationPresent(a)
+						|| ClassUtils.getUserClass(field.get(bean).getClass()).isAnnotationPresent(a)
+						|| isFramework(field.getType())
+						|| AopUtils.getTargetClass(field.get(bean)).isAnnotationPresent(a);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				return false;
+			}
+		});
 
-		boolean flag = Arrays.asList(annotationClass).stream()
-				.anyMatch(a -> field.getType().isAnnotationPresent(a)
-						|| ClassUtils.getUserClass(configurableBeanFactory.getBean(field.getType()).getClass())
-								.isAnnotationPresent(a) || isFramework(field.getType()));
 		return flag;
 
 	}
 
 	private boolean isFramework(final Class<?> clazz) {
-		return clazz.getName().startsWith(buildProperties.getGroup())
-				&& clazz.getName().contains(".framework.");
+		return clazz.getName().startsWith(buildProperties.getGroup()) && clazz.getName().contains(".framework.");
 	}
 
 	private Supplier<Stream<Field>> validateInjection(Object b) {
@@ -123,7 +131,8 @@ public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
-		if (bean.getClass().getName().startsWith(buildProperties.getGroup()) && !isFramework(bean.getClass())) {
+		if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())
+				&& !isFramework(bean.getClass())) {
 			Annotation[] annotations = bean.getClass().getAnnotations();
 			Supplier<Stream<Annotation>> supplier = () -> Arrays.asList(annotations).stream();
 			supplier.get().filter(c -> annotationValidationMap.containsKey(c.annotationType()))

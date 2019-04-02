@@ -1,6 +1,8 @@
 package me.anichakra.poc.pilot.framework.rest.config;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +21,9 @@ public class RestConsumerConfigurationProperties<T> {
 	private HttpMethod method;
 	private HttpStatus statusCode;
     private Class<T> responseType;
+    private Map<String, String> headers = new HashMap<>();
+    
+   
 	
 	public String getName() {
 		return name;
@@ -83,6 +88,14 @@ public class RestConsumerConfigurationProperties<T> {
 
 	public void setResponseType(Class<T> responseType) {
 		this.responseType = responseType;
+	}
+
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
 	}
 
 }

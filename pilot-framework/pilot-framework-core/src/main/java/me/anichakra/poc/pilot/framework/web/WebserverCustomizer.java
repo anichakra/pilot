@@ -10,15 +10,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class WebserverCustomizer implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
-	@Autowired
+	@Autowired(required = false)
 	private BuildProperties buildProperties;
 
 	@Override
 	public void customize(ConfigurableServletWebServerFactory factory) {
-
-		Optional.ofNullable(buildProperties.getArtifact()).ifPresent(c -> {
-			factory.setContextPath("/" + c + extractVersion(buildProperties.getVersion()));
-			System.setProperty("spring.application.name", c);
+		Optional.ofNullable(buildProperties).ifPresent(c -> {
+			factory.setContextPath("/" + c.getArtifact() + extractVersion(c.getVersion()));
+			System.setProperty("spring.application.name", c.getArtifact());
 		});
 	}
 

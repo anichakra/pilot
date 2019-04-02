@@ -11,6 +11,7 @@ rule:
   file-path: ${RULE_FILE_PATH:rule} # it can be file URL or classpath directory
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
+
   
-api:
-  context-path: /@project.name@/@project.version@
+test:
+  print: false

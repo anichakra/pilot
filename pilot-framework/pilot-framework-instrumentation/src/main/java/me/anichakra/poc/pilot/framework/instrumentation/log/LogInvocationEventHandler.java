@@ -5,13 +5,14 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
+import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationConfiguration;
 
 /**
  * Log4j2 Implementation of {@link InvocationEventHandler} for writing log. When
@@ -25,19 +26,17 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
  *
  */
 @Component
-@ConfigurationProperties(prefix = "framework.instrumentation.handlers.log")
 public class LogInvocationEventHandler implements InvocationEventHandler<InvocationEvent> {
     public static final String LOGGER_NAME = "INSTRUMENTATION";
-    private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
-    private boolean enabled;
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
+    private static final Logger logger = LogManager.getLogger(LOGGER_NAME);    
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return config.getHandler().getLog().isEnabled();
     }
+    
+    @Autowired
+    InstrumentationConfiguration config;
+    
     
     /**
      * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}

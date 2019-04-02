@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openl.rules.runtime.RulesEngineFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -24,6 +26,7 @@ import me.anichakra.poc.pilot.framework.rule.api.RuleService;
  */
 @Service
 public class OpenlTabletsRuleEngine<T> implements RuleEngine<T> {
+	private final static Logger logger = LogManager.getLogger();
 
 	@Autowired
 	ResourceLoader resourceLoader;
@@ -33,6 +36,7 @@ public class OpenlTabletsRuleEngine<T> implements RuleEngine<T> {
 	 */
 	@Override
 	public RuleService<T> configure(String rulePath, Class<T> ruleInterfaceType) {
+		logger.debug("rule-path:{}", rulePath);
 		RulesEngineFactory<T> ruleEngineFactory = null;
 		URL url = null;
 		synchronized (this) {
