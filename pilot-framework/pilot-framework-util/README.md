@@ -12,7 +12,7 @@ The developer need to provide the following configuration in the application.yml
 
 ```
 rule:
-  file-path: ${RULE_FILE_PATH:rule} # it can be file URL or classpath directory
+  file-path: ${RULE_FILE_PATH:rule/vehicle-rules.xml} # it can be file URL or classpath directory
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
 ```
@@ -30,13 +30,13 @@ If these configurations are not placed in the yml file then RuleService instance
 The RuleService should be injected in either a @ApplicationService or a @QueryService annotated class.
 
 ```
-	@InjectService
+	@Inject
 	private RuleService<VehicleRuleTemplate> ruleService;
 	private VehicleRuleTemplate getRuleTemplate() {
 		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(null, null);
 		return vehicleRuleTemplate;
 	}
-
+    // Use this method if you have a context to be sent to the RuleService
 	private VehicleRuleTemplate getRuleTemplate(String manufacturer) {
 		VehicleRuleTemplate vehicleRuleTemplate = ruleService.getRuleTemplate(manufacturer, null);
 		return vehicleRuleTemplate;
@@ -61,19 +61,23 @@ rest:
   consumers:
     - name: vehicle-preference
       url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/preference
-      secure: false
+      method: POST      
+      secured: false
       contentType: application/json
       responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
-      method: POST
+      headers:
+        clientId: myclient
+        X-USER-ID: myuserid
     - name: vehicle-search
-      url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/search
-      secure: true
+      url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/search/manufacturer={manufacturer}
+      method: GET      
+      secured: true
       contentType: application/xml
-      responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
-      method: GET
+      accept: text/html
+      responseType: me.anichakra.poc.pilot.driver.domain.VehicleAggregator
        
 ```
-
+The name should be unique. The name, url and method are mandatory
 ## Use 
 
 In the service classes should inject the consumer:
@@ -82,17 +86,47 @@ In the service classes should inject the consumer:
 @QueryService
 public class DefaultDriverQueryService implements DriverQueryService {
 
-	@InjectRestConsumer("vehicle-preference")
-	private PostConsumer<Category, Vehicle> postConsumer;
+	@Inject
+	@Named("vehicle-preference")
+	private PostConsumer<Category, Vehicle> vehiclePreferenceConsumer;
 ```
 
-And call the consume method from any service method:
+And simply call the consume method from any service method only passing the request object:
 
 ```
 @Override
-	public Vehicle assignVehicle(Driver driver) {
-		return postConsumer.consume(driver.getCategory());
+public Vehicle assignVehicle(Driver driver) {
+	return vehiclePreferenceConsumer.consume(driver.getCategory());
+}
+```
+
+If dynamic headers and other URI variables are required to be passed then:
+
+```
+@Inject
+@Named("vehicle-search")
+private GetConsumer<VehicleAggregator> vehicleSearchConsumer;
+
+@Override
+public VehicleAggregator searchVehicle(String manufacturer) {
+	return vehicleSearchConsumer.addHeader("name1", "value1").addHeader("name2","value2").setUriVariables(manufacturer).consume();
+}
+
+```
+
+
+Do not forget to add the @EnableRestConsumer in @Microservice annotated class. 
+
+```
+@Microservice
+@EnableRestConsumers
+public class DriverServiceApplication {
+
+	public static void main(String[] args) {
+		MicroserviceApplication.start(args);
 	}
+}
+
 ```
 
 ## Test

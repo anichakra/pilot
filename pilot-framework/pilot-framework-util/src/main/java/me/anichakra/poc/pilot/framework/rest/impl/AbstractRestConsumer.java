@@ -1,6 +1,10 @@
 package me.anichakra.poc.pilot.framework.rest.impl;
 
 import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +13,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustAllStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.http.HttpEntity;
@@ -50,20 +55,28 @@ public class AbstractRestConsumer implements RestConsumer {
 
 	private void initializeRestTemplate() {
 		if (secured) {
+			SSLContext sslContext;
 			try {
-				SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy())
-						.build();
+				sslContext = SSLContexts.custom().loadTrustMaterial(getKeyStore(), getTrustStrategy()).build();
 				SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
 				HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
 				HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 				requestFactory.setHttpClient(httpClient);
 				this.restTemplate = new RestTemplate(requestFactory);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+				throw new RestConsumerInitializationException("Cannot create secured rest consumer", e);
 			}
 		} else {
 			this.restTemplate = new RestTemplate();
 		}
+	}
+
+	protected KeyStore getKeyStore() {
+		return null;
+	}
+
+	protected TrustStrategy getTrustStrategy() {
+		return new TrustAllStrategy();
 	}
 
 	public String getName() {
@@ -115,7 +128,7 @@ public class AbstractRestConsumer implements RestConsumer {
 	protected <K, V> ResponseEntity<V> prepareResponseEntity(HttpMethod method, K requestBody, Class<V> responseType) {
 
 		if (contentType.equals(MediaType.APPLICATION_XML_VALUE)
-				&& (accept.equals(MediaType.TEXT_HTML_VALUE) || accept.equals(MediaType.APPLICATION_XML_VALUE)) 
+				&& (accept.equals(MediaType.TEXT_HTML_VALUE) || accept.equals(MediaType.APPLICATION_XML_VALUE))
 				&& !prepared) {
 			synchronized (this) {
 				List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -130,9 +143,10 @@ public class AbstractRestConsumer implements RestConsumer {
 			}
 		}
 		ResponseEntity<V> responseEntity = uriVariables != null
-				? this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers), responseType,
-						uriVariables)
-				: this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers), responseType);
+				? this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers),
+						responseType, uriVariables)
+				: this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers),
+						responseType);
 		if (httpStatusCode != null && responseEntity.getStatusCodeValue() != httpStatusCode.value())
 			throw new InvalidReturnedStatusCodeException(url.toString(), httpStatusCode.value());
 		return responseEntity;

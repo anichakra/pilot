@@ -24,35 +24,75 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This bean post processor validates all the beans that are injected throughout
- * the application. It checks for proper implementation of CQRS pattern.
+ * the microservice application in all layers starting from controllers to
+ * service and repository. It checks for proper implementation of CQRS pattern.
+ * During processing if any invalidation is found then {@link InvalidAnnotationException} will be thrown
+ * and the application will be stopped from getting started.
+ * <p>
+ * The processor will check the annotation on each class that is in class-path,
+ * based on the annotations found the following validations will be done:
+ * <ul>
+ * <li>
+ * 
+ * @Microservice: Should not contain any declared field or method apart from
+ *                main method.</li>
+ *                <li>
+ * @RestController: Should contain only one declared field that should be
+ *                  {@link Inject}ed with either of the following annotated
+ *                  class: {@link ApplicationService}, {@link CommandService},
+ *                  {@link QueryService}. Any other kind of class injection will
+ *                  be invalidated and exception will be thrown.</li>
+ *                  <li>
+ * @CommandService: Can inject {@link ApplicationService},
+ *                  {@link FrameworkService}, {@link Repository} or another
+ *                  CommandService, but cannot contain a
+ *                  {@link QueryService}</li>
+ *                  <li>
+ * @QueryService: Can inject {@link ApplicationService},
+ *                {@link FrameworkService}, {@link Repository} or another
+ *                QueryService, but cannot contain a {@link CommandService}</li>
+ *                <li>
+ * @ApplicationService: Can {@link Inject} one or more
+ *                      {@link ApplicationService}, {@link FrameworkService},
+ *                      but cannot inject any {@link CommandService},
+ *                      {@link QueryService} or {@link Repository}</li>
+ *                      </ul>
+ *
  * 
  * @author anirbanchakraborty
  *
  */
 @Component
-public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class AnnotationValidationProcessor implements BeanPostProcessor {
 
 	@Autowired(required = false)
 	BuildProperties buildProperties;
-	private ConfigurableListableBeanFactory configurableBeanFactory;
 
 	@Autowired
-	public InjectAnnotationBeanPostProcessor(ConfigurableListableBeanFactory beanFactory) {
-		this.configurableBeanFactory = beanFactory;
+	public AnnotationValidationProcessor(ConfigurableListableBeanFactory beanFactory) {
 		annotationValidationMap.put(RestController.class, restControllerValidation);
 		annotationValidationMap.put(CommandService.class, commandServiceValidation);
 		annotationValidationMap.put(QueryService.class, queryServiceValidation);
 		annotationValidationMap.put(ApplicationService.class, applicationServiceValidation);
+		annotationValidationMap.put(Microservice.class, microserviceValidation);
+
 	}
 
 	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
+
+	private Consumer<Object> microserviceValidation = b -> {
+		if (ClassUtils.getUserClass(b.getClass()).getDeclaredFields().length > 0
+				&& ClassUtils.getUserClass(b.getClass()).getDeclaredMethods().length > 1)
+			throw new InvalidAnnotationException(
+					"Microservice annotated class should not contain any field or non-static method", b);
+	};
 
 	private Consumer<Object> restControllerValidation = b -> {
 		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream();
 		long count = supplier.get().filter(f -> f.isAnnotationPresent(Inject.class)).count();
 
 		if (count != 1)
-			throw new BeanPostProcessorValidationException("Controller class must have only one injectable field", b);
+			throw new InvalidAnnotationException("Controller class must have only one injectable field", b);
 
 		final String message = "A Controller class can only inject one CommandService, or one QueryService or one ApplicationService";
 		validateBean(b, supplier, message, CommandService.class, QueryService.class, ApplicationService.class);
@@ -94,7 +134,7 @@ public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 			Class<? extends Annotation>... annotationClass) {
 		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class))
 				.allMatch(c -> isFieldAnnotatedWithEither(b, c, annotationClass)))
-			throw new BeanPostProcessorValidationException(validationMessage, b);
+			throw new InvalidAnnotationException(validationMessage, b);
 	}
 
 	@SafeVarargs
@@ -111,6 +151,7 @@ public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				return false;
 			}
+
 		});
 
 		return flag;
@@ -124,13 +165,12 @@ public class InjectAnnotationBeanPostProcessor implements BeanPostProcessor {
 	private Supplier<Stream<Field>> validateInjection(Object b) {
 		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream();
 		if (!supplier.get().allMatch(f -> f.isAnnotationPresent(Inject.class)))
-			throw new BeanPostProcessorValidationException("All fields should have proper @Injection", b);
+			throw new InvalidAnnotationException("All fields should have proper @Injection", b);
 		return supplier;
 	}
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-
 		if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())
 				&& !isFramework(bean.getClass())) {
 			Annotation[] annotations = bean.getClass().getAnnotations();

@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
  * command and query based operations. Refer to
  * <a href="https://microservices.io/patterns/data/cqrs.html">CQRS pattern</a>.
  * A command service does write operation with the data access and do not do
- * query operations. All methods in a command service are transactional in nature.
+ * query operations. All methods in a command service are transactional and
+ * non-readonly in nature. A CommandService annotated class can inject one or
+ * more CommandService, ApplicationService FrameworkService and Repository. A CommandService cannot inject a QueryService.
  * 
  * @author anirbanchakraborty
  *
@@ -31,6 +33,7 @@ public @interface CommandService {
 
 	@AliasFor(annotation = CqrsService.class)
 	String value() default "";
+
 	@AliasFor(annotation = CqrsService.class)
 	boolean stateful() default false;
 

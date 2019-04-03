@@ -29,7 +29,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.mock.controller.MockCont
 import me.anichakra.poc.pilot.framework.instrumentation.mock.controller.TestConfig;
 import me.anichakra.poc.pilot.framework.instrumentation.mock.service.api.MockBusinessException;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
-import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
+import me.anichakra.poc.pilot.framework.test.impl.MicroserviceTestRunner;
 
 @MicroserviceTest(classes = { TestConfig.class,
         InstrumentationConfiguration.class })

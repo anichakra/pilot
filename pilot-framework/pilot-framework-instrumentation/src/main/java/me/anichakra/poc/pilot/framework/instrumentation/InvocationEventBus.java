@@ -60,7 +60,7 @@ public class InvocationEventBus {
      */
     @Autowired
     public void setInvocationEventHandlers(List<InvocationEventHandler<InvocationEvent>> conversationEventHandlers) {
-        for (InvocationEventHandler<InvocationEvent> conversationEventHandler : conversationEventHandlers) {
+    	for (InvocationEventHandler<InvocationEvent> conversationEventHandler : conversationEventHandlers) {
             if (conversationEventHandler.isEnabled()) {
                 registerInvocationEventHandler(conversationEventHandler);
             }

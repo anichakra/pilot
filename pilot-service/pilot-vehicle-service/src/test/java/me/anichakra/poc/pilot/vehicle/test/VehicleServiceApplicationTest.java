@@ -8,11 +8,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
-import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestRunner;
 import me.anichakra.poc.pilot.framework.test.api.AssertableHttpStatusCode;
 import me.anichakra.poc.pilot.framework.test.api.MockApi;
 import me.anichakra.poc.pilot.framework.test.api.RequestBody;
+import me.anichakra.poc.pilot.framework.test.impl.MicroserviceTestRunner;
 import me.anichakra.poc.pilot.framework.util.StringUtils;
+import me.anichakra.poc.pilot.vehicle.VehicleServiceApplication;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 
 @MicroserviceTest
@@ -22,6 +23,11 @@ public class VehicleServiceApplicationTest {
 
 	@Inject
 	private MockApi mockApi;
+
+	@Test
+	public void testApplication() {
+		VehicleServiceApplication.main(new String[] {});
+	}
 
 	@Test
 	public void a_saveAll() throws Exception {

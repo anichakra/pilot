@@ -9,13 +9,16 @@ import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.transaction.annotation.Transactional;
+
 /**
- * Use this annotation to mark a service class as a of type "Query". This is
- * to enforce CQRS pattern implementation in service classes to separate out the
+ * Use this annotation to mark a service class as a of type "Query". This is to
+ * enforce CQRS pattern implementation in service classes to separate out the
  * command and query based operations. Refer to
  * <a href="https://microservices.io/patterns/data/cqrs.html">CQRS pattern</a>.
- * A query service does not do write operation with the data access and do only
- * query or read operations.
+ * A query service does not do write operation with the data access and do only.
+ * A QueryService annotation class can inject another QueryService, one or more
+ * ApplicationService, FrameworkService or Repository, but cannot inject a
+ * CommandService. query or read operations.
  * 
  * @author anirbanchakraborty
  *
@@ -25,12 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Documented
 @Inherited
 @CqrsService
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public @interface QueryService {
 
 	@AliasFor(annotation = CqrsService.class)
 	String value() default "";
-	
+
 	@AliasFor(annotation = CqrsService.class)
 	boolean stateful() default false;
 }

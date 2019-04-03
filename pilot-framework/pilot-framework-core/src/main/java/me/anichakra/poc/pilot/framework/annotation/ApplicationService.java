@@ -10,9 +10,12 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Use this annotation to mark a service class which is orchestrating multiple
- * {@link CommandService} or {@link QueryService} annotated classes and is complex. In that
- * case the controller should directly invoke the application service class. 
+ * Use this annotation to mark a service class which does not do any database
+ * operations but other operations like calling external systems or processing
+ * complex business logic. A Controller, a CommandService and a QueryService can
+ * inject an ApplicationService. An ApplicationService annotated class cannot
+ * inject CommandService, QueryService or Repository. It can only inject another
+ * ApplicationService or FrameworkService or both.
  * 
  * @author anirbanchakraborty
  *
@@ -25,9 +28,10 @@ import org.springframework.core.annotation.AliasFor;
 public @interface ApplicationService {
 
 	@AliasFor(annotation = CqrsService.class)
-	
+
 	/**
-	 * If the service class has a name then mark that as part of the value in the annotation.
+	 * If the service class has a name then mark that as part of the value in the
+	 * annotation.
 	 * 
 	 * @return
 	 */
@@ -35,10 +39,7 @@ public @interface ApplicationService {
 
 	/**
 	 * Mention if the service class is stateful. By default all service classes are
-	 * stateless. Stateful classes will keep session specific attributes. If a
-	 * service is stateless but keeps attribute which are not annotated as either
-	 * {@link ApplicationService}, {@link CommandService}, {@link QueryService} or
-	 * {@link DataAccess} then the class will fail to load.
+	 * stateless. Stateful classes will keep session specific attributes.
 	 * 
 	 * @return
 	 */

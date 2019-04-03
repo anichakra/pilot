@@ -10,12 +10,9 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Service;
 
 /**
- * Use this annotation to mark a service class as a of type "Command". This is
- * to enforce CQRS pattern implementation in service classes to separate out the
- * command and query based operations. Refer to
+ * Abstract annotation to be inherited by {@link CommandService} and {@link QueryService}. Refer to
  * <a href="https://microservices.io/patterns/data/cqrs.html">CQRS pattern</a>.
- * A command service does write operation with the data access and do not do
- * query operations. All methods in a command service are transactional in nature.
+ * 
  * 
  * @author anirbanchakraborty
  *

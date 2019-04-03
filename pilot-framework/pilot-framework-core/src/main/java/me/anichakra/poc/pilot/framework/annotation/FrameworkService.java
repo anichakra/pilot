@@ -7,9 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to mark a service class which is orchestrating multiple
- * {@link CommandService} or {@link QueryService} annotated classes and is complex. In that
- * case the controller should directly invoke the application service class. 
+ * Use this annotation to mark a service class which are part of framework and not ideally a business service or part of CQRS.
  * 
  * @author anirbanchakraborty
  *
@@ -25,16 +23,4 @@ public @interface FrameworkService {
 	 * @return
 	 */
 	String value() default "";
-
-	/**
-	 * Mention if the service class is stateful. By default all service classes are
-	 * stateless. Stateful classes will keep session specific attributes. If a
-	 * service is stateless but keeps attribute which are not annotated as either
-	 * {@link FrameworkService}, {@link CommandService}, {@link QueryService} or
-	 * {@link DataAccess} then the class will fail to load.
-	 * 
-	 * @return
-	 */
-	boolean stateful() default false;
-
 }

@@ -16,7 +16,6 @@ import java.util.UUID;
 public class Invocation {
     private InvocationEventBus invocationEventBus;
 
-    private boolean fireEvent;
     private Map<Context, String> contextData;
 
     public Map<Context, String> getContextData() {
@@ -71,7 +70,7 @@ public class Invocation {
             }
         }
         invocationEvent.start(signature, params);
-        if (!invocationEvent.isAlreadyMarkedIgnore() && fireEvent) {
+        if (!invocationEvent.isAlreadyMarkedIgnore()) {
             invocationEventBus.fireInvocationEvent(invocationEvent);
         }
     }
@@ -86,7 +85,7 @@ public class Invocation {
         InvocationEvent invocationEvent = InvocationEvent.getCurrent();
         if (invocationEvent != null) {
             invocationEvent.complete();
-            if (!invocationEvent.isAlreadyMarkedIgnore() && fireEvent) {
+            if (!invocationEvent.isAlreadyMarkedIgnore()) {
                 invocationEventBus.fireInvocationEvent(invocationEvent);
             }
             invocationEvent.markIgnore(durationToIgnore);
@@ -129,9 +128,6 @@ public class Invocation {
         return invocationEvent;
     }
 
-    public void setFireInvocationEvent(boolean fireEvent) {
-        this.fireEvent = fireEvent;
-    }
 
     /**
      * Recursive method that traverses through a {@link Throwable} and finds the

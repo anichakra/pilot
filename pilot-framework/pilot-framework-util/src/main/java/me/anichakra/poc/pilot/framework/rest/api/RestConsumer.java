@@ -1,7 +1,5 @@
 package me.anichakra.poc.pilot.framework.rest.api;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 
 public interface RestConsumer {
