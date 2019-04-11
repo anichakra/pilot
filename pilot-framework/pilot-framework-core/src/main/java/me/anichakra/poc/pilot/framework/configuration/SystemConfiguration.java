@@ -8,8 +8,11 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
+
 @Configuration
 @ConfigurationProperties("system")
+@FrameworkService
 public final class SystemConfiguration {
 	private List<Internal> internal=new ArrayList<>();
 	private List<External> external=new ArrayList<>();
