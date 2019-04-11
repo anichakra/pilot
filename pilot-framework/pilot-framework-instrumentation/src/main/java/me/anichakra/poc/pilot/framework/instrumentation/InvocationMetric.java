@@ -39,6 +39,8 @@ public class InvocationMetric {
     private Status status;
     private Throwable rootCause;
 
+	private String[] eventNames;
+
     /**
      * @return The method arguments
      */
@@ -188,4 +190,12 @@ public class InvocationMetric {
     public Throwable getRootCause() {
         return rootCause;
     }
+
+	public void setEventNames(String[] eventNames) {
+		this.eventNames = eventNames;
+	}
+	
+	public String[] getEventNames() {
+		return this.eventNames;
+	}
 }

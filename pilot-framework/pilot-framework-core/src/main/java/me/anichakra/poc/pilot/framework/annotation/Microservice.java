@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.core.annotation.AliasFor;
 
 /**
@@ -25,7 +26,7 @@ import org.springframework.core.annotation.AliasFor;
 @Inherited
 @SpringBootApplication(scanBasePackages = "me.anichakra.poc.pilot")
 @EntityScan(basePackages = "me.anichakra.poc.pilot")
-
+@ServletComponentScan
 public @interface Microservice {
 	/**
 	 * Exclude specific auto-configuration classes such that they will never be

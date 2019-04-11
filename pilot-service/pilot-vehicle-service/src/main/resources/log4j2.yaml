@@ -31,6 +31,16 @@ Configutation:
             size: 1 KB
         DefaultRollOverStrategy:
           max: 30
+      - name: Instrumentation_Appender
+        fileName: ${log-path}/instrumentation.log
+        filePattern: "logs/archive/instrumentation.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 10MB
+        DefaultRollOverStrategy:
+          max: 300
  
   Loggers:
       Root:
@@ -38,7 +48,7 @@ Configutation:
         AppenderRef:
           - ref: Console_Appender
       Logger:
-        - name: me.anichakra.poc.pilot
+        - name: me.anichakra.poc.pilot.vehicle
           additivity: false
           level: debug
           AppenderRef:
@@ -48,3 +58,13 @@ Configutation:
               level: error
             - ref: RollingFile_Appender
               level: debug
+        - name: INSTRUMENTATION
+          additivity: false
+          level: INFO
+          AppenderRef:
+            - ref: Console_Appender
+              level: info
+            - ref: Instrumentation_Appender
+              level: info
+
+              

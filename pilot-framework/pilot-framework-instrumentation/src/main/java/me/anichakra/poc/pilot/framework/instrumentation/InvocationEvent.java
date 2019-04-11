@@ -47,7 +47,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 public class InvocationEvent {
     private String localAddress = "";
     private String remoteAddress = "";
-    private String id = "";
+    private String id;
     private String eventId;
     private String path = "";
     private String user = "";
@@ -147,7 +147,7 @@ public class InvocationEvent {
      * stacked.
      */
     public void markIgnore() {
-        InvocationMetric invocation = getCurrentInvocation();
+        InvocationMetric invocation = getCurrentMetric();
         ignoreSignature.add(invocation.getSignature());
     }
 
@@ -156,7 +156,7 @@ public class InvocationEvent {
      * @return true if the invocation is already marked to be ignored.
      */
     public boolean isAlreadyMarkedIgnore() {
-        InvocationMetric invocation = getCurrentInvocation();
+        InvocationMetric invocation = getCurrentMetric();
         if (invocation == null)
             return false;
         return ignoreSignature.contains(invocation.getSignature());
@@ -172,7 +172,7 @@ public class InvocationEvent {
      */
     public void markIgnore(long durationToIgnore) {
         InvocationEvent event = InvocationEvent.getCurrent();
-        InvocationMetric invocation = event.getCurrentInvocation();
+        InvocationMetric invocation = event.getCurrentMetric();
         if (invocation.getDuration() < durationToIgnore) {
             event.markIgnore();
         }
@@ -190,7 +190,7 @@ public class InvocationEvent {
      * 
      * @return
      */
-    public InvocationMetric getCurrentInvocation() {
+    public InvocationMetric getCurrentMetric() {
         return invocationStack.getFirst();
     }
 
@@ -207,7 +207,8 @@ public class InvocationEvent {
         builder.append(id).append(SEPARATOR).append(remoteAddress).append(SEPARATOR).append(localAddress)
                 .append(SEPARATOR).append(getEventId()).append(SEPARATOR).append(getCorrelationId()).append(SEPARATOR)
                 .append(user).append(SEPARATOR).append(path).append(SEPARATOR).append(parameter).append(SEPARATOR)
-                .append(getLevel());
+                .append(getLevel()).append(SEPARATOR)
+                .append(getCurrentMetric());
 
         return builder.toString();
     }
@@ -235,13 +236,12 @@ public class InvocationEvent {
      * Gets the current {@link InvocationMetric} instance and mark it as failed.
      */
     public void fail() {
-        InvocationMetric invocation = this.getCurrentInvocation();
+        InvocationMetric invocation = this.getCurrentMetric();
         invocation.setEnd(System.currentTimeMillis());
         invocation.setStatus(Status.F);
         if (!this.isMarkExceptionInExecution()) {
             this.setMarkExceptionInExecution(true);
         }
-
     }
 
     /**
@@ -249,7 +249,7 @@ public class InvocationEvent {
      */
     public void complete() {
         InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentInvocation();
+        InvocationMetric invocationMetric = invocation.getCurrentMetric();
         invocationMetric.setEnd(System.currentTimeMillis());
         invocationMetric.setStatus(Status.C);
         invocation.setMarkExceptionInExecution(false);
@@ -280,7 +280,7 @@ public class InvocationEvent {
      */
     public Throwable getRootCause() {
         InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentInvocation();
+        InvocationMetric invocationMetric = invocation.getCurrentMetric();
         return invocationMetric.getRootCause();
     }
 
@@ -291,7 +291,7 @@ public class InvocationEvent {
      */
     public void setRootCause(Throwable rootCause) {
         InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentInvocation();
+        InvocationMetric invocationMetric = invocation.getCurrentMetric();
         if (lastRootCause != null && lastRootCause.equals(rootCause))
             return;
         invocationMetric.setRootCause(rootCause);

@@ -21,3 +21,14 @@ instrumentation:
       enabled: true
     new-relic:
       enabled: false
+      
+cloud:
+  aws:
+    credentials:
+      accessKey:
+      secretKey:
+      instanceProfile: true
+      useDefaultAwsCredentialsChain: true
+    region:
+      auto:
+      static: 

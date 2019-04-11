@@ -19,11 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import me.anichakra.poc.pilot.framework.instrumentation.Context;
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
-import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationConfiguration;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
+import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 
 /**
  * The Filter class to intercepts any invocation came into the web application.
@@ -33,13 +35,15 @@ import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationCo
  */
 @Component
 @WebFilter(displayName = "InstrumentationFilter", urlPatterns = { "/web/*",
-		"/service/*" }, description = "Instrumentation Profiling Filter")
+		"/pilot-*-service/*" }, description = "Instrumentation Filter")
+@ConfigurationProperties(prefix = "instrumentation.filter")
 public class InstrumentationFilter implements Filter {
 
 	private final static Logger logger = LogManager.getLogger();
+	private boolean enabled;
 
 	@Autowired
-	private InstrumentationConfiguration configuration;
+	private InvocationEventBus eventBus;
 
 	public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -75,14 +79,14 @@ public class InstrumentationFilter implements Filter {
 	protected void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		Invocation invocation = null;
-		if (configuration.isEnabled()) {
+		if (isEnabled()) {
 			String user = Optional.ofNullable(request.getUserPrincipal()).map(s -> s.getName())
 					.orElse(request.getHeader("X-USER-ID"));
 
 			String sessionId = Optional.ofNullable(request.getSession(false)).map(s -> s.getId()).orElse("");
 			Map<String, String[]> parameters = request.getParameterMap();
 			invocation = createInvocation(request, user, sessionId, parameters);
-
+            invocation.setEventBus(eventBus);
 			try {
 				invocation.start(null);
 			} catch (Exception e) {
@@ -92,7 +96,7 @@ public class InstrumentationFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} finally {
-			if (configuration.isEnabled()) {
+			if (isEnabled()) {
 				try {
 					invocation.end(0);
 				} catch (Exception e) {
@@ -104,18 +108,16 @@ public class InstrumentationFilter implements Filter {
 
 	private Invocation createInvocation(HttpServletRequest request, String user, String sessionId,
 			Map<String, String[]> parameters) {
-		boolean ignoreQueryParameters = configuration.getWeb().isIgnoreUriVariables();
 		String uri = request.getRequestURI();
 		String remoteAddress = getRemoteAddress(request);
 		String localAddress = request.getLocalAddr() + ":" + request.getLocalPort();
-		Invocation invocation = new Invocation(this.getClass() + ".doFilter()");
-
+		Invocation invocation = new Invocation(this.getClass() + ".doFilter()", Layer.FILTER);
 		invocation.getContextData().put(Context.CONVERSATION, sessionId);
 		invocation.getContextData().put(Context.SOURCE, localAddress);
 		invocation.getContextData().put(Context.TARGET, remoteAddress);
 		invocation.getContextData().put(Context.PATH, uri);
 		invocation.getContextData().put(Context.USER, user);
-		invocation.getContextData().put(Context.PARAMETER, ignoreQueryParameters ? null : getParameters(parameters));
+		invocation.getContextData().put(Context.PARAMETER, getParameters(parameters));
 		invocation.getContextData().put(Context.CORRELATION,
 				request.getHeader("instrumentation.conversation"));
 
@@ -136,6 +138,20 @@ public class InstrumentationFilter implements Filter {
 	
 	private String getRemoteAddress(HttpServletRequest request) {
 		return Optional.ofNullable(request.getHeader("X-Forwarded-For")).orElse(request.getRemoteAddr());
+	}
+
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }

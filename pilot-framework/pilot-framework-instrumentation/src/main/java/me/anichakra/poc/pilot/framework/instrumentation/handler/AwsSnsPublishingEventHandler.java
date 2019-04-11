@@ -1,16 +1,18 @@
 package me.anichakra.poc.pilot.framework.instrumentation.handler;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.NestedExceptionUtils;
+import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import com.amazonaws.services.sns.AmazonSNS;
 
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 
 /**
  * Log4j2 Implementation of {@link InvocationEventHandler} for writing log. When
@@ -24,27 +26,19 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
  *
  */
 @Component
-@ConfigurationProperties(prefix = "instrumentation.handlers.log")
-public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
-	public static final String LOGGER_NAME = "INSTRUMENTATION_LOG";
-	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
-
-	public void setIgnoreUriVariables(boolean ignoreUriVariables) {
-		this.ignoreUriVariables = ignoreUriVariables;
+@ConfigurationProperties(prefix = "instrumentation.handlers.aws-sns")
+public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler {
+	public static final String LOGGER_NAME = "INSTRUMENTATION";
+//	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
+	private final NotificationMessagingTemplate notificationMessagingTemplate;
+	@Autowired
+	public AwsSnsPublishingEventHandler(AmazonSNS amazonSns) {
+		this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
 	}
 
-	public void setIgnoreArguments(boolean ignoreArguments) {
-		this.ignoreArguments = ignoreArguments;
+	public void send(String subject, String message) {
+		this.notificationMessagingTemplate.sendNotification("physicalTopicName", message, subject);
 	}
-
-	public void setIgnoreExceptionStack(boolean ignoreExceptionStack) {
-		this.ignoreExceptionStack = ignoreExceptionStack;
-	}
-
-	private boolean ignoreUriVariables;
-	private boolean ignoreArguments;
-	private boolean ignoreExceptionStack;
-
 	/**
 	 * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}
 	 * object to log in info mode. Also put the entire conversation instance to
@@ -55,24 +49,12 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	 */
 	@Override
 	public void handleInvocationEvent(InvocationEvent event) {
-		if (!ignoreUriVariables)
-			event.setParameter(null);
+		if (hasAnyEventMatched(event.getCurrentMetric().getEventNames())
+				&& event.getCurrentMetric().getStatus().equals(Status.C))
+			System.out.println("#######" + event);
+		System.out.println("#######" + event.getCurrentMetric().getArguments());
+		send("subject", event.getCurrentMetric().getArguments().toString());
 
-		InvocationMetric metric = event.getCurrentMetric();
-		if (ignoreArguments)
-			metric.setArguments(null);
-
-		if (event.getRootCause() == null)
-			logger.info(event);
-		else
-			logger.info(event, extractRootCause(event.getRootCause()));
-	}
-
-	private Throwable extractRootCause(Throwable rootCause) {
-		if (ignoreExceptionStack)
-			return NestedExceptionUtils.getRootCause(rootCause);
-		else
-			return rootCause;
 	}
 
 	/**
@@ -81,5 +63,6 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	public void clear() {
 		ThreadContext.clearStack();
 	}
-
+	 
+	
 }

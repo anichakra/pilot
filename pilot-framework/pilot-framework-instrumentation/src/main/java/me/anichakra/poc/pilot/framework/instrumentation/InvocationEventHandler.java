@@ -21,8 +21,9 @@ public interface InvocationEventHandler<T> {
 
     /**
      * 
-     * @return If this handler is enabled from configuration or not.
+     * @return Returns the events if present or null
      */
     boolean isEnabled();
+    
 
 }
