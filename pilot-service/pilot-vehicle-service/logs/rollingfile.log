@@ -1,5 +1,3 @@
-[DEBUG] 2019-04-03 19:47:09.861 [main] VehicleServiceApplication - Running with Spring Boot v2.1.2.RELEASE, Spring v5.1.4.RELEASE
-[INFO ] 2019-04-03 19:47:09.866 [main] VehicleServiceApplication - No active profile set, falling back to default profiles: default
-[DEBUG] 2019-04-03 19:47:13.037 [main] OpenlTabletsRuleEngine - rule-path:rule/vehicle-rules.xls
-[DEBUG] 2019-04-03 19:47:13.075 [main] OpenlTabletsRuleEngine - rule-path:rule/vehicle-rules.xls
-[INFO ] 2019-04-03 19:47:14.093 [main] VehicleServiceApplication - Started VehicleServiceApplication in 4.45 seconds (JVM running for 5.188)
+[DEBUG] 2019-04-11 11:06:36.134 [main] VehicleServiceApplication - Running with Spring Boot v2.1.2.RELEASE, Spring v5.1.4.RELEASE
+[INFO ] 2019-04-11 11:06:36.140 [main] VehicleServiceApplication - No active profile set, falling back to default profiles: default
+[INFO ] 2019-04-11 11:06:41.725 [main] VehicleServiceApplication - Started VehicleServiceApplication in 5.857 seconds (JVM running for 6.764)
