@@ -97,7 +97,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		final String message = "A Controller class can only inject one CommandService, or one QueryService or one ApplicationService";
 		validateBean(b, supplier, message, CommandService.class, QueryService.class, ApplicationService.class);
 
-	};
+	};	
 
 	private Consumer<Object> commandServiceValidation = b -> {
 		Supplier<Stream<Field>> supplier = null;
@@ -106,7 +106,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		}
 		final String message = "A CommandService class can only inject another CommandService, an ApplicationService, a FrameworkService or a Repository";
 		validateBean(b, supplier, message, CommandService.class, ApplicationService.class, FrameworkService.class,
-				Repository.class);
+				Repository.class, ServiceConfig.class);
 
 	};
 
@@ -117,7 +117,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		}
 		final String message = "A QueryService class can only inject another QueryService, an ApplicationService, a FrameworkService or a Repository";
 		validateBean(b, supplier, message, QueryService.class, ApplicationService.class, FrameworkService.class,
-				Repository.class);
+				Repository.class, ServiceConfig.class);
 	};
 
 	private Consumer<Object> applicationServiceValidation = b -> {
@@ -126,7 +126,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 			supplier = validateInjection(b);
 		}
 		final String message = "An ApplicationService class can only inject another ApplicationService or a FrameworkService";
-		validateBean(b, supplier, message, ApplicationService.class, FrameworkService.class);
+		validateBean(b, supplier, message, ApplicationService.class, FrameworkService.class, ServiceConfig.class);
 	};
 
 	@SafeVarargs

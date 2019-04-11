@@ -1,29 +1,22 @@
-package me.anichakra.poc.pilot.framework.configuration;
+package me.anichakra.poc.pilot.framework.exception;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import me.anichakra.poc.pilot.framework.annotation.ServiceConfig;
 
-import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
-
-@Configuration
-@ConfigurationProperties("system")
-@FrameworkService
-public final class SystemConfiguration {
-	private List<Internal> internal=new ArrayList<>();
-	private List<External> external=new ArrayList<>();
-
+@ServiceConfig
+public class SystemConfiguration {
+	private List<Internal> internal = new ArrayList<>();
+	private List<External> external = new ArrayList<>();
 
 	public static class Internal {
-		
-		private String name;
-		
-		private Map<String, String> properties = new HashMap<>();
 
+		private String name;
+
+		private Map<String, String> properties = new HashMap<>();
 
 		/**
 		 * @return the name
@@ -53,12 +46,11 @@ public final class SystemConfiguration {
 			this.properties = properties;
 		}
 	}
-	
+
 	public static class External {
 		private String name;
-		
-		private Map<String, String> properties = new HashMap<>();
 
+		private Map<String, String> properties = new HashMap<>();
 
 		/**
 		 * @return the name
