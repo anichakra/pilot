@@ -22,6 +22,7 @@ public class RestConsumerConfigurationProperties<T> {
 	private HttpStatus statusCode;
     private Class<T> responseType;
     private Map<String, String> headers = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
     
    
 	
@@ -96,6 +97,20 @@ public class RestConsumerConfigurationProperties<T> {
 
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
+	}
+
+	/**
+	 * @return the parameters
+	 */
+	public Map<String, String> getProperties() {
+		return properties;
+	}
+
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
 	}
 
 }

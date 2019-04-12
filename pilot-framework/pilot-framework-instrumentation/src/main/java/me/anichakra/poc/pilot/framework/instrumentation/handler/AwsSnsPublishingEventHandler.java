@@ -1,12 +1,8 @@
 package me.anichakra.poc.pilot.framework.instrumentation.handler;
 
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.stereotype.Component;
-
-import com.amazonaws.services.sns.AmazonSNS;
 
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
@@ -30,15 +26,15 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler {
 	public static final String LOGGER_NAME = "INSTRUMENTATION";
 //	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
-	private final NotificationMessagingTemplate notificationMessagingTemplate;
-	@Autowired
-	public AwsSnsPublishingEventHandler(AmazonSNS amazonSns) {
-		this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
-	}
+	//private final NotificationMessagingTemplate notificationMessagingTemplate;
+//	@Autowired
+//	public AwsSnsPublishingEventHandler(AmazonSNS amazonSns) {
+//		this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
+//	}
 
-	public void send(String subject, String message) {
-		this.notificationMessagingTemplate.sendNotification("physicalTopicName", message, subject);
-	}
+//	public void send(String subject, String message) {
+//		this.notificationMessagingTemplate.sendNotification("physicalTopicName", message, subject);
+//	}
 	/**
 	 * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}
 	 * object to log in info mode. Also put the entire conversation instance to
@@ -53,7 +49,7 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 				&& event.getCurrentMetric().getStatus().equals(Status.C))
 			System.out.println("#######" + event);
 		System.out.println("#######" + event.getCurrentMetric().getArguments());
-		send("subject", event.getCurrentMetric().getArguments().toString());
+	//	send("subject", event.getCurrentMetric().getArguments().toString());
 
 	}
 

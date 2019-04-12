@@ -10,14 +10,9 @@ import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 import me.anichakra.poc.pilot.vehicle.repo.VehicleRepository;
 import me.anichakra.poc.pilot.vehicle.service.VehicleCommandService;
 
-@CommandService(config="transunion")
+@CommandService
 public class DefaultVehicleCommandService implements VehicleCommandService {
-	
-	@Property
-	private String prop1;
-	
-	@Property
-	private String prop2;
+
 
 	@Inject
 	private VehicleRepository vehicleRepository;

@@ -52,18 +52,6 @@ instrumentation:
     aws-sns:
       event-names: notification
 
-service:
-    - name: transunion
-      version: 2.3
-      blah: blah
-    - name: lexisnexis
-      version: 2203
-      blah: blah
-      blah1: blah1
-   - name: myinternalservice
-     prop1: value1
-     prop2: value2
-     prop3: 1324
  
     
     

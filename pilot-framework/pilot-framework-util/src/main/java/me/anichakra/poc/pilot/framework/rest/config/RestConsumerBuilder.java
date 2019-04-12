@@ -68,5 +68,6 @@ public class RestConsumerBuilder<K,V> {
 		consumer.setContentType(c.getContentType());
 		consumer.setStatusCode(c.getStatusCode());
 		c.getHeaders().entrySet().stream().forEach(e->consumer.addHeader(e.getKey(), e.getValue()));
+		c.getProperties().entrySet().stream().forEach(e->consumer.addProperty(e.getKey(), e.getValue()));
 	}
 }

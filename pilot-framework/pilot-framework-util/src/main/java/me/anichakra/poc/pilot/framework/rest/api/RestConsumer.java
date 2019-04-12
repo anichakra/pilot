@@ -28,4 +28,8 @@ public interface RestConsumer {
 	void setContentType(String contentType);
 
 	void setStatusCode(HttpStatus statusCode);
+
+	RestConsumer addProperty(String name, String value);
+	
+	String getProperty(String name);
 }

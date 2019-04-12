@@ -6,7 +6,9 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
@@ -38,6 +40,7 @@ public class AbstractRestConsumer implements RestConsumer {
 	protected String accept;
 	protected HttpStatus httpStatusCode;
 	protected HttpHeaders headers = new HttpHeaders();
+	Map<String, String> parameters = new HashMap<>();
 	protected Object[] uriVariables = null;
 	protected RestTemplate restTemplate;
 	private boolean prepared;
@@ -112,11 +115,23 @@ public class AbstractRestConsumer implements RestConsumer {
 	public URI getUrl() {
 		return url;
 	}
+	
 
 	@Override
 	public RestConsumer addHeader(String name, String value) {
 		headers.add(name, value);
 		return this;
+	}
+	
+	@Override
+	public RestConsumer addProperty(String name, String value) {
+		parameters.put(name,value);
+		return this;
+	}
+
+	@Override
+	public String getProperty(String name) {
+		return parameters.get(name);
 	}
 
 	@Override
@@ -151,5 +166,7 @@ public class AbstractRestConsumer implements RestConsumer {
 			throw new InvalidReturnedStatusCodeException(url.toString(), httpStatusCode.value());
 		return responseEntity;
 	}
+
+
 
 }

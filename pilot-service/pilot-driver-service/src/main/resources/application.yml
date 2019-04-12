@@ -33,4 +33,7 @@ rest:
       headers:
         clientId: abc
         x-header: xyz
+      properties:
+        cost: 1000
+        color: red
   

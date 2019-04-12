@@ -1,3 +1,6 @@
-[DEBUG] 2019-04-11 11:06:36.134 [main] VehicleServiceApplication - Running with Spring Boot v2.1.2.RELEASE, Spring v5.1.4.RELEASE
-[INFO ] 2019-04-11 11:06:36.140 [main] VehicleServiceApplication - No active profile set, falling back to default profiles: default
-[INFO ] 2019-04-11 11:06:41.725 [main] VehicleServiceApplication - Started VehicleServiceApplication in 5.857 seconds (JVM running for 6.764)
+[DEBUG] 2019-04-12 11:41:25.279 [main] VehicleServiceApplication - Running with Spring Boot v2.1.3.RELEASE, Spring v5.1.5.RELEASE
+[INFO ] 2019-04-12 11:41:25.285 [main] VehicleServiceApplication - No active profile set, falling back to default profiles: default
+[INFO ] 2019-04-12 14:02:13.387 [main] VehicleServiceApplication - Starting VehicleServiceApplication on Anirbans-MacBook-Pro.local with PID 24244 (/Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service/target/classes started by anirbanchakraborty in /Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service)
+[DEBUG] 2019-04-12 14:02:13.388 [main] VehicleServiceApplication - Running with Spring Boot v2.1.3.RELEASE, Spring v5.1.5.RELEASE
+[INFO ] 2019-04-12 14:02:13.388 [main] VehicleServiceApplication - No active profile set, falling back to default profiles: default
+[INFO ] 2019-04-12 14:02:19.143 [main] VehicleServiceApplication - Started VehicleServiceApplication in 6.053 seconds (JVM running for 7.145)

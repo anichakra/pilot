@@ -36,7 +36,6 @@ public @interface CommandService {
 
 	@AliasFor(annotation = CqrsService.class)
 	boolean stateful() default false;
-	
-	String config() default "";
+
 
 }
