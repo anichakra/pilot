@@ -18,10 +18,11 @@
 			<artifactId>pilot-framework-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+	 	<dependency>
 			<groupId>me.anichakra.poc</groupId>
 			<artifactId>pilot-framework-instrumentation</artifactId>
 			<version>${project.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

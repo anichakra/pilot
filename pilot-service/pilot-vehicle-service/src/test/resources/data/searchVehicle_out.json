@@ -1,27 +1,23 @@
 [
 	{
-		"id": 1,
 		"manufacturer": "Nissan",
 		"year": 2018,
 		"model": "Altima",
 		"price": null
 	},
 	{
-		"id": 2,
 		"manufacturer": "Nissan",
 		"year": 2017,
 		"model": "Frontier",
 		"price": null
 	},
 	{
-		"id": 3,
 		"manufacturer": "Nissan",
 		"year": 2018,
 		"model": "Pathfinder",
 		"price": null
 	},
 	{
-		"id": 4,
 		"manufacturer": "Nissan",
 		"year": 2019,
 		"model": "GT-R",

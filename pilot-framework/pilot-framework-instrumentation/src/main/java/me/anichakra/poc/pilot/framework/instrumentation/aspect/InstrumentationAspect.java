@@ -86,7 +86,7 @@ public class InstrumentationAspect {
 	 */
 	public Object instrument(final ProceedingJoinPoint pjp, Layer layer) throws Throwable {
 		if (!enabled)
-			pjp.proceed();
+			return pjp.proceed();
 		String signature = pjp.getSignature().toLongString();
 		Invocation invocation = new Invocation(signature, layer);
 		invocation.setEventBus(eventBus);

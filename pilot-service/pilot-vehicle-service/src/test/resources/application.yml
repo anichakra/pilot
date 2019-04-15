@@ -14,4 +14,4 @@ rule:
 
   
 test:
-  print: false
+  print: true

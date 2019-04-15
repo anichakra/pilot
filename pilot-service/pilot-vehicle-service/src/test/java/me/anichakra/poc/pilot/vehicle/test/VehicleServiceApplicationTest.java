@@ -24,7 +24,7 @@ public class VehicleServiceApplicationTest {
 	@Inject
 	private MockApi mockApi;
 
-	@Test
+	//@Test
 	public void testApplication() {
 		VehicleServiceApplication.main(new String[] {});
 	}
@@ -40,9 +40,6 @@ public class VehicleServiceApplicationTest {
 		Vehicle v = mockApi.post("/vehicle").<Vehicle>call(new RequestBody("save_in")).getResultBean(Vehicle.class);
 		mockApi.delete("/vehicle?id={id}").setUriVariables(v.getId()).call()
 				.assertResult(AssertableHttpStatusCode.NO_CONTENT);
-		String template = "The vehicle with ${id} whose manufacturere is ${manufacturer} with price ${price:0.11} build in ${year} is not available";
-		String value = StringUtils.format(template, v);
-		System.out.println(value);
 	}
 
 	@Test

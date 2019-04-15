@@ -50,7 +50,7 @@ instrumentation:
     new-relic:
       event-names: none   
     aws-sns:
-      event-names: notification
+      event-names: sourcing
 
  
     
