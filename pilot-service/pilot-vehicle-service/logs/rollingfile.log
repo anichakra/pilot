@@ -1,7 +1,2 @@
-[DEBUG] 2019-04-15 21:15:37.043 [main] VehicleServiceApplicationTest - Running with Spring Boot v2.1.3.RELEASE, Spring v5.1.5.RELEASE
-[INFO ] 2019-04-15 21:15:37.050 [main] VehicleServiceApplicationTest - The following profiles are active: test
-[INFO ] 2019-04-15 21:15:43.795 [main] VehicleServiceApplicationTest - Started VehicleServiceApplicationTest in 6.997 seconds (JVM running for 8.098)
-[INFO ] 2019-04-15 21:19:41.163 [main] VehicleServiceApplicationTest - Starting VehicleServiceApplicationTest on Anirbans-MacBook-Pro.local with PID 31081 (started by anirbanchakraborty in /Users/anirbanchakraborty/git/pilot/pilot-service/pilot-vehicle-service)
-[DEBUG] 2019-04-15 21:19:41.165 [main] VehicleServiceApplicationTest - Running with Spring Boot v2.1.3.RELEASE, Spring v5.1.5.RELEASE
-[INFO ] 2019-04-15 21:19:41.165 [main] VehicleServiceApplicationTest - The following profiles are active: test
-[INFO ] 2019-04-15 21:19:47.695 [main] VehicleServiceApplicationTest - Started VehicleServiceApplicationTest in 6.776 seconds (JVM running for 8.062)
+[INFO ] 2019-04-15 21:55:44.141 [main] VehicleServiceApplicationTest - The following profiles are active: test
+[INFO ] 2019-04-15 21:55:51.306 [main] VehicleServiceApplicationTest - Started VehicleServiceApplicationTest in 7.442 seconds (JVM running for 8.632)

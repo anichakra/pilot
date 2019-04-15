@@ -81,15 +81,21 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
 
 	private Consumer<Object> microserviceValidation = b -> {
-		if (ClassUtils.getUserClass(b.getClass()).getDeclaredFields().length > 0
-				&& ClassUtils.getUserClass(b.getClass()).getDeclaredMethods().length > 1)
+		Class<?> clazz= ClassUtils.getUserClass(b.getClass());
+		long fieldCount = Arrays.asList(clazz.getDeclaredFields()).stream().filter(f->!f.isSynthetic()).count();
+		long methodCount = Arrays.asList(clazz.getDeclaredMethods()).stream().filter(m->!m.isSynthetic()).count();
+
+		if (fieldCount> 0
+				|| methodCount > 1) {
+
 			throw new InvalidAnnotationException(
 					"Microservice annotated class should not contain any field or non-static method", b);
+		}
 	};
 
 	private Consumer<Object> restControllerValidation = b -> {
 		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream();
-		long count = supplier.get().filter(f -> f.isAnnotationPresent(Inject.class)).count();
+		long count = supplier.get().filter(f -> f.isAnnotationPresent(Inject.class) && !f.isSynthetic()).count();
 
 		if (count != 1)
 			throw new InvalidAnnotationException("Controller class must have only one injectable field", b);
@@ -132,7 +138,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 	@SafeVarargs
 	private final void validateBean(Object b, Supplier<Stream<Field>> supplier, String validationMessage,
 			Class<? extends Annotation>... annotationClass) {
-		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class))
+		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class) && !f.isSynthetic())
 				.allMatch(c -> isFieldAnnotatedWithEither(b, c, annotationClass)))
 			throw new InvalidAnnotationException(validationMessage, b);
 	}
@@ -164,7 +170,7 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 
 	private Supplier<Stream<Field>> validateInjection(Object b) {
 		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream();
-		if (!supplier.get().allMatch(f -> f.isAnnotationPresent(Inject.class)))
+		if (!supplier.get().allMatch(f -> f.isAnnotationPresent(Inject.class) && !f.isSynthetic()))
 			throw new InvalidAnnotationException("All fields should have proper @Injection", b);
 		return supplier;
 	}
