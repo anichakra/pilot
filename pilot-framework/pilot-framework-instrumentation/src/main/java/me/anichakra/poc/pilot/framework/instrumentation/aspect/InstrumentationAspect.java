@@ -32,11 +32,11 @@ import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 public class InstrumentationAspect {
 	@Autowired
 	private InvocationEventBus eventBus;
-	
+
 	private boolean enabled;
 	private long ignoreDurationInMillis = 10;
 
-	private Map<String, String[]> signatureEventCache = new ConcurrentHashMap<>();
+	private Map<String, Event> signatureEventCache = new ConcurrentHashMap<>();
 
 	@Around("controllerClassMethods()")
 	public Object instrumentController(final ProceedingJoinPoint pjp) throws Throwable {
@@ -90,15 +90,13 @@ public class InstrumentationAspect {
 		String signature = pjp.getSignature().toLongString();
 		Invocation invocation = new Invocation(signature, layer);
 		invocation.setEventBus(eventBus);
-		if (signatureEventCache.get(signature) == null) {
-			Event e = findEvent(pjp);
-			String[] names = new String[] {};
-			if (e != null)
-				names = e.name();
-			signatureEventCache.put(signature, names); // if not extract and add
+		Event event = signatureEventCache.get(signature);
+		if (event == null) {
+			event = findEvent(pjp);
+			signatureEventCache.put(signature, event); // if not extract and add
 		}
-		
-		invocation.setEventNames(signatureEventCache.get(signature)); // set to invocation
+
+		invocation.setEvent(event); // set to invocation
 		invocation.start(pjp.getArgs());
 
 		Object outcome = null;
@@ -108,25 +106,28 @@ public class InstrumentationAspect {
 			invocation.failed(t);
 			throw t;
 		}
-		invocation.end(this.ignoreDurationInMillis);
+		invocation.end(outcome, this.ignoreDurationInMillis);
 		return outcome;
-
 	}
 
 	private Event findEvent(final ProceedingJoinPoint pjp)
 			throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+		Method method = null;
 		String signature = pjp.getSignature().toLongString();
 		Class<?> type = pjp.getSignature().getDeclaringType();
 		String methodName = signature.substring(signature.lastIndexOf(type.getName()) + type.getName().length() + 1,
 				signature.indexOf("("));
 		String[] parameters = signature.substring(signature.indexOf("(") + 1, signature.lastIndexOf(")")).split(",");
-
-		Class<?>[] parameterTypes = new Class[parameters.length];
-		int index = 0;
-		for (String parameter : parameters) {
-			parameterTypes[index++] = Class.forName(parameter);
+		if (parameters.length > 0) {
+			Class<?>[] parameterTypes = new Class[parameters.length];
+			int index = 0;
+			for (String parameter : parameters) {
+				parameterTypes[index++] = Class.forName(parameter.trim());
+			}
+			method = type.getDeclaredMethod(methodName, parameterTypes);
+		} else {
+			method = type.getDeclaredMethod(methodName);
 		}
-		Method method = type.getDeclaredMethod(methodName, parameterTypes);
 		return method.getAnnotation(Event.class);
 	}
 

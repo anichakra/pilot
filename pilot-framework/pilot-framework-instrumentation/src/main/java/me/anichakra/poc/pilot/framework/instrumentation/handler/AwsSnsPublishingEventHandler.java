@@ -1,9 +1,13 @@
 package me.anichakra.poc.pilot.framework.instrumentation.handler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import me.anichakra.poc.pilot.framework.annotation.Event;
+import me.anichakra.poc.pilot.framework.annotation.EventObject;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
@@ -24,9 +28,11 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 @Component
 @ConfigurationProperties(prefix = "instrumentation.handlers.aws-sns")
 public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler {
-	public static final String LOGGER_NAME = "INSTRUMENTATION";
+	public static final String LOGGER_NAME = "INSTRUMENTATION_AWSSNS";
+	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
+
 //	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
-	//private final NotificationMessagingTemplate notificationMessagingTemplate;
+	// private final NotificationMessagingTemplate notificationMessagingTemplate;
 //	@Autowired
 //	public AwsSnsPublishingEventHandler(AmazonSNS amazonSns) {
 //		this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
@@ -35,22 +41,21 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 //	public void send(String subject, String message) {
 //		this.notificationMessagingTemplate.sendNotification("physicalTopicName", message, subject);
 //	}
-	/**
-	 * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}
-	 * object to log in info mode. Also put the entire conversation instance to
-	 * {@link ThreadContext} with a key 'event'.
-	 * <p>
-	 * The corresponding log4j pattern layout recommended is:
-	 * <code> pattern="%d [%t] %-5p %c-%X{event};%m%n" </code>
-	 */
-	@Override
-	public void handleInvocationEvent(InvocationEvent event) {
-		if (hasAnyEventMatched(event.getCurrentMetric().getEventNames())
-				&& event.getCurrentMetric().getStatus().equals(Status.C))
-			System.out.println("#######" + event);
-		System.out.println("#######" + event.getCurrentMetric().getArguments());
-	//	send("subject", event.getCurrentMetric().getArguments().toString());
 
+	@Override
+	public void handleInvocationEvent(InvocationEvent invocationEvent) {
+		Event event = invocationEvent.getCurrentMetric().getEvent();
+		InvocationMetric metric = invocationEvent.getCurrentMetric();
+		if (match(event)
+				&& metric.getStatus().equals(Status.C)) {
+			if(event.object().equals(EventObject.REQUEST)) {
+			logger.info(metric.getArguments());
+			} else {
+				logger.info(metric.getOutcome());
+
+			}
+		}
+		// send("subject", event.getCurrentMetric().getArguments().toString());
 	}
 
 	/**
@@ -59,6 +64,5 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 	public void clear() {
 		ThreadContext.clearStack();
 	}
-	 
-	
+
 }

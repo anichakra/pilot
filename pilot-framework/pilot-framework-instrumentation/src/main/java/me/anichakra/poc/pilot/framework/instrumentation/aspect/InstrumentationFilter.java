@@ -98,7 +98,7 @@ public class InstrumentationFilter implements Filter {
 		} finally {
 			if (isEnabled()) {
 				try {
-					invocation.end(0);
+					invocation.end(response.getStatus(), 0);
 				} catch (Exception e) {
 					logger.error("Exception in context.proceed() on completion", e);
 				}

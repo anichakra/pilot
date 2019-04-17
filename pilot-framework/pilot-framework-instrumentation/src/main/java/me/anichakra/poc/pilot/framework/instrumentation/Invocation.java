@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import me.anichakra.poc.pilot.framework.annotation.Event;
+
 /**
  * One object of Invocation can be considered to be one line of invocation that
  * starts from one layer and proceeds to the next layer till the invocation is
@@ -25,7 +27,7 @@ public class Invocation {
 
 	private String signature;
 
-	private String[] eventNames;
+	private Event event;
 
 	private Layer layer;
 
@@ -77,7 +79,7 @@ public class Invocation {
 		}
 		invocationEvent.start(signature, params);
 		InvocationMetric currentInvocationMetric = invocationEvent.getCurrentMetric();
-		Optional.ofNullable(currentInvocationMetric).ifPresent(c -> c.setEventNames(eventNames));
+		Optional.ofNullable(currentInvocationMetric).ifPresent(c -> c.setEvent(event));
 
 		if (!invocationEvent.isAlreadyMarkedIgnore()) {
 			invocationEventBus.fireInvocationEvent(invocationEvent);
@@ -87,11 +89,12 @@ public class Invocation {
 	/**
 	 * Ends an invocation. If the duration of the invocation is too small, not need
 	 * to consider.
+	 * @param outcome 
 	 */
-	public void end(long durationToIgnore) {
+	public void end(Object outcome, long durationToIgnore) {
 		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
 		if (invocationEvent != null) {
-			invocationEvent.complete();
+			invocationEvent.complete(outcome);
 			if (!invocationEvent.isAlreadyMarkedIgnore()) {
 				invocationEventBus.fireInvocationEvent(invocationEvent);
 			}
@@ -159,12 +162,12 @@ public class Invocation {
 
 	}
 
-	public String[] getEventNames() {
-		return eventNames;
+	public Event getEvent() {
+		return event;
 	}
 
-	public void setEventNames(String[] eventNames) {
-		this.eventNames = eventNames;
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 	public Layer getLayer() {

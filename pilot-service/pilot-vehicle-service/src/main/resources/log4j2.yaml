@@ -4,7 +4,7 @@ Configutation:
   Properties:
     Property:
       name: log-path
-      value: "logs"
+      value: "~/logs"
  
   Appenders:
  
@@ -58,7 +58,15 @@ Configutation:
               level: error
             - ref: RollingFile_Appender
               level: debug
-        - name: INSTRUMENTATION
+        - name: INSTRUMENTATION_LOG
+          additivity: false
+          level: INFO
+          AppenderRef:
+            - ref: Console_Appender
+              level: info
+            - ref: Instrumentation_Appender
+              level: info
+        - name: INSTRUMENTATION_AWSSNS
           additivity: false
           level: INFO
           AppenderRef:

@@ -45,308 +45,309 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
  *
  */
 public class InvocationEvent {
-    private String localAddress = "";
-    private String remoteAddress = "";
-    private String id;
-    private String eventId;
-    private String path = "";
-    private String user = "";
-    private String correlationId = "";
-    private boolean markExceptionInExecution;
-    private Throwable lastRootCause = null;
-    private String parameter;
+	private String localAddress = "";
+	private String remoteAddress = "";
+	private String id;
+	private String eventId;
+	private String path = "";
+	private String user = "";
+	private String correlationId = "";
+	private boolean markExceptionInExecution;
+	private Throwable lastRootCause = null;
+	private String parameter;
 
-    private Deque<InvocationMetric> invocationStack = new ArrayDeque<>();
-    private Set<String> ignoreSignature = new HashSet<>();
-    private static final ThreadLocal<InvocationEvent> CURRENT = new ThreadLocal<>();
+	private Deque<InvocationMetric> invocationStack = new ArrayDeque<>();
+	private Set<String> ignoreSignature = new HashSet<>();
+	private static final ThreadLocal<InvocationEvent> CURRENT = new ThreadLocal<>();
 
-    /**
-     * Creates a Invocation with an id, event id, path and user. If Id is sent as
-     * null a random id is created and assigned to the invocation.
-     * 
-     * @param id
-     * @param eventId
-     * @param path
-     * @param user
-     */
-    InvocationEvent(String id, String eventId, String path, String user) {
-        this.id = id == null ? UUID.randomUUID().toString() : id;
-        this.eventId = eventId;
-        this.path = path;
-        this.user = user;
-    }
+	/**
+	 * Creates a Invocation with an id, event id, path and user. If Id is sent as
+	 * null a random id is created and assigned to the invocation.
+	 * 
+	 * @param id
+	 * @param eventId
+	 * @param path
+	 * @param user
+	 */
+	InvocationEvent(String id, String eventId, String path, String user) {
+		this.id = id == null ? UUID.randomUUID().toString() : id;
+		this.eventId = eventId;
+		this.path = path;
+		this.user = user;
+	}
 
-    /**
-     * Return the current Invocation instance residing in {@link ThreadLocal}
-     * 
-     * @return
-     */
-    public synchronized static InvocationEvent getCurrent() {
-        return CURRENT.get();
-    }
+	/**
+	 * Return the current Invocation instance residing in {@link ThreadLocal}
+	 * 
+	 * @return
+	 */
+	public synchronized static InvocationEvent getCurrent() {
+		return CURRENT.get();
+	}
 
-    /**
-     * Set the Invocation if not present to the {@link ThreadLocal}
-     * 
-     * @param current
-     */
-    static synchronized void setCurrent(InvocationEvent current) {
-        if (getCurrent() == null)
-            CURRENT.set(current);
-    }
+	/**
+	 * Set the Invocation if not present to the {@link ThreadLocal}
+	 * 
+	 * @param current
+	 */
+	static synchronized void setCurrent(InvocationEvent current) {
+		if (getCurrent() == null)
+			CURRENT.set(current);
+	}
 
-    /**
-     * Removes the Invocation from the current {@link ThreadLocal}
-     */
-    static synchronized void clearCurrent() {
-        CURRENT.remove();
-    }
+	/**
+	 * Removes the Invocation from the current {@link ThreadLocal}
+	 */
+	static synchronized void clearCurrent() {
+		CURRENT.remove();
+	}
 
-    /**
-     * Marks this invocation that an exception has occurred in one of the
-     * {@link InvocationMetric}s.
-     * 
-     * @param markExceptionInExecution
-     */
-    public void setMarkExceptionInExecution(boolean markExceptionInExecution) {
-        this.markExceptionInExecution = markExceptionInExecution;
-    }
+	/**
+	 * Marks this invocation that an exception has occurred in one of the
+	 * {@link InvocationMetric}s.
+	 * 
+	 * @param markExceptionInExecution
+	 */
+	public void setMarkExceptionInExecution(boolean markExceptionInExecution) {
+		this.markExceptionInExecution = markExceptionInExecution;
+	}
 
-    /**
-     * 
-     * @return true if this invocation is marked as failed.
-     */
-    public boolean isMarkExceptionInExecution() {
-        return markExceptionInExecution;
-    }
+	/**
+	 * 
+	 * @return true if this invocation is marked as failed.
+	 */
+	public boolean isMarkExceptionInExecution() {
+		return markExceptionInExecution;
+	}
 
-    /**
-     * 
-     * @return The correlation id if its present
-     */
-    public String getCorrelationId() {
-        return correlationId;
-    }
+	/**
+	 * 
+	 * @return The correlation id if its present
+	 */
+	public String getCorrelationId() {
+		return correlationId;
+	}
 
-    /**
-     * Sets the correlation id to the invocation. The correlation id is the
-     * invocation id of a parent invocation. For e.g if a web application is
-     * executing a invocation which invokes a ReST call to another application, then
-     * the invocation id is passed in the ReST call, so that the new invocation that
-     * is starting in the second application exposing ReST service will send the
-     * invocation id as correlation id to its Invocation instance.
-     * 
-     * @param correlationId
-     */
-    public void setCorrelationId(String correlationId) {
-        this.correlationId = correlationId;
-    }
+	/**
+	 * Sets the correlation id to the invocation. The correlation id is the
+	 * invocation id of a parent invocation. For e.g if a web application is
+	 * executing a invocation which invokes a ReST call to another application, then
+	 * the invocation id is passed in the ReST call, so that the new invocation that
+	 * is starting in the second application exposing ReST service will send the
+	 * invocation id as correlation id to its Invocation instance.
+	 * 
+	 * @param correlationId
+	 */
+	public void setCorrelationId(String correlationId) {
+		this.correlationId = correlationId;
+	}
 
-    /**
-     * Mark this Invocation instance as ignore. Hence no further invocation will be
-     * stacked.
-     */
-    public void markIgnore() {
-        InvocationMetric invocation = getCurrentMetric();
-        ignoreSignature.add(invocation.getSignature());
-    }
+	/**
+	 * Mark this Invocation instance as ignore. Hence no further invocation will be
+	 * stacked.
+	 */
+	public void markIgnore() {
+		InvocationMetric invocation = getCurrentMetric();
+		ignoreSignature.add(invocation.getSignature());
+	}
 
-    /**
-     * 
-     * @return true if the invocation is already marked to be ignored.
-     */
-    public boolean isAlreadyMarkedIgnore() {
-        InvocationMetric invocation = getCurrentMetric();
-        if (invocation == null)
-            return false;
-        return ignoreSignature.contains(invocation.getSignature());
-    }
+	/**
+	 * 
+	 * @return true if the invocation is already marked to be ignored.
+	 */
+	public boolean isAlreadyMarkedIgnore() {
+		InvocationMetric invocation = getCurrentMetric();
+		if (invocation == null)
+			return false;
+		return ignoreSignature.contains(invocation.getSignature());
+	}
 
-    /**
-     * Mark the {@link InvocationMetric} in a invocation to ignore if execution
-     * duration of the invocation is less than specified. This is to ignore stacking
-     * insignificant invocations which are repetitive which are not important for
-     * profiling.
-     * 
-     * @param durationToIgnore
-     */
-    public void markIgnore(long durationToIgnore) {
-        InvocationEvent event = InvocationEvent.getCurrent();
-        InvocationMetric invocation = event.getCurrentMetric();
-        if (invocation.getDuration() < durationToIgnore) {
-            event.markIgnore();
-        }
-    }
+	/**
+	 * Mark the {@link InvocationMetric} in a invocation to ignore if execution
+	 * duration of the invocation is less than specified. This is to ignore stacking
+	 * insignificant invocations which are repetitive which are not important for
+	 * profiling.
+	 * 
+	 * @param durationToIgnore
+	 */
+	public void markIgnore(long durationToIgnore) {
+		InvocationEvent event = InvocationEvent.getCurrent();
+		InvocationMetric invocation = event.getCurrentMetric();
+		if (invocation.getDuration() < durationToIgnore) {
+			event.markIgnore();
+		}
+	}
 
-    /**
-     * Pops the last invocation from stack
-     */
-    public void removeLastInvocation() {
-        invocationStack.pop();
-    }
+	/**
+	 * Pops the last invocation from stack
+	 */
+	public void removeLastInvocation() {
+		invocationStack.pop();
+	}
 
-    /**
-     * Get the current {@link InvocationMetric} instance
-     * 
-     * @return
-     */
-    public InvocationMetric getCurrentMetric() {
-        return invocationStack.getFirst();
-    }
+	/**
+	 * Get the current {@link InvocationMetric} instance
+	 * 
+	 * @return
+	 */
+	public InvocationMetric getCurrentMetric() {
+		return invocationStack.getFirst();
+	}
 
-    /**
-     * Returns the String representation of the InvocationEvent instance in a single
-     * line. Following are returned in sequence separated by Invocation.SEPARATOR.
-     * <p>
-     * id;remoteAddress;localAddress;eventId;correlationId;user;path;parameter;level
-     * 
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(id).append(SEPARATOR).append(remoteAddress).append(SEPARATOR).append(localAddress)
-                .append(SEPARATOR).append(getEventId()).append(SEPARATOR).append(getCorrelationId()).append(SEPARATOR)
-                .append(user).append(SEPARATOR).append(path).append(SEPARATOR).append(parameter).append(SEPARATOR)
-                .append(getLevel()).append(SEPARATOR)
-                .append(getCurrentMetric());
+	/**
+	 * Returns the String representation of the InvocationEvent instance in a single
+	 * line. Following are returned in sequence separated by Invocation.SEPARATOR.
+	 * <p>
+	 * id;remoteAddress;localAddress;eventId;correlationId;user;path;parameter;level
+	 * 
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(id).append(SEPARATOR).append(remoteAddress).append(SEPARATOR).append(localAddress)
+				.append(SEPARATOR).append(getEventId()).append(SEPARATOR).append(getCorrelationId()).append(SEPARATOR)
+				.append(user).append(SEPARATOR).append(path).append(SEPARATOR).append(parameter).append(SEPARATOR)
+				.append(getLevel()).append(SEPARATOR).append(getCurrentMetric());
 
-        return builder.toString();
-    }
+		return builder.toString();
+	}
 
-    /**
-     * This method creates an {@link InvocationMetric} object and set the class and
-     * method signature including method parameters to it. It pushes the invocation
-     * event instance to the stack.
-     * 
-     * @param signature
-     * @param args
-     */
-    public void start(String signature, Object[] args) {
-        InvocationMetric invocation = new InvocationMetric();
-        invocation.setSignature(signature);
-        if (args != null) {
-            invocation.setArguments(Arrays.asList(args));
-        }
-        invocation.setStart(System.currentTimeMillis());
-        invocation.setStatus(Status.S);
-        invocationStack.push(invocation);
-    }
+	/**
+	 * This method creates an {@link InvocationMetric} object and set the class and
+	 * method signature including method parameters to it. It pushes the invocation
+	 * event instance to the stack.
+	 * 
+	 * @param signature
+	 * @param args
+	 */
+	public void start(String signature, Object[] args) {
+		InvocationMetric invocation = new InvocationMetric();
+		invocation.setSignature(signature);
+		if (args != null) {
+			invocation.setArguments(Arrays.asList(args));
+		}
+		invocation.setStart(System.currentTimeMillis());
+		invocation.setStatus(Status.S);
+		invocationStack.push(invocation);
+	}
 
-    /**
-     * Gets the current {@link InvocationMetric} instance and mark it as failed.
-     */
-    public void fail() {
-        InvocationMetric invocation = this.getCurrentMetric();
-        invocation.setEnd(System.currentTimeMillis());
-        invocation.setStatus(Status.F);
-        if (!this.isMarkExceptionInExecution()) {
-            this.setMarkExceptionInExecution(true);
-        }
-    }
+	/**
+	 * Gets the current {@link InvocationMetric} instance and mark it as failed.
+	 */
+	public void fail() {
+		InvocationMetric invocation = this.getCurrentMetric();
+		invocation.setEnd(System.currentTimeMillis());
+		invocation.setStatus(Status.F);
+		if (!this.isMarkExceptionInExecution()) {
+			this.setMarkExceptionInExecution(true);
+		}
+	}
 
-    /**
-     * Gets the current {@link InvocationMetric} instance and mark it as completed.
-     */
-    public void complete() {
-        InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentMetric();
-        invocationMetric.setEnd(System.currentTimeMillis());
-        invocationMetric.setStatus(Status.C);
-        invocation.setMarkExceptionInExecution(false);
-    }
+	/**
+	 * Gets the current {@link InvocationMetric} instance and mark it as completed.
+	 */
+	public void complete(Object outcome) {
+		InvocationEvent invocation = InvocationEvent.getCurrent();
+		InvocationMetric invocationMetric = invocation.getCurrentMetric();
+		invocationMetric.setEnd(System.currentTimeMillis());
+		invocationMetric.setOutcome(outcome);
+		invocationMetric.setStatus(Status.C);
+		invocation.setMarkExceptionInExecution(false);
+	}
 
-    /**
-     * 
-     * @return The event id
-     */
-    public String getEventId() {
-        return this.eventId;
-    }
+	/**
+	 * 
+	 * @return The event id
+	 */
+	public String getEventId() {
+		return this.eventId;
+	}
 
-    /**
-     * This returns the nested level of an invocation inside a invocation event.
-     * E.g. method a() level is 1, b() level is 2 and c() is 3.
-     * 
-     * @return
-     */
-    public int getLevel() {
-        return invocationStack.size() - 1;
-    }
+	/**
+	 * This returns the nested level of an invocation inside a invocation event.
+	 * E.g. method a() level is 1, b() level is 2 and c() is 3.
+	 * 
+	 * @return
+	 */
+	public int getLevel() {
+		return invocationStack.size() - 1;
+	}
 
-    /**
-     * If the invocation is failed, the root cause of the failure is captured
-     * 
-     * @return The root cause of the failure.
-     */
-    public Throwable getRootCause() {
-        InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentMetric();
-        return invocationMetric.getRootCause();
-    }
+	/**
+	 * If the invocation is failed, the root cause of the failure is captured
+	 * 
+	 * @return The root cause of the failure.
+	 */
+	public Throwable getRootCause() {
+		InvocationEvent invocation = InvocationEvent.getCurrent();
+		InvocationMetric invocationMetric = invocation.getCurrentMetric();
+		return invocationMetric.getRootCause();
+	}
 
-    /**
-     * Sets the root cause if the invocation has failed due to some exception.
-     * 
-     * @param rootCause
-     */
-    public void setRootCause(Throwable rootCause) {
-        InvocationEvent invocation = InvocationEvent.getCurrent();
-        InvocationMetric invocationMetric = invocation.getCurrentMetric();
-        if (lastRootCause != null && lastRootCause.equals(rootCause))
-            return;
-        invocationMetric.setRootCause(rootCause);
-        lastRootCause = rootCause;
-    }
+	/**
+	 * Sets the root cause if the invocation has failed due to some exception.
+	 * 
+	 * @param rootCause
+	 */
+	public void setRootCause(Throwable rootCause) {
+		InvocationEvent invocation = InvocationEvent.getCurrent();
+		InvocationMetric invocationMetric = invocation.getCurrentMetric();
+		if (lastRootCause != null && lastRootCause.equals(rootCause))
+			return;
+		invocationMetric.setRootCause(rootCause);
+		lastRootCause = rootCause;
+	}
 
-    /**
-     * Sets the parameter to the invocation
-     * 
-     * @param parameter
-     */
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
+	/**
+	 * Sets the parameter to the invocation
+	 * 
+	 * @param parameter
+	 */
+	public void setParameter(String parameter) {
+		this.parameter = parameter;
+	}
 
-    /**
-     * Sets the local address to the invocation
-     * 
-     * @param localAddress
-     */
-    public void setLocalAddress(String localAddress) {
-        this.localAddress = localAddress;
-    }
+	/**
+	 * Sets the local address to the invocation
+	 * 
+	 * @param localAddress
+	 */
+	public void setLocalAddress(String localAddress) {
+		this.localAddress = localAddress;
+	}
 
-    /**
-     * Sets the remote address to the invocation
-     * 
-     * @param remoteAddress
-     */
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
+	/**
+	 * Sets the remote address to the invocation
+	 * 
+	 * @param remoteAddress
+	 */
+	public void setRemoteAddress(String remoteAddress) {
+		this.remoteAddress = remoteAddress;
+	}
 
-    public String getLocalAddress() {
-        return localAddress;
-    }
+	public String getLocalAddress() {
+		return localAddress;
+	}
 
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
+	public String getRemoteAddress() {
+		return remoteAddress;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public String getUser() {
-        return user;
-    }
+	public String getUser() {
+		return user;
+	}
 
-    public String getParameter() {
-        return parameter;
-    }
+	public String getParameter() {
+		return parameter;
+	}
+
 
 }

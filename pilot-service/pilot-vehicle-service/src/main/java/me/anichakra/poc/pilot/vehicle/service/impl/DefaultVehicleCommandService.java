@@ -3,7 +3,6 @@ package me.anichakra.poc.pilot.vehicle.service.impl;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import me.anichakra.poc.pilot.framework.annotation.CommandService;
 import me.anichakra.poc.pilot.framework.annotation.Event;

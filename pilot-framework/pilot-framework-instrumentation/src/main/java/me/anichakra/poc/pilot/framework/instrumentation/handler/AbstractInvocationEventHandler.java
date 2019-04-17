@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.anichakra.poc.pilot.framework.annotation.Event;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
@@ -39,11 +40,11 @@ public abstract class AbstractInvocationEventHandler implements InvocationEventH
 		this.layers = layers;
 	}
 
-	public boolean hasAnyEventMatched(String[] eventNames) {
+	protected boolean match(Event event) {
 		boolean flag = false;
-		if (this.eventNames != null && eventNames != null) {
+		if (event != null && event.value() != null && this.eventNames != null) {
 			for (String en : this.eventNames) {
-				for (String e : eventNames) {
+				for (String e : event.value()) {
 					if (e.equals(en)) {
 						flag = true;
 						break;
@@ -52,6 +53,5 @@ public abstract class AbstractInvocationEventHandler implements InvocationEventH
 			}
 		}
 		return flag;
-
 	}
 }
