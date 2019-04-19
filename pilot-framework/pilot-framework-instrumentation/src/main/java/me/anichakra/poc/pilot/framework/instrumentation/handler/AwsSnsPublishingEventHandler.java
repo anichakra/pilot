@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import me.anichakra.poc.pilot.framework.annotation.Event;
 import me.anichakra.poc.pilot.framework.annotation.EventObject;
+import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
@@ -15,9 +16,10 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 
 /**
- * Log4j2 Implementation of {@link InvocationEventHandler} for writing log. When
- * a Conversation is published in the InvocationEventBus this handler if
- * registered in the bus will be invoked.
+ * This {@link InvocationEventHandler} handles the {@link InvocationEvent} and
+ * checks the event contains an marked {@link Event} that is matched with the
+ * configured event-names. If matched the InvocationEvent's method argument
+ * object or method return object is published to configured SNS topic.
  * <p>
  * 
  * @see InvocationEvent
@@ -46,14 +48,13 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 	public void handleInvocationEvent(InvocationEvent invocationEvent) {
 		Event event = invocationEvent.getCurrentMetric().getEvent();
 		InvocationMetric metric = invocationEvent.getCurrentMetric();
-		if (match(event)
-				&& metric.getStatus().equals(Status.C)) {
-			if(event.object().equals(EventObject.REQUEST)) {
+		boolean matchFlag = match(event);
+		if (matchFlag && metric.getStatus().equals(Status.S) && event.object().equals(EventObject.REQUEST)) {
 			logger.info(metric.getArguments());
-			} else {
-				logger.info(metric.getOutcome());
 
-			}
+		} else if (matchFlag && metric.getStatus().equals(Status.C) && event.object().equals(EventObject.RESPONSE)) {
+			logger.info(metric.getOutcome());
+
 		}
 		// send("subject", event.getCurrentMetric().getArguments().toString());
 	}

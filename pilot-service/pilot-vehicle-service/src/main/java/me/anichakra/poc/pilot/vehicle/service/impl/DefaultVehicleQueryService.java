@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import me.anichakra.poc.pilot.framework.annotation.Event;
+import me.anichakra.poc.pilot.framework.annotation.EventObject;
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.rule.api.RuleService;
 import me.anichakra.poc.pilot.vehicle.domain.Category;
@@ -46,6 +48,7 @@ public class DefaultVehicleQueryService implements VehicleQueryService {
 	}
 
 	@Override
+	@Event(name="sourcing", object=EventObject.RESPONSE)
 	public Vehicle getPreference(Category category) {
 		final Optional<Vehicle> preferredVehicle = Optional
 				.ofNullable(getRuleTemplate().getPreference(category, new Vehicle()));

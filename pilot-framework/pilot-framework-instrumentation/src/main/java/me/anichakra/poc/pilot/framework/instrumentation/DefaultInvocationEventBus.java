@@ -18,31 +18,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultInvocationEventBus implements InvocationEventBus {
 
-	private List<InvocationEventHandler<InvocationEvent>> conversationEventHandlers;
+	private List<InvocationEventHandler> conversationEventHandlers;
 
 	/**
 	 * Creates a InvocationEventBus along with an empty list of
 	 * {@link InvocationEventHandler}
 	 */
 	public DefaultInvocationEventBus() {
-		conversationEventHandlers = new ArrayList<InvocationEventHandler<InvocationEvent>>();
+		conversationEventHandlers = new ArrayList<InvocationEventHandler>();
 	}
 
-	private void registerInvocationEventHandler(InvocationEventHandler<InvocationEvent> conversationEventHandler) {
+	private void registerInvocationEventHandler(InvocationEventHandler conversationEventHandler) {
 		this.conversationEventHandlers.add(conversationEventHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * me.anichakra.poc.pilot.framework.instrumentation.aspect.InvocationEventBus#
-	 * fireInvocationEvent(me.anichakra.poc.pilot.framework.instrumentation.
-	 * InvocationEvent)
-	 */
+
 	@Override
 	public void fireInvocationEvent(InvocationEvent invocationEvent) {
-		for (InvocationEventHandler<InvocationEvent> conversationEventHandler : conversationEventHandlers) {
+		for (InvocationEventHandler conversationEventHandler : conversationEventHandlers) {
 			conversationEventHandler.handleInvocationEvent(invocationEvent);
 		}
 	}
@@ -56,39 +49,24 @@ public class DefaultInvocationEventBus implements InvocationEventBus {
 	 */
 	@Override
 	public void clearAll() {
-		for (InvocationEventHandler<InvocationEvent> conversationEventHandler : conversationEventHandlers) {
+		for (InvocationEventHandler conversationEventHandler : conversationEventHandlers) {
 			conversationEventHandler.clear();
 		}
 		InvocationEvent.clearCurrent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * me.anichakra.poc.pilot.framework.instrumentation.aspect.InvocationEventBus#
-	 * setInvocationEventHandlers(java.util.List)
-	 */
 	@Override
 	@Autowired
-	public void setInvocationEventHandlers(List<InvocationEventHandler<InvocationEvent>> conversationEventHandlers) {
-		for (InvocationEventHandler<InvocationEvent> conversationEventHandler : conversationEventHandlers) {
+	public void setInvocationEventHandlers(List<InvocationEventHandler> conversationEventHandlers) {
+		for (InvocationEventHandler conversationEventHandler : conversationEventHandlers) {
 			if (conversationEventHandler.isEnabled()) {
 				registerInvocationEventHandler(conversationEventHandler);
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * me.anichakra.poc.pilot.framework.instrumentation.aspect.InvocationEventBus#
-	 * unregisterInvocationEventHandler(me.anichakra.poc.pilot.framework.
-	 * instrumentation.InvocationEventHandler)
-	 */
 	@Override
-	public void unregisterInvocationEventHandler(InvocationEventHandler<InvocationEvent> conversationEventHandler) {
+	public void unregisterInvocationEventHandler(InvocationEventHandler conversationEventHandler) {
 		conversationEventHandlers.remove(conversationEventHandler);
 	}
 }

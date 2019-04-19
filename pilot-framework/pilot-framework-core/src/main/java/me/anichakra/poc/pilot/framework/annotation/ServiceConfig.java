@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Use this annotation to mark a service class which are part of framework and not ideally a business service or part of CQRS.
+ * Use this annotation to mark a class which is a nature of a bean containing
+ * some configuration attributes and does not involve in any business logic or
+ * processing. Each property of the class should be configured with a value in the application.yml file.
  * 
  * @author anirbanchakraborty
  *

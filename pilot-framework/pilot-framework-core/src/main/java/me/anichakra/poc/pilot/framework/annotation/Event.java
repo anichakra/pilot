@@ -9,21 +9,19 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Use this annotation to mark a service class which does not do any database
- * operations but other operations like calling external systems or processing
- * complex business logic. A Controller, a CommandService and a QueryService can
- * inject an ApplicationService. An ApplicationService annotated class cannot
- * inject CommandService, QueryService or Repository. It can only inject another
- * ApplicationService or FrameworkService or both.
+ * A method can be marked with this annotation to indicate that this method is
+ * special and is part of event-driven actions. The name of the event must be
+ * provided. The object is optional, default is {@link EventObject}.REQUEST.
+ * When set to REQUEST then the method argument will be used if set to RESPONSE
+ * then the return value of the method will be used.
  * 
  * @author anirbanchakraborty
  *
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Event {
-
 
 	@AliasFor("name")
 	String[] value() default {};
@@ -31,8 +29,5 @@ public @interface Event {
 	@AliasFor("value")
 	String[] name() default {};
 
-	EventObject object() default EventObject.RESPONSE;
-	
-	
-
+	EventObject object() default EventObject.REQUEST;
 }

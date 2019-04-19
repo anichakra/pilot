@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.newrelic.api.agent.NewRelic;
 
+import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;

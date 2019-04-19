@@ -2,12 +2,20 @@ package me.anichakra.poc.pilot.framework.instrumentation;
 
 import java.util.List;
 
+/**
+ * The InvocationEventBus is responsible to register
+ * {@link InvocationEventHandler}s and then can fire an {@link InvocationEvent}
+ * on all the handlers.
+ * 
+ * @author anirbanchakraborty
+ *
+ */
 public interface InvocationEventBus {
 
 	/**
-	 * Externally this Invocation will be fired. All the
-	 * {@link InvocationEventHandler}s will be handling the conversation to either
-	 * log it, or set to JMX MBean for monitoring etc.
+	 * All the {@link InvocationEventHandler}s will be handling the
+	 * {@link InvocationEvent} to do some meaningful work like publishing to
+	 * messaging engine, logging, emailing etc.
 	 */
 	void fireInvocationEvent(InvocationEvent invocationEvent);
 
@@ -19,14 +27,14 @@ public interface InvocationEventBus {
 	/**
 	 * Sets the {@link InvocationEventHandler}s
 	 * 
-	 * @param conversationEventHandlers
+	 * @param invocationEventHandler
 	 */
-	void setInvocationEventHandlers(List<InvocationEventHandler<InvocationEvent>> conversationEventHandlers);
+	void setInvocationEventHandlers(List<InvocationEventHandler> invocationEventHandler);
 
 	/**
 	 * Dynamically any {@link InvocationEventHandler} can be unregistered from the
 	 * bus.
 	 */
-	void unregisterInvocationEventHandler(InvocationEventHandler<InvocationEvent> conversationEventHandler);
+	void unregisterInvocationEventHandler(InvocationEventHandler invocationEventHandler);
 
 }

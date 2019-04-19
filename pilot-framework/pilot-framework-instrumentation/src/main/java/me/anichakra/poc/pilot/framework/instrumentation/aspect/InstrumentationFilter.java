@@ -28,7 +28,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 
 /**
- * The Filter class to intercepts any invocation came into the web application.
+ * The Filter class to intercepts any invocation made to the web application.
  * 
  * @author anichakra
  *

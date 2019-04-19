@@ -5,11 +5,11 @@ import java.util.List;
 import me.anichakra.poc.pilot.framework.annotation.Event;
 
 /**
- * The Invocation keeps all the information of a method call and is a part of a
- * Conversation.
+ * The InvocationMetric keeps all the information of a method call and is a part of a
+ * {@link Invocation}.
  * 
  * @author anichakra
- * @see InvocationEvent
+ * @see Invocation
  */
 public class InvocationMetric {
 

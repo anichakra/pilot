@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.stereotype.Component;
 
+import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;

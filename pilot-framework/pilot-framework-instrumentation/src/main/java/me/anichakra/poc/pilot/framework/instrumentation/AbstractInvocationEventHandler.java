@@ -1,15 +1,20 @@
-package me.anichakra.poc.pilot.framework.instrumentation.handler;
+package me.anichakra.poc.pilot.framework.instrumentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import me.anichakra.poc.pilot.framework.annotation.Event;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
-import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 
-public abstract class AbstractInvocationEventHandler implements InvocationEventHandler<InvocationEvent> {
+/**
+ * This is the base class of the InvocationEventHandler that event matching
+ * logic for {@link Event} annotated methods, and abstracts the
+ * handleInvocationEvent() method.
+ * 
+ * @author anirbanchakraborty
+ *
+ */
+public abstract class AbstractInvocationEventHandler implements InvocationEventHandler {
 	private String[] eventNames;
 	private boolean enabled;
 
@@ -42,9 +47,9 @@ public abstract class AbstractInvocationEventHandler implements InvocationEventH
 
 	protected boolean match(Event event) {
 		boolean flag = false;
-		if (event != null && event.value() != null && this.eventNames != null) {
+		if (event != null && event.name() != null && event.name().length > 0 && this.eventNames != null) {
 			for (String en : this.eventNames) {
-				for (String e : event.value()) {
+				for (String e : event.name()) {
 					if (e.equals(en)) {
 						flag = true;
 						break;

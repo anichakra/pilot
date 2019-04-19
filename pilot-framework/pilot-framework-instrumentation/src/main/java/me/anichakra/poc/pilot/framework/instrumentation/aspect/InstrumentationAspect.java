@@ -1,9 +1,5 @@
 package me.anichakra.poc.pilot.framework.instrumentation.aspect;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,15 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.InvocationContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RestController;
 
+import me.anichakra.poc.pilot.framework.annotation.ApplicationService;
+import me.anichakra.poc.pilot.framework.annotation.CommandService;
 import me.anichakra.poc.pilot.framework.annotation.Event;
+import me.anichakra.poc.pilot.framework.annotation.EventAnnotationDetectionProcessor;
+import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
+import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 
 /**
- * It intercepts a method of a class and creates {@link Invocation} instances
- * during start, completion and failure of a method call.
+ * It intercepts a method of a {@link RestController}, {@link CommandService},
+ * {@link QueryService}, {@link ApplicationService}, {@link FrameworkService}
+ * or {@link Repository} annotated class and creates {@link Invocation} instances during
+ * start, completion and failure of a method call.
  * 
  * @see InstrumentationConfiguration
  * @author anichakra
@@ -33,10 +38,11 @@ public class InstrumentationAspect {
 	@Autowired
 	private InvocationEventBus eventBus;
 
+	@Autowired
+	private EventAnnotationDetectionProcessor eventAnnotationDetectionProcessor;
+
 	private boolean enabled;
 	private long ignoreDurationInMillis = 10;
-
-	private Map<String, Event> signatureEventCache = new ConcurrentHashMap<>();
 
 	@Around("controllerClassMethods()")
 	public Object instrumentController(final ProceedingJoinPoint pjp) throws Throwable {
@@ -90,11 +96,7 @@ public class InstrumentationAspect {
 		String signature = pjp.getSignature().toLongString();
 		Invocation invocation = new Invocation(signature, layer);
 		invocation.setEventBus(eventBus);
-		Event event = signatureEventCache.get(signature);
-		if (event == null) {
-			event = findEvent(pjp);
-			signatureEventCache.put(signature, event); // if not extract and add
-		}
+		Event event = eventAnnotationDetectionProcessor.getEventAnnotation(signature);
 
 		invocation.setEvent(event); // set to invocation
 		invocation.start(pjp.getArgs());
@@ -110,26 +112,26 @@ public class InstrumentationAspect {
 		return outcome;
 	}
 
-	private Event findEvent(final ProceedingJoinPoint pjp)
-			throws ClassNotFoundException, NoSuchMethodException, SecurityException {
-		Method method = null;
-		String signature = pjp.getSignature().toLongString();
-		Class<?> type = pjp.getSignature().getDeclaringType();
-		String methodName = signature.substring(signature.lastIndexOf(type.getName()) + type.getName().length() + 1,
-				signature.indexOf("("));
-		String[] parameters = signature.substring(signature.indexOf("(") + 1, signature.lastIndexOf(")")).split(",");
-		if (parameters.length > 0) {
-			Class<?>[] parameterTypes = new Class[parameters.length];
-			int index = 0;
-			for (String parameter : parameters) {
-				parameterTypes[index++] = Class.forName(parameter.trim());
-			}
-			method = type.getDeclaredMethod(methodName, parameterTypes);
-		} else {
-			method = type.getDeclaredMethod(methodName);
-		}
-		return method.getAnnotation(Event.class);
-	}
+//	private Event findEvent(final ProceedingJoinPoint pjp)
+//			throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+//		Method method = null;
+//		String signature = pjp.getSignature().toLongString();
+//		Class<?> type = pjp.getSignature().getDeclaringType();
+//		String methodName = signature.substring(signature.lastIndexOf(type.getName()) + type.getName().length() + 1,
+//				signature.indexOf("("));
+//		String[] parameters = signature.substring(signature.indexOf("(") + 1, signature.lastIndexOf(")")).split(",");
+//		if (parameters.length > 0) {
+//			Class<?>[] parameterTypes = new Class[parameters.length];
+//			int index = 0;
+//			for (String parameter : parameters) {
+//				parameterTypes[index++] = Class.forName(parameter.trim());
+//			}
+//			method = type.getDeclaredMethod(methodName, parameterTypes);
+//		} else {
+//			method = type.getDeclaredMethod(methodName);
+//		}
+//		return method.getAnnotation(Event.class);
+//	}
 
 	public void setIgnoreDurationInMillis(int ignoreDurationInMillis) {
 		this.ignoreDurationInMillis = ignoreDurationInMillis;

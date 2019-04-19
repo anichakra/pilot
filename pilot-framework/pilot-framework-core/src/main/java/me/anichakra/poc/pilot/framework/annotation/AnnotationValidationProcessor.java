@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RestController;
+
+import me.anichakra.poc.pilot.framework.util.CoreUtils;
 
 /**
  * This bean post processor validates all the beans that are injected throughout
@@ -69,6 +70,8 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 	@Autowired(required = false)
 	BuildProperties buildProperties;
 
+	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
+
 	@Autowired
 	public AnnotationValidationProcessor(ConfigurableListableBeanFactory beanFactory) {
 		annotationValidationMap.put(RestController.class, restControllerValidation);
@@ -78,7 +81,6 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		annotationValidationMap.put(Microservice.class, microserviceValidation);
 	}
 
-	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
 
 	private Consumer<Object> microserviceValidation = b -> {
 		Class<?> clazz = ClassUtils.getUserClass(b.getClass());
@@ -86,7 +88,6 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		long methodCount = Arrays.asList(clazz.getDeclaredMethods()).stream().filter(m -> !m.isSynthetic()).count();
 
 		if (fieldCount > 0 || methodCount > 1) {
-
 			throw new InvalidAnnotationException(
 					"Microservice annotated class should not contain any field or non-static method", b);
 		}
@@ -139,33 +140,8 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 	private final void validateBean(Object b, Supplier<Stream<Field>> supplier, String validationMessage,
 			Class<? extends Annotation>... annotationClass) {
 		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class))
-				.allMatch(c -> isFieldAnnotatedWithEither(b, c, annotationClass)))
+				.allMatch(c -> CoreUtils.isFieldAnnotatedWithEither(b, c, annotationClass)))
 			throw new InvalidAnnotationException(validationMessage, b);
-	}
-
-	@SafeVarargs
-	private final boolean isFieldAnnotatedWithEither(final Object bean, final Field field,
-			final Class<? extends Annotation>... annotationClass) {
-		field.setAccessible(true);
-		boolean flag = false;
-		flag = Arrays.asList(annotationClass).stream().anyMatch(a -> {
-			try {
-				return field.getType().isAnnotationPresent(a)
-						|| ClassUtils.getUserClass(field.get(bean).getClass()).isAnnotationPresent(a)
-						|| isFramework(field.getType())
-						|| AopUtils.getTargetClass(field.get(bean)).isAnnotationPresent(a);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				return false;
-			}
-
-		});
-
-		return flag;
-
-	}
-
-	private boolean isFramework(final Class<?> clazz) {
-		return clazz.getName().startsWith(buildProperties.getGroup()) && clazz.getName().contains(".framework.");
 	}
 
 	private Supplier<Stream<Field>> validateInjection(Object b) {
@@ -179,12 +155,11 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())
-				&& !isFramework(bean.getClass())) {
+				&& !CoreUtils.isFramework(buildProperties.getGroup(), bean)) {
 			Annotation[] annotations = bean.getClass().getAnnotations();
 			Supplier<Stream<Annotation>> supplier = () -> Arrays.asList(annotations).stream();
 			supplier.get().filter(c -> annotationValidationMap.containsKey(c.annotationType()))
 					.forEach(c -> annotationValidationMap.get(c.annotationType()).accept(bean));
-
 		}
 		return bean;
 	}

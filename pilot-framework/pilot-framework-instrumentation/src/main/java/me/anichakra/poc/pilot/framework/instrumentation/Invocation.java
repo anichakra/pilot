@@ -114,7 +114,6 @@ public class Invocation {
 	 *                  happened.
 	 */
 	public void failed(Throwable rootCause) {
-
 		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
 		if (invocationEvent != null) {
 			invocationEvent.fail();
