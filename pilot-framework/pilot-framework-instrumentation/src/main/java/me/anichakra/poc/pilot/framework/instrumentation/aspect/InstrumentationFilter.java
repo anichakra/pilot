@@ -2,9 +2,9 @@ package me.anichakra.poc.pilot.framework.instrumentation.aspect;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import me.anichakra.poc.pilot.framework.instrumentation.Context;
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 
 /**
@@ -40,7 +41,9 @@ import me.anichakra.poc.pilot.framework.instrumentation.Layer;
 public class InstrumentationFilter implements Filter {
 
 	private final static Logger logger = LogManager.getLogger();
+	private final String SIGNATURE = this.getClass().getName() + ".doFilter()";
 	private boolean enabled;
+	private final static String INSTANCE_ID = UUID.randomUUID().toString();
 
 	@Autowired
 	private InvocationEventBus eventBus;
@@ -78,17 +81,31 @@ public class InstrumentationFilter implements Filter {
 	 */
 	protected void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		
 		Invocation invocation = null;
 		if (isEnabled()) {
 			String user = Optional.ofNullable(request.getUserPrincipal()).map(s -> s.getName())
 					.orElse(request.getHeader("X-USER-ID"));
 
-			String sessionId = Optional.ofNullable(request.getSession(false)).map(s -> s.getId()).orElse("");
+			String sessionId = Optional.ofNullable(request.getSession(false)).map(s -> s.getId())
+					.orElse(request.getRequestedSessionId());
 			Map<String, String[]> parameters = request.getParameterMap();
-			invocation = createInvocation(request, user, sessionId, parameters);
-            invocation.setEventBus(eventBus);
+		   invocation = new Invocation(Layer.FILTER, eventBus);
+			invocation.setEventBus(eventBus);
+			String uri = "[" +  request.getMethod() + "]" + request.getRequestURI();
+			String remoteAddress = getRemoteAddress(request);
+			String localAddress = request.getLocalAddr() + ":" + request.getLocalPort() + " "
+					+ Optional.ofNullable(System.getenv("HOSTNAME")).orElse("");
+			invocation.addMetric(InvocationMetric.INSTANCE_ID, INSTANCE_ID);
+			invocation.addMetric(InvocationMetric.SESSION_ID, sessionId)
+					.addMetric(InvocationMetric.CORRELATION_ID, request.getHeader("INSTRUMENTATION_CORRELATION"))
+					.addMetric(InvocationMetric.REMOTE_ADDRESS, remoteAddress)
+					.addMetric(InvocationMetric.LOCAL_ADDRESS,
+							localAddress)
+					.addMetric(InvocationMetric.USER_ID, user).addMetric(InvocationMetric.URI,  uri);
 			try {
-				invocation.start(null);
+				invocation.start(SIGNATURE, getParameters(parameters));
+				
 			} catch (Exception e) {
 				logger.error("Exception in context.proceed() on start", e);
 			}
@@ -98,7 +115,7 @@ public class InstrumentationFilter implements Filter {
 		} finally {
 			if (isEnabled()) {
 				try {
-					invocation.end(response.getStatus(), 0);
+					invocation.end(response.getStatus());
 				} catch (Exception e) {
 					logger.error("Exception in context.proceed() on completion", e);
 				}
@@ -106,36 +123,22 @@ public class InstrumentationFilter implements Filter {
 		}
 	}
 
-	private Invocation createInvocation(HttpServletRequest request, String user, String sessionId,
-			Map<String, String[]> parameters) {
-		String uri = request.getRequestURI();
-		String remoteAddress = getRemoteAddress(request);
-		String localAddress = request.getLocalAddr() + ":" + request.getLocalPort();
-		Invocation invocation = new Invocation(this.getClass() + ".doFilter()", Layer.FILTER);
-		invocation.getContextData().put(Context.CONVERSATION, sessionId);
-		invocation.getContextData().put(Context.SOURCE, localAddress);
-		invocation.getContextData().put(Context.TARGET, remoteAddress);
-		invocation.getContextData().put(Context.PATH, uri);
-		invocation.getContextData().put(Context.USER, user);
-		invocation.getContextData().put(Context.PARAMETER, getParameters(parameters));
-		invocation.getContextData().put(Context.CORRELATION,
-				request.getHeader("instrumentation.conversation"));
-
-		return invocation;
-	}
-
-	private String getParameters(Map<String, String[]> parameters) {
-		if (parameters == null) {
-			return "";
+	private Object[] getParameters(Map<String, String[]> parameters) {
+		StringBuilder sb = new StringBuilder();
+		Optional.ofNullable(parameters).ifPresent(p -> {
+			p.entrySet().stream().forEach(s -> sb.append(s.getKey()).append("=").append(Arrays.toString(s.getValue())));
+			sb.append(";");
+		});
+		String returnVal = sb.toString();
+		if(returnVal.endsWith(";")) {
+			sb.deleteCharAt(sb.length()-1);
 		}
-		Map<String, String> map1 = new HashMap<>();
-		parameters.entrySet().stream().forEach(s -> map1.put(s.getKey(), Arrays.toString(s.getValue())));
-		return map1.toString();
+		return sb.toString().split(";");
 	}
 
 	public void destroy() {
 	}
-	
+
 	private String getRemoteAddress(HttpServletRequest request) {
 		return Optional.ofNullable(request.getHeader("X-Forwarded-For")).orElse(request.getRemoteAddr());
 	}

@@ -1,15 +1,14 @@
 package me.anichakra.poc.pilot.framework.instrumentation;
 
-import static me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.SEPARATOR;
+import static me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem.SEPARATOR;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
 
 /**
  * InvocationEvent is a piece of information about an invocation that stays in
@@ -19,8 +18,8 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
  * request creates a invocation which is persisted in {@link ThreadLocal}.
  * <p>
  * The invocation relates to a particular execution or thread with multiple
- * {@link InvocationMetric} involved in it. Each Invocation instance maintains a
- * stack of Invocation. Each invocation can be considered to be a method call.
+ * {@link InvocationLineItem} involved in it. Each Invocation instance maintains
+ * a stack of Invocation. Each invocation can be considered to be a method call.
  * For e.g. a invocation starts from a method a() which in turn calls another
  * method b() which in turns call third method c(). So the Invocation instance
  * stacks a() as Invocation, followed by b() and c() when individual method is
@@ -45,35 +44,33 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
  *
  */
 public class InvocationEvent {
-	private String localAddress = "";
-	private String remoteAddress = "";
+
+	Map<InvocationMetric, String> metricMap = new EnumMap<>(InvocationMetric.class);
 	private String id;
-	private String eventId;
-	private String path = "";
-	private String user = "";
-	private String correlationId = "";
 	private boolean markExceptionInExecution;
 	private Throwable lastRootCause = null;
-	private String parameter;
-
-	private Deque<InvocationMetric> invocationStack = new ArrayDeque<>();
+	private Deque<InvocationLineItem> invocationStack = new ArrayDeque<>();
 	private Set<String> ignoreSignature = new HashSet<>();
 	private static final ThreadLocal<InvocationEvent> CURRENT = new ThreadLocal<>();
 
 	/**
-	 * Creates a Invocation with an id, event id, path and user. If Id is sent as
-	 * null a random id is created and assigned to the invocation.
+	 * Creates a Invocation with a eventId.
 	 * 
 	 * @param id
-	 * @param eventId
-	 * @param path
-	 * @param user
 	 */
-	InvocationEvent(String id, String eventId, String path, String user) {
-		this.id = id == null ? UUID.randomUUID().toString() : id;
-		this.eventId = eventId;
-		this.path = path;
-		this.user = user;
+	InvocationEvent(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * Add metric to this Invocation instance
+	 * 
+	 * @param metric
+	 * @param value
+	 * @return
+	 */
+	public void addMetric(InvocationMetric metric, String value) {
+		metricMap.put(metric, value);
 	}
 
 	/**
@@ -104,7 +101,7 @@ public class InvocationEvent {
 
 	/**
 	 * Marks this invocation that an exception has occurred in one of the
-	 * {@link InvocationMetric}s.
+	 * {@link InvocationLineItem}s.
 	 * 
 	 * @param markExceptionInExecution
 	 */
@@ -121,49 +118,29 @@ public class InvocationEvent {
 	}
 
 	/**
-	 * 
-	 * @return The correlation id if its present
-	 */
-	public String getCorrelationId() {
-		return correlationId;
-	}
-
-	/**
-	 * Sets the correlation id to the invocation. The correlation id is the
-	 * invocation id of a parent invocation. For e.g if a web application is
-	 * executing a invocation which invokes a ReST call to another application, then
-	 * the invocation id is passed in the ReST call, so that the new invocation that
-	 * is starting in the second application exposing ReST service will send the
-	 * invocation id as correlation id to its Invocation instance.
-	 * 
-	 * @param correlationId
-	 */
-	public void setCorrelationId(String correlationId) {
-		this.correlationId = correlationId;
-	}
-
-	/**
 	 * Mark this Invocation instance as ignore. Hence no further invocation will be
 	 * stacked.
 	 */
 	public void markIgnore() {
-		InvocationMetric invocation = getCurrentMetric();
-		ignoreSignature.add(invocation.getSignature());
+		InvocationLineItem invocationLineItem = getCurrentLineItem();
+		ignoreSignature.add(invocationLineItem.getSignature());
 	}
+
+	
 
 	/**
 	 * 
 	 * @return true if the invocation is already marked to be ignored.
 	 */
 	public boolean isAlreadyMarkedIgnore() {
-		InvocationMetric invocation = getCurrentMetric();
-		if (invocation == null)
+		InvocationLineItem invocationLineItem = getCurrentLineItem();
+		if (invocationLineItem == null)
 			return false;
-		return ignoreSignature.contains(invocation.getSignature());
+		return ignoreSignature.contains(invocationLineItem.getSignature());
 	}
 
 	/**
-	 * Mark the {@link InvocationMetric} in a invocation to ignore if execution
+	 * Mark the {@link InvocationLineItem} in a invocation to ignore if execution
 	 * duration of the invocation is less than specified. This is to ignore stacking
 	 * insignificant invocations which are repetitive which are not important for
 	 * profiling.
@@ -172,7 +149,7 @@ public class InvocationEvent {
 	 */
 	public void markIgnore(long durationToIgnore) {
 		InvocationEvent event = InvocationEvent.getCurrent();
-		InvocationMetric invocation = event.getCurrentMetric();
+		InvocationLineItem invocation = event.getCurrentLineItem();
 		if (invocation.getDuration() < durationToIgnore) {
 			event.markIgnore();
 		}
@@ -186,11 +163,11 @@ public class InvocationEvent {
 	}
 
 	/**
-	 * Get the current {@link InvocationMetric} instance
+	 * Get the current {@link InvocationLineItem} instance
 	 * 
 	 * @return
 	 */
-	public InvocationMetric getCurrentMetric() {
+	public InvocationLineItem getCurrentLineItem() {
 		return invocationStack.getFirst();
 	}
 
@@ -203,64 +180,67 @@ public class InvocationEvent {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(id).append(SEPARATOR).append(remoteAddress).append(SEPARATOR).append(localAddress)
-				.append(SEPARATOR).append(getEventId()).append(SEPARATOR).append(getCorrelationId()).append(SEPARATOR)
-				.append(user).append(SEPARATOR).append(path).append(SEPARATOR).append(parameter).append(SEPARATOR)
-				.append(getLevel()).append(SEPARATOR).append(getCurrentMetric());
-
-		return builder.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(id).append(SEPARATOR);
+		metricMap.entrySet().forEach(e->sb.append(e.getValue()).append(SEPARATOR));
+		sb.append(getCurrentLineItem());
+		return sb.toString();
 	}
 
 	/**
-	 * This method creates an {@link InvocationMetric} object and set the class and
-	 * method signature including method parameters to it. It pushes the invocation
-	 * event instance to the stack.
+	 * This method creates an {@link InvocationLineItem} object and set the class
+	 * and method signature including method parameters to it. It pushes the
+	 * invocation event instance to the stack.
+	 * 
+	 * @param arguments
 	 * 
 	 * @param signature
 	 * @param args
 	 */
-	public void start(String signature, Object[] args) {
-		InvocationMetric invocation = new InvocationMetric();
-		invocation.setSignature(signature);
-		if (args != null) {
-			invocation.setArguments(Arrays.asList(args));
+	public void start(String signature, Object[] arguments) {
+		InvocationLineItem invocationLineItem = new InvocationLineItem();
+		invocationLineItem.setSignature(signature);
+		if (arguments != null) {
+			invocationLineItem.setArguments(arguments);
 		}
-		invocation.setStart(System.currentTimeMillis());
-		invocation.setStatus(Status.S);
-		invocationStack.push(invocation);
+		invocationLineItem.setStart(System.currentTimeMillis());
+		invocationLineItem.setStatus(InvocationStatus.Started);
+		invocationStack.push(invocationLineItem);
 	}
 
 	/**
-	 * Gets the current {@link InvocationMetric} instance and mark it as failed.
+	 * Gets the current {@link InvocationLineItem} instance and mark it as failed.
 	 */
 	public void fail() {
-		InvocationMetric invocation = this.getCurrentMetric();
-		invocation.setEnd(System.currentTimeMillis());
-		invocation.setStatus(Status.F);
+		InvocationLineItem invocationLineItem = this.getCurrentLineItem();
+		invocationLineItem.setEnd(System.currentTimeMillis());
+		invocationLineItem.setStatus(InvocationStatus.Failed);
 		if (!this.isMarkExceptionInExecution()) {
 			this.setMarkExceptionInExecution(true);
 		}
 	}
 
 	/**
-	 * Gets the current {@link InvocationMetric} instance and mark it as completed.
+	 * Gets the current {@link InvocationLineItem} instance and mark it as
+	 * completed.
+	 * 
+	 * @param outcome
 	 */
 	public void complete(Object outcome) {
-		InvocationEvent invocation = InvocationEvent.getCurrent();
-		InvocationMetric invocationMetric = invocation.getCurrentMetric();
-		invocationMetric.setEnd(System.currentTimeMillis());
-		invocationMetric.setOutcome(outcome);
-		invocationMetric.setStatus(Status.C);
-		invocation.setMarkExceptionInExecution(false);
+		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		InvocationLineItem invocationLineItem = invocationEvent.getCurrentLineItem();
+		invocationLineItem.setEnd(System.currentTimeMillis());
+		invocationLineItem.setOutcome(outcome);
+		invocationLineItem.setStatus(InvocationStatus.Completed);
+		invocationEvent.setMarkExceptionInExecution(false);
 	}
 
 	/**
 	 * 
 	 * @return The event id
 	 */
-	public String getEventId() {
-		return this.eventId;
+	public String getId() {
+		return this.id;
 	}
 
 	/**
@@ -280,7 +260,7 @@ public class InvocationEvent {
 	 */
 	public Throwable getRootCause() {
 		InvocationEvent invocation = InvocationEvent.getCurrent();
-		InvocationMetric invocationMetric = invocation.getCurrentMetric();
+		InvocationLineItem invocationMetric = invocation.getCurrentLineItem();
 		return invocationMetric.getRootCause();
 	}
 
@@ -291,63 +271,15 @@ public class InvocationEvent {
 	 */
 	public void setRootCause(Throwable rootCause) {
 		InvocationEvent invocation = InvocationEvent.getCurrent();
-		InvocationMetric invocationMetric = invocation.getCurrentMetric();
+		InvocationLineItem invocationMetric = invocation.getCurrentLineItem();
 		if (lastRootCause != null && lastRootCause.equals(rootCause))
 			return;
 		invocationMetric.setRootCause(rootCause);
 		lastRootCause = rootCause;
 	}
-
-	/**
-	 * Sets the parameter to the invocation
-	 * 
-	 * @param parameter
-	 */
-	public void setParameter(String parameter) {
-		this.parameter = parameter;
+	
+	public Map<InvocationMetric, String> getMetricMap() {
+		return metricMap;
 	}
-
-	/**
-	 * Sets the local address to the invocation
-	 * 
-	 * @param localAddress
-	 */
-	public void setLocalAddress(String localAddress) {
-		this.localAddress = localAddress;
-	}
-
-	/**
-	 * Sets the remote address to the invocation
-	 * 
-	 * @param remoteAddress
-	 */
-	public void setRemoteAddress(String remoteAddress) {
-		this.remoteAddress = remoteAddress;
-	}
-
-	public String getLocalAddress() {
-		return localAddress;
-	}
-
-	public String getRemoteAddress() {
-		return remoteAddress;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public String getParameter() {
-		return parameter;
-	}
-
 
 }

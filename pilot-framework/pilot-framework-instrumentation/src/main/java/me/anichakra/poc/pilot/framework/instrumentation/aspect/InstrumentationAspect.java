@@ -20,6 +20,7 @@ import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 
 /**
  * It intercepts a method of a {@link RestController}, {@link CommandService},
@@ -94,12 +95,11 @@ public class InstrumentationAspect {
 		if (!enabled)
 			return pjp.proceed();
 		String signature = pjp.getSignature().toLongString();
-		Invocation invocation = new Invocation(signature, layer);
+		Invocation invocation = new Invocation(layer, eventBus);
 		invocation.setEventBus(eventBus);
 		Event event = eventAnnotationDetectionProcessor.getEventAnnotation(signature);
-
 		invocation.setEvent(event); // set to invocation
-		invocation.start(pjp.getArgs());
+		invocation.start(signature, pjp.getArgs());
 
 		Object outcome = null;
 		try {
@@ -108,7 +108,8 @@ public class InstrumentationAspect {
 			invocation.failed(t);
 			throw t;
 		}
-		invocation.end(outcome, this.ignoreDurationInMillis);
+		invocation.setDurationToIgnore(this.ignoreDurationInMillis);
+		invocation.end(outcome);
 		return outcome;
 	}
 

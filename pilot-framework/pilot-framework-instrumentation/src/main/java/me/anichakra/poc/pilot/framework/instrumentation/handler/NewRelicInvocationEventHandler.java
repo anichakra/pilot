@@ -12,6 +12,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventH
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 
 /**
@@ -30,7 +31,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 public class NewRelicInvocationEventHandler extends AbstractInvocationEventHandler {
 
 	/**
-	 * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}
+	 * Writes current {@link InvocationLineItem} of the passed {@link InvocationEvent}
 	 * object to log in info mode. Also put the entire conversation instance to
 	 * {@link ThreadContext} with a key 'event'.
 	 * <p>
@@ -40,7 +41,7 @@ public class NewRelicInvocationEventHandler extends AbstractInvocationEventHandl
 	@Override
 	public void handleInvocationEvent(InvocationEvent event) {
 		NewRelic.addCustomParameter("transactionId",
-				Optional.ofNullable(event.getCorrelationId()).orElse(event.getEventId()));
+				Optional.ofNullable(event.getMetricMap().get(InvocationMetric.CORRELATION_ID)).orElse(event.getId()));
 	}
 
 	/**

@@ -12,8 +12,8 @@ import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventH
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric.Status;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationStatus;
 
 /**
  * This {@link InvocationEventHandler} handles the {@link InvocationEvent} and
@@ -46,13 +46,15 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 
 	@Override
 	public void handleInvocationEvent(InvocationEvent invocationEvent) {
-		Event event = invocationEvent.getCurrentMetric().getEvent();
-		InvocationMetric metric = invocationEvent.getCurrentMetric();
+		Event event = invocationEvent.getCurrentLineItem().getEvent();
+		InvocationLineItem metric = invocationEvent.getCurrentLineItem();
 		boolean matchFlag = match(event);
-		if (matchFlag && metric.getStatus().equals(Status.S) && event.object().equals(EventObject.REQUEST)) {
+		if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Started) && 
+				event.object().equals(EventObject.REQUEST)) {
 			logger.info(metric.getArguments());
 
-		} else if (matchFlag && metric.getStatus().equals(Status.C) && event.object().equals(EventObject.RESPONSE)) {
+		} else if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Completed) 
+				&& event.object().equals(EventObject.RESPONSE)) {
 			logger.info(metric.getOutcome());
 
 		}

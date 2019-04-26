@@ -4,75 +4,77 @@ Configutation:
   Properties:
     Property:
       name: log-path
-      value: "~/logs"
+      value: "/Users/anirbanchakraborty/logs"
  
   Appenders:
  
     Console:
-      name: Console_Appender
+      name: Console
       target: SYSTEM_OUT
       PatternLayout:
         pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
  
-    File:
-      name: File_Appender
-      fileName: ${log-path}/logfile.log
-      PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
- 
     RollingFile:
-      - name: RollingFile_Appender
-        fileName: ${log-path}/rollingfile.log
-        filePattern: "logs/archive/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      - name: ApplicationLog
+        fileName: ${log-path}/application.log
+        filePattern: "logs/archive/application.log.%d{yyyy-MM-dd-hh-mm}.gz"
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
         Policies:
           SizeBasedTriggeringPolicy:
-            size: 1 KB
+            size: 10 MB
         DefaultRollOverStrategy:
           max: 30
-      - name: Instrumentation_Appender
+      - name: InstrumentationLog
         fileName: ${log-path}/instrumentation.log
         filePattern: "logs/archive/instrumentation.log.%d{yyyy-MM-dd-hh-mm}.gz"
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
         Policies:
           SizeBasedTriggeringPolicy:
-            size: 10MB
+            size: 10 MB
         DefaultRollOverStrategy:
           max: 300
- 
+      - name: InstrumentationAws
+        fileName: ${log-path}/aws.log
+        filePattern: "logs/archive/aws.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 10 MB
+        DefaultRollOverStrategy:
+          max: 300 
+          
   Loggers:
       Root:
         level: debug
         AppenderRef:
-          - ref: Console_Appender
+          - ref: Console
       Logger:
         - name: me.anichakra.poc.pilot.vehicle
           additivity: false
           level: debug
           AppenderRef:
-            - ref: Console_Appender
+            - ref: Console
               level: info
-            - ref: File_Appender
-              level: error
-            - ref: RollingFile_Appender
+            - ref: ApplicationLog
               level: debug
         - name: INSTRUMENTATION_LOG
           additivity: false
           level: INFO
           AppenderRef:
-            - ref: Console_Appender
+            - ref: Console
               level: info
-            - ref: Instrumentation_Appender
+            - ref: InstrumentationLog
               level: info
         - name: INSTRUMENTATION_AWSSNS
           additivity: false
           level: INFO
           AppenderRef:
-            - ref: Console_Appender
+            - ref: Console
               level: info
-            - ref: Instrumentation_Appender
+            - ref: InstrumentationAws
               level: info
 
               

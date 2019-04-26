@@ -1,5 +1,7 @@
 package me.anichakra.poc.pilot.framework.instrumentation.handler;
 
+import static me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem.SEPARATOR;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -11,7 +13,8 @@ import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventH
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationStatus;
 
 /**
  * Log4j2 Implementation of {@link InvocationEventHandler} for writing log. When
@@ -29,44 +32,54 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	public static final String LOGGER_NAME = "INSTRUMENTATION_LOG";
 	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
+	private boolean ignoreParameters;
+	private boolean ignoreExceptionStack;
+	private boolean ignoreOutcome;
+	private boolean limited;
 
-	public void setIgnoreUriVariables(boolean ignoreUriVariables) {
-		this.ignoreUriVariables = ignoreUriVariables;
-	}
-
-	public void setIgnoreArguments(boolean ignoreArguments) {
-		this.ignoreArguments = ignoreArguments;
+	public void setIgnoreParameters(boolean ignoreParameters) {
+		this.ignoreParameters = ignoreParameters;
 	}
 
 	public void setIgnoreExceptionStack(boolean ignoreExceptionStack) {
 		this.ignoreExceptionStack = ignoreExceptionStack;
 	}
 
-	private boolean ignoreUriVariables;
-	private boolean ignoreArguments;
-	private boolean ignoreExceptionStack;
+	public void setIgnoreOutcome(boolean ignoreOutcome) {
+		this.ignoreOutcome = ignoreOutcome;
+	}
 
 	/**
-	 * Writes current {@link InvocationMetric} of the passed {@link InvocationEvent}
-	 * object to log in info mode. Also put the entire conversation instance to
-	 * {@link ThreadContext} with a key 'event'.
+	 * Writes current {@link InvocationLineItem} of the passed
+	 * {@link InvocationEvent} object to log in info mode. Also put the entire
+	 * conversation instance to {@link ThreadContext} with a key 'event'.
 	 * <p>
 	 * The corresponding log4j pattern layout recommended is:
 	 * <code> pattern="%d [%t] %-5p %c-%X{event};%m%n" </code>
 	 */
 	@Override
 	public void handleInvocationEvent(InvocationEvent event) {
-		if (!ignoreUriVariables)
-			event.setParameter(null);
-
-		InvocationMetric metric = event.getCurrentMetric();
-		if (ignoreArguments)
+		StringBuilder sb = new StringBuilder();
+		InvocationLineItem metric = event.getCurrentLineItem();
+		if (ignoreParameters)
 			metric.setArguments(null);
 
+		if (ignoreOutcome)
+			metric.setOutcome(null);
+		sb.append(event.getId()).append(SEPARATOR);
+
+		if (!limited || (metric.getInvocationStatus().equals(InvocationStatus.Started))){ // for limited the completed
+																							// and failed status
+																							// invocation line items
+																							// should show limited
+																							// metrics.
+			event.getMetricMap().entrySet().forEach(e -> sb.append(e.getValue()).append(SEPARATOR));
+		}
+		sb.append(metric);
 		if (event.getRootCause() == null)
-			logger.info(event);
+			logger.info(sb);
 		else
-			logger.info(event, extractRootCause(event.getRootCause()));
+			logger.info(sb, extractRootCause(event.getRootCause()));
 	}
 
 	private Throwable extractRootCause(Throwable rootCause) {
@@ -81,6 +94,13 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	 */
 	public void clear() {
 		ThreadContext.clearStack();
+	}
+
+	/**
+	 * @param trim the trim to set
+	 */
+	public void setLimited(boolean trim) {
+		this.limited = limited;
 	}
 
 }

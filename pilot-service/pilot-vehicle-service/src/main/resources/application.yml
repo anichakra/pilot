@@ -44,9 +44,10 @@ instrumentation:
        - SERVICE
        - REPOSITORY
       event-names: all
-      ignore-uri-variables: false
-      ignore-arguments: false
+      ignore-parameters: false
+      ignore-outcome: true
       ignore-exception-stack: true
+      limited: false
     new-relic:
       event-names: none   
     aws-sns:

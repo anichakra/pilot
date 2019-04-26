@@ -36,7 +36,7 @@ public enum Context {
      * The conversation id that is generated when an event is starting. This conversation id is
      * passed to another application or system and there it becomes the CORRELATION id.
      */
-    CONVERSATION,
+    SESSION_ID,
 
     /**
      * The entire event data containing many event related information

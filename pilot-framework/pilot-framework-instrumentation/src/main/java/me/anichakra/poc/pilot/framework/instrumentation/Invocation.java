@@ -1,7 +1,5 @@
 package me.anichakra.poc.pilot.framework.instrumentation;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,46 +17,18 @@ import me.anichakra.poc.pilot.framework.annotation.Event;
 public class Invocation {
 	private InvocationEventBus invocationEventBus;
 
-	private Map<Context, String> contextData;
-
-	public Map<Context, String> getContextData() {
-		return contextData;
-	}
-
-	private String signature;
-
 	private Event event;
 
 	private Layer layer;
 
-	/**
-	 * Creates an invocation from a signature (class name and method name together)
-	 * 
-	 * @param signature
-	 */
-	public Invocation(String signature, Layer layer) {
-		this.signature = signature;
+	private long durationToIgnore;
+
+	public Invocation(Layer layer, InvocationEventBus invocationEventBus) {
 		this.layer = layer;
-		invocationEventBus = new DefaultInvocationEventBus();
-		this.contextData = new HashMap<Context, String>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String get(Object key) {
-				if (this.containsKey(key)) {
-					return super.get(key);
-				}
-
-				if (key.equals(Context.EVENT)) {
-					InvocationEvent invocationEvent = InvocationEvent.getCurrent();
-					if (invocationEvent != null) {
-						return invocationEvent.getEventId();
-					}
-				}
-				return null;
-			}
-		};
+		this.invocationEventBus = invocationEventBus;
+		InvocationEvent invocationEvent = Optional.ofNullable(InvocationEvent.getCurrent())
+				.orElse(new InvocationEvent(UUID.randomUUID().toString()));
+		InvocationEvent.setCurrent(invocationEvent);
 	}
 
 	/**
@@ -68,17 +38,13 @@ public class Invocation {
 	 * @param params Method parameters, HTTP request parameters, headers etc.
 	 * @return
 	 */
-	public void start(Object[] params) {
+	public void start(String signature, Object[] parameters) {
 		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
-		if (invocationEvent == null) {
-			invocationEvent = createInvocationEvent();
-		} else {
-			if (invocationEvent.getLevel() < 0) {
-				invocationEventBus.clearAll();
-			}
-		}
-		invocationEvent.start(signature, params);
-		InvocationMetric currentInvocationMetric = invocationEvent.getCurrentMetric();
+//		if (invocationEvent.getLevel() < 0) {
+//			invocationEventBus.clearAll();
+//		}
+		invocationEvent.start(signature, parameters);
+		InvocationLineItem currentInvocationMetric = invocationEvent.getCurrentLineItem();
 		Optional.ofNullable(currentInvocationMetric).ifPresent(c -> c.setEvent(event));
 
 		if (!invocationEvent.isAlreadyMarkedIgnore()) {
@@ -89,9 +55,10 @@ public class Invocation {
 	/**
 	 * Ends an invocation. If the duration of the invocation is too small, not need
 	 * to consider.
-	 * @param outcome 
+	 * 
+	 * @param outcome
 	 */
-	public void end(Object outcome, long durationToIgnore) {
+	public void end(Object outcome) {
 		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
 		if (invocationEvent != null) {
 			invocationEvent.complete(outcome);
@@ -127,19 +94,6 @@ public class Invocation {
 
 	}
 
-	private InvocationEvent createInvocationEvent() {
-		InvocationEvent invocationEvent;
-		invocationEvent = new InvocationEvent((String) contextData.get(Context.CONVERSATION),
-				UUID.randomUUID().toString(), (String) contextData.get(Context.PATH),
-				(String) contextData.get(Context.USER));
-		invocationEvent.setRemoteAddress((String) contextData.get(Context.SOURCE));
-		invocationEvent.setLocalAddress((String) contextData.get(Context.TARGET));
-		invocationEvent.setCorrelationId((String) contextData.get(Context.CORRELATION));
-		InvocationEvent.setCurrent(invocationEvent);
-
-		return invocationEvent;
-	}
-
 	/**
 	 * Recursive method that traverses through a {@link Throwable} and finds the
 	 * leaf level root cause.
@@ -171,6 +125,16 @@ public class Invocation {
 
 	public Layer getLayer() {
 		return layer;
+	}
+
+	public Invocation addMetric(InvocationMetric metric, String value) {
+		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		invocationEvent.addMetric(metric, value);
+		return this;
+	}
+
+	public void setDurationToIgnore(long ignoreDurationInMillis) {
+		this.durationToIgnore = ignoreDurationInMillis;
 	}
 
 }
