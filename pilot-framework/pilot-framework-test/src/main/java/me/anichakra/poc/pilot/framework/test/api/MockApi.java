@@ -4,6 +4,7 @@ public interface MockApi {
 
 	/**
 	 * Mocks a ReST API post URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -12,6 +13,7 @@ public interface MockApi {
 
 	/**
 	 * Mocks a ReST API delete URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -20,6 +22,7 @@ public interface MockApi {
 
 	/**
 	 * Mocks a ReST API get URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -28,6 +31,7 @@ public interface MockApi {
 
 	/**
 	 * Mocks a ReST API put URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception

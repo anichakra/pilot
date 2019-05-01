@@ -15,5 +15,4 @@ public class TestInitializationException extends RuntimeException {
 		super(message + ":" + clazz.getName());
 	}
 
-	
 }

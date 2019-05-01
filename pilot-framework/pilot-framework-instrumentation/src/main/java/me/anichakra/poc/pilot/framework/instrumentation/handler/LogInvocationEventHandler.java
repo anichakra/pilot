@@ -68,7 +68,7 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 			metric.setOutcome(null);
 		sb.append(event.getId()).append(SEPARATOR);
 
-		if (!limited || (metric.getInvocationStatus().equals(InvocationStatus.Started))){ // for limited the completed
+		if (!limited || (metric.getInvocationStatus().equals(InvocationStatus.Started))) { // for limited the completed
 																							// and failed status
 																							// invocation line items
 																							// should show limited

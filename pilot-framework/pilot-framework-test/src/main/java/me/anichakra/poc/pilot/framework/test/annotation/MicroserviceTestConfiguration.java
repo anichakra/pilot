@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Profile;
 
 /**
  * Annotate with this on all microservice test configuration classes. Test
- * configuration classes are required if mocking of a service or repository
- * bean is required, that is injected somewhere in the dependency chain.
+ * configuration classes are required if mocking of a service or repository bean
+ * is required, that is injected somewhere in the dependency chain.
  * 
  * @author anirbanchakraborty
  *

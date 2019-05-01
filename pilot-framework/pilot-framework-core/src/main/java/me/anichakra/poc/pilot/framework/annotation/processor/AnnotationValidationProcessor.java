@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.annotation;
+package me.anichakra.poc.pilot.framework.annotation.processor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -21,6 +21,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.anichakra.poc.pilot.framework.annotation.ApplicationService;
+import me.anichakra.poc.pilot.framework.annotation.CommandService;
+import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
+import me.anichakra.poc.pilot.framework.annotation.Microservice;
+import me.anichakra.poc.pilot.framework.annotation.QueryService;
+import me.anichakra.poc.pilot.framework.annotation.ServiceConfig;
 import me.anichakra.poc.pilot.framework.util.CoreUtils;
 
 /**
@@ -72,6 +78,10 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 
 	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
 
+	/**
+	 * 
+	 * @param beanFactory
+	 */
 	@Autowired
 	public AnnotationValidationProcessor(ConfigurableListableBeanFactory beanFactory) {
 		annotationValidationMap.put(RestController.class, restControllerValidation);
@@ -152,6 +162,9 @@ public class AnnotationValidationProcessor implements BeanPostProcessor {
 		return supplier;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())

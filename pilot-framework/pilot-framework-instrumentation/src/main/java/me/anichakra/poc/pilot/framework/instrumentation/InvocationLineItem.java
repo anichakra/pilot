@@ -6,16 +6,14 @@ import java.util.List;
 import me.anichakra.poc.pilot.framework.annotation.Event;
 
 /**
- * The InvocationLineItem keeps all the information of a method call and is a part of a
- * {@link Invocation}.
+ * The InvocationLineItem keeps all the information of a method call and is a
+ * part of a {@link Invocation}.
  * 
  * @author anichakra
  * @see Invocation
  */
 public class InvocationLineItem {
 
-	
-	
 	/**
 	 * The separator for each attribute of this instance. This is used in the
 	 * {@link #toString()} method.
@@ -121,14 +119,14 @@ public class InvocationLineItem {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(signature).append(SEPARATOR);
-		
-		if (getInvocationStatus().equals(InvocationStatus.Started)) {		
+
+		if (getInvocationStatus().equals(InvocationStatus.Started)) {
 			builder.append(SEPARATOR).append(getInvocationStatus());
 			if (getArguments() != null) {
 				String args = strip(getArguments());
 				builder.append(SEPARATOR).append(args);
 			}
-		} else if(getInvocationStatus().equals(InvocationStatus.Completed)) {
+		} else if (getInvocationStatus().equals(InvocationStatus.Completed)) {
 			builder.append(SEPARATOR).append(getInvocationStatus());
 			builder.append(SEPARATOR).append(getDuration());
 			if (getOutcome() != null) {
@@ -145,7 +143,7 @@ public class InvocationLineItem {
 	}
 
 	private String strip(Object[] arguments) {
-	    return Arrays.toString(arguments);
+		return Arrays.toString(arguments);
 	}
 
 	/**
@@ -173,18 +171,18 @@ public class InvocationLineItem {
 	}
 
 	public void setOutcome(Object outcome) {
-		this.outcome=outcome;
+		this.outcome = outcome;
 	}
-	
+
 	public Object getOutcome() {
 		return outcome;
 	}
 
 	public void setSignature(String signature) {
-	  this.signature =signature;
-		
+		this.signature = signature;
+
 	}
-	
+
 	public String getSignature() {
 		return this.signature;
 	}

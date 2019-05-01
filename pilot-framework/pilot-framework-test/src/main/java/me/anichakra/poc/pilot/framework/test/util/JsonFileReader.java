@@ -31,11 +31,12 @@ public class JsonFileReader {
 	public static final String INPUT_DATA_CLASSPATH = "data";
 
 	/**
-	 * Reads the json file from classpath. Validates the file and the structure of the json. Throws TestDataParsingException if either is invalid.
+	 * Reads the json file from classpath. Validates the file and the structure of
+	 * the json. Throws TestDataParsingException if either is invalid.
 	 * 
 	 * @param jsonFileName Name of the file without path or extension. File should
 	 *                     be in the default path {@link INPUT_DATA_CLASSPATH} which
-	 *                     should be in classpath. 
+	 *                     should be in classpath.
 	 * @return The JSON as String
 	 */
 	public static String read(String jsonFileName) {
@@ -43,7 +44,8 @@ public class JsonFileReader {
 	}
 
 	/**
-	 * Reads the test data files from some path. Validates the file and the structure of the json. Throws TestDataParsingException if either is invalid.
+	 * Reads the test data files from some path. Validates the file and the
+	 * structure of the json. Throws TestDataParsingException if either is invalid.
 	 * 
 	 * @param jsonFileName Name of the file without path or extension (.json)
 	 * @param path         The path where the file is kept. The path root should be

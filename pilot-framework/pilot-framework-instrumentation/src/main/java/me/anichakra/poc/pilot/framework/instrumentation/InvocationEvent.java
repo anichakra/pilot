@@ -126,8 +126,6 @@ public class InvocationEvent {
 		ignoreSignature.add(invocationLineItem.getSignature());
 	}
 
-	
-
 	/**
 	 * 
 	 * @return true if the invocation is already marked to be ignored.
@@ -182,7 +180,7 @@ public class InvocationEvent {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(id).append(SEPARATOR);
-		metricMap.entrySet().forEach(e->sb.append(e.getValue()).append(SEPARATOR));
+		metricMap.entrySet().forEach(e -> sb.append(e.getValue()).append(SEPARATOR));
 		sb.append(getCurrentLineItem());
 		return sb.toString();
 	}
@@ -277,7 +275,7 @@ public class InvocationEvent {
 		invocationMetric.setRootCause(rootCause);
 		lastRootCause = rootCause;
 	}
-	
+
 	public Map<InvocationMetric, String> getMetricMap() {
 		return metricMap;
 	}

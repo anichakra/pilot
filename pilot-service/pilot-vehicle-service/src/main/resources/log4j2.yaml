@@ -60,6 +60,14 @@ Configutation:
               level: info
             - ref: ApplicationLog
               level: debug
+        - name: com.zaxxer.hikari
+          additivity: false
+          level: error
+          AppenderRef:
+            - ref: Console
+              level: error
+            - ref: ApplicationLog
+              level: debug
         - name: INSTRUMENTATION_LOG
           additivity: false
           level: INFO

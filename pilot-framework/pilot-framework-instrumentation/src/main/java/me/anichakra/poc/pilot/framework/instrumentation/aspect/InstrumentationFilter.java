@@ -81,7 +81,7 @@ public class InstrumentationFilter implements Filter {
 	 */
 	protected void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
+
 		Invocation invocation = null;
 		if (isEnabled()) {
 			String user = Optional.ofNullable(request.getUserPrincipal()).map(s -> s.getName())
@@ -90,9 +90,9 @@ public class InstrumentationFilter implements Filter {
 			String sessionId = Optional.ofNullable(request.getSession(false)).map(s -> s.getId())
 					.orElse(request.getRequestedSessionId());
 			Map<String, String[]> parameters = request.getParameterMap();
-		   invocation = new Invocation(Layer.FILTER, eventBus);
+			invocation = new Invocation(Layer.FILTER, eventBus);
 			invocation.setEventBus(eventBus);
-			String uri = "[" +  request.getMethod() + "]" + request.getRequestURI();
+			String uri = "[" + request.getMethod() + "]" + request.getRequestURI();
 			String remoteAddress = getRemoteAddress(request);
 			String localAddress = request.getLocalAddr() + ":" + request.getLocalPort() + " "
 					+ Optional.ofNullable(System.getenv("HOSTNAME")).orElse("");
@@ -100,12 +100,11 @@ public class InstrumentationFilter implements Filter {
 			invocation.addMetric(InvocationMetric.SESSION_ID, sessionId)
 					.addMetric(InvocationMetric.CORRELATION_ID, request.getHeader("INSTRUMENTATION_CORRELATION"))
 					.addMetric(InvocationMetric.REMOTE_ADDRESS, remoteAddress)
-					.addMetric(InvocationMetric.LOCAL_ADDRESS,
-							localAddress)
-					.addMetric(InvocationMetric.USER_ID, user).addMetric(InvocationMetric.URI,  uri);
+					.addMetric(InvocationMetric.LOCAL_ADDRESS, localAddress).addMetric(InvocationMetric.USER_ID, user)
+					.addMetric(InvocationMetric.URI, uri);
 			try {
 				invocation.start(SIGNATURE, getParameters(parameters));
-				
+
 			} catch (Exception e) {
 				logger.error("Exception in context.proceed() on start", e);
 			}
@@ -130,8 +129,8 @@ public class InstrumentationFilter implements Filter {
 			sb.append(";");
 		});
 		String returnVal = sb.toString();
-		if(returnVal.endsWith(";")) {
-			sb.deleteCharAt(sb.length()-1);
+		if (returnVal.endsWith(";")) {
+			sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString().split(";");
 	}

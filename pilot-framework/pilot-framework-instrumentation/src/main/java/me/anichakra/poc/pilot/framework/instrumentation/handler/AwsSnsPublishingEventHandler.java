@@ -49,11 +49,11 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 		Event event = invocationEvent.getCurrentLineItem().getEvent();
 		InvocationLineItem metric = invocationEvent.getCurrentLineItem();
 		boolean matchFlag = match(event);
-		if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Started) && 
-				event.object().equals(EventObject.REQUEST)) {
+		if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Started)
+				&& event.object().equals(EventObject.REQUEST)) {
 			logger.info(metric.getArguments());
 
-		} else if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Completed) 
+		} else if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Completed)
 				&& event.object().equals(EventObject.RESPONSE)) {
 			logger.info(metric.getOutcome());
 

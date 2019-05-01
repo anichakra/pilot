@@ -1,10 +1,16 @@
 package me.anichakra.poc.pilot.vehicle.domain;
 
+import javax.validation.constraints.NotEmpty;
+
 public class Category {
 
+	@NotEmpty
 	private String segment;
+	
+	@NotEmpty
     private String type;
-    public String getSegment() {
+   
+	public String getSegment() {
         return segment;
     }
     public void setSegment(String segment) {

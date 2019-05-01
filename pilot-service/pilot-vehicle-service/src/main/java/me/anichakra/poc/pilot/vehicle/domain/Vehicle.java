@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +24,15 @@ public class Vehicle implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    
+    @NotEmpty(message = "vehicle.manufacturer.Empty")
+    
+    @Size(min=4, max=1000)
     private String manufacturer;
+    
+    @Min(value = 1990)
     private int year;
+    
     private String model;
 
     @Transient

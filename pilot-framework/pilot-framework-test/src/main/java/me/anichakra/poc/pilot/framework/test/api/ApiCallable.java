@@ -15,6 +15,7 @@ public interface ApiCallable {
 	 * variables or query params. Passing URI variables is options. E.g.
 	 * <p>
 	 * As part of the path variables:
+	 * 
 	 * <pre>
 	 * <code>
 	 * mockApi.delete("/vehicle?id={id}").setUriVariables(v.getId()).call()
@@ -22,11 +23,13 @@ public interface ApiCallable {
 	 * </pre>
 	 * <p>
 	 * As part of the query params:
+	 * 
 	 * <pre>
 	 * <code>
 	 * mockApi.get("/vehicle/search?manufacturer={manufacturer}").setUriVariables("Nissan").call()
 	 * </code>
 	 * </pre>
+	 * 
 	 * @param uriVariables
 	 * @return
 	 */

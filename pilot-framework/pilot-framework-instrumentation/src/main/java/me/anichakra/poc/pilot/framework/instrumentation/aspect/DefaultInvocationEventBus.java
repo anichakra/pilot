@@ -31,5 +31,4 @@ public class DefaultInvocationEventBus extends AbstractInvocationEventBus {
 		}
 	}
 
-	
 }

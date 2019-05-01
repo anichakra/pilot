@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.annotation;
+package me.anichakra.poc.pilot.framework.annotation.processor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.anichakra.poc.pilot.framework.annotation.ApplicationService;
+import me.anichakra.poc.pilot.framework.annotation.CommandService;
+import me.anichakra.poc.pilot.framework.annotation.Event;
+import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.util.CoreUtils;
 
 /**

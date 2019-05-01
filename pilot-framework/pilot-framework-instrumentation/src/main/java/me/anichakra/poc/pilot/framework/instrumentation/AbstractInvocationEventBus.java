@@ -24,8 +24,6 @@ public abstract class AbstractInvocationEventBus implements InvocationEventBus {
 		invocationEventHandlers = new ArrayList<InvocationEventHandler>();
 	}
 
-
-
 	@Override
 	public void fireInvocationEvent(InvocationEvent invocationEvent) {
 		for (InvocationEventHandler conversationEventHandler : invocationEventHandlers) {
@@ -52,7 +50,6 @@ public abstract class AbstractInvocationEventBus implements InvocationEventBus {
 	public void unregisterInvocationEventHandler(InvocationEventHandler conversationEventHandler) {
 		invocationEventHandlers.remove(conversationEventHandler);
 	}
-	
 
 	protected void registerInvocationEventHandler(InvocationEventHandler invocationEventHandler) {
 		this.invocationEventHandlers.add(invocationEventHandler);

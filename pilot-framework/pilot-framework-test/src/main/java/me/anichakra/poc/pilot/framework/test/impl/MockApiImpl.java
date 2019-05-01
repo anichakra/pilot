@@ -30,16 +30,17 @@ import me.anichakra.poc.pilot.framework.test.api.ReSTJsonBasedApiCallable;
 public class MockApiImpl implements MockApi {
 
 	private boolean print = false;
-	
+
 	public void setPrint(boolean print) {
 		this.print = print;
 	}
-	
+
 	@Autowired
 	private MockMvc mockMvc;
 
 	/**
 	 * Mocks a ReST API post URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -51,6 +52,7 @@ public class MockApiImpl implements MockApi {
 
 	/**
 	 * Mocks a ReST API delete URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -62,6 +64,7 @@ public class MockApiImpl implements MockApi {
 
 	/**
 	 * Mocks a ReST API get URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception
@@ -73,6 +76,7 @@ public class MockApiImpl implements MockApi {
 
 	/**
 	 * Mocks a ReST API put URI of the API to be called or tested.
+	 * 
 	 * @param uri The URI to mock.
 	 * @return An ApiCallable instance for the URI provided
 	 * @throws Exception

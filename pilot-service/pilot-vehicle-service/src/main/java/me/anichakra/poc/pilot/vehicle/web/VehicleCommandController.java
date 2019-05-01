@@ -3,9 +3,13 @@ package me.anichakra.poc.pilot.vehicle.web;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +24,7 @@ import me.anichakra.poc.pilot.vehicle.service.VehicleCommandService;
 
 @RestController
 @RequestMapping("/vehicle")
+@Validated
 public class VehicleCommandController {
 
 	@Inject
@@ -30,19 +35,19 @@ public class VehicleCommandController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public Vehicle saveVehicle(@RequestBody Vehicle vehicle) {
+	public Vehicle saveVehicle(@Valid @RequestBody Vehicle vehicle) {
 		return vehicleCommandService.saveVehicle(vehicle);
 	}
 
 	@PostMapping("/save")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public List<Vehicle> saveVehicles(@RequestBody List<Vehicle> vehicles) {
+	public List<Vehicle> saveVehicles(@Valid @RequestBody List<Vehicle> vehicles) {
 		return vehicleCommandService.saveVehicles(vehicles);
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Void> deleteVehicle(@RequestParam("id") Long id) {
+	public ResponseEntity<Void> deleteVehicle(@RequestParam("id") @NotNull @Min(1) Long id) {
 		vehicleCommandService.deleteVehicle(id);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}

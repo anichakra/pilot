@@ -8,20 +8,23 @@ package me.anichakra.poc.pilot.framework.instrumentation;
  */
 public enum Layer {
 	/**
-	 * The web filter layer which is the entry point for all web invocation, e.g. any ReST call.
+	 * The web filter layer which is the entry point for all web invocation, e.g.
+	 * any ReST call.
 	 */
-	FILTER, 
-	
+	FILTER,
+
 	/**
-	 * The controller layer exposes a Web API as ReST service. Controller invokes a Service.
+	 * The controller layer exposes a Web API as ReST service. Controller invokes a
+	 * Service.
 	 */
-	CONTROLLER, 
-	
+	CONTROLLER,
+
 	/**
-	 * The service layer processes all business logic ands invokes another service or repository.
+	 * The service layer processes all business logic ands invokes another service
+	 * or repository.
 	 */
-	SERVICE, 
-	
+	SERVICE,
+
 	/**
 	 * The repository communicates with the underlying persistence tier.
 	 */

@@ -31,9 +31,9 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 public class NewRelicInvocationEventHandler extends AbstractInvocationEventHandler {
 
 	/**
-	 * Writes current {@link InvocationLineItem} of the passed {@link InvocationEvent}
-	 * object to log in info mode. Also put the entire conversation instance to
-	 * {@link ThreadContext} with a key 'event'.
+	 * Writes current {@link InvocationLineItem} of the passed
+	 * {@link InvocationEvent} object to log in info mode. Also put the entire
+	 * conversation instance to {@link ThreadContext} with a key 'event'.
 	 * <p>
 	 * The corresponding log4j pattern layout recommended is:
 	 * <code> pattern="%d [%t] %-5p %c-%X{event};%m%n" </code>

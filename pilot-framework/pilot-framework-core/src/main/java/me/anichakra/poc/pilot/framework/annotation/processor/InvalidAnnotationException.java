@@ -1,4 +1,6 @@
-package me.anichakra.poc.pilot.framework.annotation;
+package me.anichakra.poc.pilot.framework.annotation.processor;
+
+import org.springframework.validation.BeanPropertyBindingResult;
 
 /**
  * This exception is thrown when processing the annotations during service bean creation fail.
@@ -16,7 +18,11 @@ public class InvalidAnnotationException extends RuntimeException {
 		super(string + ":"+  bean.getClass().getName());
 	}
 
-	/**
+	public InvalidAnnotationException(Exception e, Object bean) {
+        super("Exception resolving annotation of bean" + ":"+  bean.getClass().getName(), e);
+    }
+
+    /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

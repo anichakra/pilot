@@ -1,7 +1,5 @@
 server:
   port: ${PORT:8080}
-
-# Remove this configuration if want to run with in memory database called H2.
 spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -13,8 +11,6 @@ spring:
       hibernate:
         jdbc:
           lob.non_contextual_creation: true
-
-# Postgres connectivity details here      
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DATABASE:postgres}
     username: ${POSTGRES_USER:anirbanchakraborty}
@@ -23,39 +19,47 @@ spring:
   aop:
     auto: true
     proxy-target-class: true
-
-# Path of vehicle.xls file containing the rule template
 rule:
   file-path: ${RULE_FILE_PATH:rule/vehicle-rules.xls}
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
-  
-instrumentation: 
+instrumentation:
   filter:
-    enabled: true 
+    enabled: true
   aspect:
     enabled: true
-    ignore-duration-in-millis : 20
+    ignore-duration-in-millis: 20
   handlers:
     log:
-      layers: 
-       - FILTER
-       - CONTROLLER
-       - SERVICE
-       - REPOSITORY
+      layers:
+      - FILTER
+      - CONTROLLER
+      - SERVICE
+      - REPOSITORY
       event-names: all
       ignore-parameters: false
       ignore-outcome: true
       ignore-exception-stack: true
       limited: false
     new-relic:
-      event-names: none   
+      event-names: none
     aws-sns:
       event-names: sourcing
-
- 
+message:
+  validations:
+    getVehicle.id: Vehicle Id should be more than ${value}.
+    searchVehicle.manufacturer.Size: Manufacturer name must be between ${min} and ${max}. Provided number ${input} is invalid.
+    searchVehicle.manufacturer.Pattern: At least 4 digit/alphabetic chars is required
+    vehicle.manufacturer.Size: Manufacturer name must be between ${min} and ${max}. Provided number ${invalidValue} is invalid.
+    vehicle.manufacturer.Empty: Manufacturer cannot be empty
+    vehicle.year.Min: Vehicle year should start from at least ${value}
+  exceptions:
+   - name: VehicleNotFoundException
+     code: getVehicle.notFound
+     http-status: BAD_REQUEST
+     template: Vehicle ${id} is not found
+   - name: java.lang.Exception
+     code: exception.unknown
+     http-status: INTERNAL_SERVER_ERROR
+     template: Unknown System Exception
     
-    
-    
-
-      

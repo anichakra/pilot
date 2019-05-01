@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import me.anichakra.poc.pilot.framework.annotation.ApplicationService;
 import me.anichakra.poc.pilot.framework.annotation.CommandService;
 import me.anichakra.poc.pilot.framework.annotation.Event;
-import me.anichakra.poc.pilot.framework.annotation.EventAnnotationDetectionProcessor;
 import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
+import me.anichakra.poc.pilot.framework.annotation.processor.EventAnnotationDetectionProcessor;
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
@@ -24,9 +24,9 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 
 /**
  * It intercepts a method of a {@link RestController}, {@link CommandService},
- * {@link QueryService}, {@link ApplicationService}, {@link FrameworkService}
- * or {@link Repository} annotated class and creates {@link Invocation} instances during
- * start, completion and failure of a method call.
+ * {@link QueryService}, {@link ApplicationService}, {@link FrameworkService} or
+ * {@link Repository} annotated class and creates {@link Invocation} instances
+ * during start, completion and failure of a method call.
  * 
  * @see InstrumentationConfiguration
  * @author anichakra

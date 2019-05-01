@@ -2,11 +2,11 @@ package me.anichakra.poc.pilot.framework.instrumentation;
 
 /**
  * An InvocationEventHandler is suppose to handle an {@link InvocationEvent}.
- * All implemented handlers can be added to the framework as pluggable components.
- * components.
+ * All implemented handlers can be added to the framework as pluggable
+ * components. components.
  * 
  * @author anichakra
-
+ * 
  */
 public interface InvocationEventHandler {
 

@@ -14,7 +14,7 @@ import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 public interface VehicleQueryService {
 
 	
-	Optional<Vehicle> getVehicle(Long id);
+	Optional<Vehicle> getVehicle(Long id) ;
 	List<Vehicle> searchVehicle(String manufacturer);
 
     Vehicle getPreference(Category category);

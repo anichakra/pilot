@@ -19,20 +19,24 @@ public class RequestBody {
 	 * Creates a request body using the json input file name containing the input to
 	 * the rest API.
 	 * 
-	 * @param jsonInputFileName Only the file name of the file excluding path and extension
+	 * @param jsonInputFileName Only the file name of the file excluding path and
+	 *                          extension
 	 */
 	public RequestBody(String jsonInputFileName) {
-       this.json = JsonFileReader.read(jsonInputFileName);
+		this.json = JsonFileReader.read(jsonInputFileName);
 	}
-	
+
 	/**
 	 * Creates a request body using the json input file name containing the input to
 	 * the rest API.
-	 * @param path The directory path after classpath where the json input file is kept
-	 * @param jsonInputFileName Only the file name of the file excluding path and extension
+	 * 
+	 * @param path              The directory path after classpath where the json
+	 *                          input file is kept
+	 * @param jsonInputFileName Only the file name of the file excluding path and
+	 *                          extension
 	 */
 	public RequestBody(String path, String jsonInputFileName) {
-       this.json = JsonFileReader.read(path, jsonInputFileName);
+		this.json = JsonFileReader.read(path, jsonInputFileName);
 	}
 
 	/**
@@ -40,14 +44,13 @@ public class RequestBody {
 	 * sending the same as part of rest API call.
 	 * 
 	 * @param inputObject
-	 * @throws JsonProcessingException 
+	 * @throws JsonProcessingException
 	 */
 	public RequestBody(Object inputObject) throws JsonProcessingException {
 		ObjectMapper m = new ObjectMapper();
 		json = m.writeValueAsString(inputObject);
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return
@@ -55,6 +58,5 @@ public class RequestBody {
 	public String getJson() {
 		return json;
 	}
-
 
 }
