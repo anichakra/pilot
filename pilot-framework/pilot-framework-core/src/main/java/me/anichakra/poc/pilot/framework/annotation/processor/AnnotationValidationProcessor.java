@@ -26,7 +26,7 @@ import me.anichakra.poc.pilot.framework.annotation.CommandService;
 import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.annotation.Microservice;
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
-import me.anichakra.poc.pilot.framework.annotation.ServiceConfig;
+import me.anichakra.poc.pilot.framework.configuration.ServiceConfig;
 import me.anichakra.poc.pilot.framework.util.CoreUtils;
 
 /**

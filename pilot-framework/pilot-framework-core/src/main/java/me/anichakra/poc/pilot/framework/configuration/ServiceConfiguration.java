@@ -2,8 +2,6 @@ package me.anichakra.poc.pilot.framework.configuration;
 
 import javax.validation.constraints.NotNull;
 
-import me.anichakra.poc.pilot.framework.annotation.ServiceConfig;
-
 /**
  * The base class for a configuration bean. This is a {@link ServiceConfig} annotated class.
  * @author anirbanchakraborty

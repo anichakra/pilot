@@ -40,13 +40,36 @@ We can enable and disable the filter and aspect for introspection from here. ign
 
 # Handlers
 ## Log
-This logs each event. The log line although can be customized but it captures all metrics. Following is an example of log lines that gets generated:
+This logs each event. The log line although can be customized but it captures all metrics. Following is an example of a configuration
 
 ```
-
-
+instrumentation:
+  handlers:
+    log:
+      layers:
+      - FILTER
+      - CONTROLLER
+      - SERVICE
+      - REPOSITORY
+      event-names: all
+      ignore-parameters: false
+      ignore-outcome: true
+      ignore-exception-stack: true
+      limited: false
 ```
 
+Here we can control lot of things. Logging can be enabled or disabled, based on layers. The event-names: all means for all methods this logging will be considered.
+
+The example of one user transaction log is given below:
+
+```
+[INFO ] 2019-05-02 14:12:27.950 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;me.anichakra.poc.pilot.framework.instrumentation.aspect.InstrumentationFilter.doFilter();;S;[]
+[INFO ] 2019-05-02 14:12:28.110 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;public me.anichakra.poc.pilot.vehicle.domain.Vehicle me.anichakra.poc.pilot.vehicle.web.VehicleCommandController.saveVehicle(me.anichakra.poc.pilot.vehicle.domain.Vehicle);;S;[{"id":null,"manufacturer":"Honda","year":2019,"model":"Amaze","price":null}]
+[INFO ] 2019-05-02 14:12:28.141 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;public me.anichakra.poc.pilot.vehicle.domain.Vehicle me.anichakra.poc.pilot.vehicle.service.impl.DefaultVehicleCommandService.saveVehicle(me.anichakra.poc.pilot.vehicle.domain.Vehicle);;S;[{"id":null,"manufacturer":"Honda","year":2019,"model":"Amaze","price":null}]
+[INFO ] 2019-05-02 14:12:28.195 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;public me.anichakra.poc.pilot.vehicle.domain.Vehicle me.anichakra.poc.pilot.vehicle.service.impl.DefaultVehicleCommandService.saveVehicle(me.anichakra.poc.pilot.vehicle.domain.Vehicle);;C;56
+[INFO ] 2019-05-02 14:12:28.266 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;public me.anichakra.poc.pilot.vehicle.domain.Vehicle me.anichakra.poc.pilot.vehicle.web.VehicleCommandController.saveVehicle(me.anichakra.poc.pilot.vehicle.domain.Vehicle);;C;158
+[INFO ] 2019-05-02 14:12:28.297 [http-nio-8080-exec-1] INSTRUMENTATION_LOG - 63492bed-81de-449f-a4f2-dcbf8731931f;b81f52b5-f431-408d-a465-3fe5d81f3956;null;null;null;0:0:0:0:0:0:0:1:8080 ;0:0:0:0:0:0:0:1;[POST]/pilot-vehicle-service/0.0/vehicle;me.anichakra.poc.pilot.framework.instrumentation.aspect.InstrumentationFilter.doFilter();;C;348
+```
 The above instrumentation log is for one invocation to web. It shows the complete navigation of the call from filter, to controller, service and repository. Following is the structure illustrated.
 When the invocation enters any method the Start log with status S is written:
 
@@ -71,25 +94,6 @@ REQUESTED_SESSION_ID;GENERATED_EVENT_ID;F;DURATION_IN_MILLIS;EXCEPTION_STACK
 ```
 Using these logs one can easily find the performance bottleneck, debug program easily and understand a particular execution flow.
 
-The configuration for this handler is as below:
-
-```
-instrumentation:  
-  handlers:
-    log:
-      layers: 
-       - FILTER
-       - CONTROLLER
-       - SERVICE
-       - REPOSITORY
-      event-names: all
-      ignore-uri-variables: false
-      ignore-arguments: false
-      ignore-return: false
-      ignore-exception-stack: false
-      trim: false
-```
-Here we can control lot of things. Logging can be enabled or disabled, based on layers. The event-names: all means for all methods this logging will be considered.
 
 ## AWS-SNS
 This handler will publish a message to SNS configured topic. This can be used as event-sourcing. Any service method can be annotated with @Event annotation, example given below:

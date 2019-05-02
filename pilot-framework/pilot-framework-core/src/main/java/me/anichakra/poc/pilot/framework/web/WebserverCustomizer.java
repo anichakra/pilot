@@ -50,8 +50,12 @@ public class WebserverCustomizer implements WebServerFactoryCustomizer<Configura
 	@Override
 	public void customize(ConfigurableServletWebServerFactory factory) {
 		Optional.ofNullable(buildProperties).ifPresent(c -> {
-			factory.setContextPath(SEPARATOR + c.getArtifact() + extractVersion(c.getVersion()));
+		    String version = extractVersion(c.getVersion());
+			factory.setContextPath(SEPARATOR + c.getArtifact() + SEPARATOR + version);
 			System.setProperty("spring.application.name", c.getArtifact());
+			System.setProperty(MicroserviceApplication.MICROSERVICE_NAME, c.getArtifact());
+	         System.setProperty(MicroserviceApplication.MICROSERVICE_VERSION, version);
+
 		});
 	}
 
@@ -61,9 +65,9 @@ public class WebserverCustomizer implements WebServerFactoryCustomizer<Configura
 		if (firstDot > 0) {
 			int secondDot = c.indexOf(".", c.indexOf(".") + 1);
 			if (secondDot > 0)
-				return SEPARATOR + c.substring(0, secondDot);
+				return c.substring(0, secondDot);
 		}
-		return "";
+		return "0.0";
 	}
 
 }
