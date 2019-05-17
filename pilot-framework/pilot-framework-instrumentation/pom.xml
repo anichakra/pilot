@@ -87,15 +87,31 @@
 			<version>${spring-cloud-version}</version>
 
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-aws-messaging</artifactId>
-			<version>${spring-cloud-version}</version>
-		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
-			<version>${spring-cloud-version}</version>
-		</dependency> -->
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.23.1-GA</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-aws-messaging</artifactId> 
+			<version>${spring-cloud-version}</version> </dependency> <dependency> <groupId>org.springframework.cloud</groupId> 
+			<artifactId>spring-cloud-aws-autoconfigure</artifactId> <version>${spring-cloud-version}</version> 
+			</dependency> -->
 	</dependencies>
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+
+				<configuration>
+					<archive>
+						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
 </project>

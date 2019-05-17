@@ -1,7 +1,6 @@
 package me.anichakra.poc.pilot.framework.instrumentation;
 
 import java.util.Arrays;
-import java.util.List;
 
 import me.anichakra.poc.pilot.framework.annotation.Event;
 

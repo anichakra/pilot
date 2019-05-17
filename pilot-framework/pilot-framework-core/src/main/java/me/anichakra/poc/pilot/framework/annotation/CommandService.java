@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Use this annotation to mark a service class as a of type "Command". This is
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Documented
 @Inherited
 @CqrsService
-@Transactional(readOnly = false)
+//@Transactional(readOnly = false)
 public @interface CommandService {
 
 	@AliasFor(annotation = CqrsService.class)

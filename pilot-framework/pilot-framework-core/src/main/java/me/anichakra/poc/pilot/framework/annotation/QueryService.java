@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Use this annotation to mark a service class as a of type "Query". This is to
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Documented
 @Inherited
 @CqrsService
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public @interface QueryService {
 
 	@AliasFor(annotation = CqrsService.class)

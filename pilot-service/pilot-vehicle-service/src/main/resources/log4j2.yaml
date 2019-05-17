@@ -7,7 +7,6 @@ Configutation:
       value: "/Users/anirbanchakraborty/logs"
  
   Appenders:
- 
     Console:
       name: Console
       target: SYSTEM_OUT

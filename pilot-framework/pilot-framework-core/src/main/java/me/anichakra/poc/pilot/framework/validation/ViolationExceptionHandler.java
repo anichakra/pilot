@@ -130,7 +130,6 @@ public class ViolationExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorInfo errorInfo = new ErrorInfo(LocalDateTime.now(), status,
                 ((ServletWebRequest) request).getRequest().getRequestURL().toString());
-
         ex.getBindingResult().getFieldErrors().forEach(t -> {
             String code = t.getDefaultMessage();
 
@@ -144,6 +143,7 @@ public class ViolationExceptionHandler extends ResponseEntityExceptionHandler {
                                                           // then try with
                                                           // domain.attribute.annotation_simple_name
             }
+
             String message = null;
             if (template == null) {
                 code = null;

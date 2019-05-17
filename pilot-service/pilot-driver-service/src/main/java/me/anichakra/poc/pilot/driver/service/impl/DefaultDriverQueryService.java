@@ -37,9 +37,6 @@ public class DefaultDriverQueryService implements DriverQueryService {
 
 	@Override
 	public Vehicle assignVehicle(Driver driver) {
-		String cost  = postConsumer.getProperty("cost");
-		String color = postConsumer.getProperty("color");
-		
 		return postConsumer.consume(driver.getCategory());
 	}
 

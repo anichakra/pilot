@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -28,6 +29,8 @@ import me.anichakra.poc.pilot.framework.annotation.Microservice;
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.configuration.ServiceConfig;
 import me.anichakra.poc.pilot.framework.util.CoreUtils;
+
+
 
 /**
  * This bean post processor validates all the beans that are injected throughout
@@ -73,113 +76,115 @@ import me.anichakra.poc.pilot.framework.util.CoreUtils;
 @Component
 public class AnnotationValidationProcessor implements BeanPostProcessor {
 
-	@Autowired(required = false)
-	BuildProperties buildProperties;
+    @Autowired(required = false)
+    BuildProperties buildProperties;
 
-	private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
+    private Map<Class<? extends Annotation>, Consumer<Object>> annotationValidationMap = new HashMap<>();
 
-	/**
-	 * 
-	 * @param beanFactory
-	 */
-	@Autowired
-	public AnnotationValidationProcessor(ConfigurableListableBeanFactory beanFactory) {
-		annotationValidationMap.put(RestController.class, restControllerValidation);
-		annotationValidationMap.put(CommandService.class, commandServiceValidation);
-		annotationValidationMap.put(QueryService.class, queryServiceValidation);
-		annotationValidationMap.put(ApplicationService.class, applicationServiceValidation);
-		annotationValidationMap.put(Microservice.class, microserviceValidation);
-	}
+    /**
+     * 
+     * @param beanFactory
+     */
+    @Autowired
+    public AnnotationValidationProcessor(ConfigurableListableBeanFactory beanFactory) {
+        annotationValidationMap.put(RestController.class, restControllerValidation);
+        annotationValidationMap.put(CommandService.class, commandServiceValidation);
+        annotationValidationMap.put(QueryService.class, queryServiceValidation);
+        annotationValidationMap.put(ApplicationService.class, applicationServiceValidation);
+        annotationValidationMap.put(Microservice.class, microserviceValidation);
+    }
 
+    private Consumer<Object> microserviceValidation = b -> {
+        Class<?> clazz = ClassUtils.getUserClass(b.getClass());
+        long fieldCount = Arrays.asList(clazz.getDeclaredFields()).stream().filter(f -> !f.isSynthetic()).count();
+        long methodCount = Arrays.asList(clazz.getDeclaredMethods()).stream().filter(m -> !m.isSynthetic()).count();
 
-	private Consumer<Object> microserviceValidation = b -> {
-		Class<?> clazz = ClassUtils.getUserClass(b.getClass());
-		long fieldCount = Arrays.asList(clazz.getDeclaredFields()).stream().filter(f -> !f.isSynthetic()).count();
-		long methodCount = Arrays.asList(clazz.getDeclaredMethods()).stream().filter(m -> !m.isSynthetic()).count();
+        if (fieldCount > 0 || methodCount > 1) {
+            throw new InvalidAnnotationException(
+                    "Microservice annotated class should not contain any field or non-static method", b);
+        }
+    };
 
-		if (fieldCount > 0 || methodCount > 1) {
-			throw new InvalidAnnotationException(
-					"Microservice annotated class should not contain any field or non-static method", b);
-		}
-	};
+    private Consumer<Object> restControllerValidation = b -> {
+        Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream()
+                .filter(f -> !f.isSynthetic());
+        long count = supplier.get().filter(f -> f.isAnnotationPresent(Inject.class)).count();
 
-	private Consumer<Object> restControllerValidation = b -> {
-		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream()
-				.filter(f -> !f.isSynthetic());
-		long count = supplier.get().filter(f -> f.isAnnotationPresent(Inject.class)).count();
+        if (count != 1)
+            throw new InvalidAnnotationException("Controller class must have only one injectable field", b);
 
-		if (count != 1)
-			throw new InvalidAnnotationException("Controller class must have only one injectable field", b);
+        final String message = "A Controller class can only inject one CommandService, or one QueryService or one ApplicationService";
+        validateBean(b, supplier, message, CommandService.class, QueryService.class, ApplicationService.class);
 
-		final String message = "A Controller class can only inject one CommandService, or one QueryService or one ApplicationService";
-		validateBean(b, supplier, message, CommandService.class, QueryService.class, ApplicationService.class);
+    };
 
-	};
+    private Consumer<Object> commandServiceValidation = b -> {
+        Supplier<Stream<Field>> supplier = null;
+        if (!b.getClass().getAnnotation(CommandService.class).stateful()) {
+            supplier = validateInjection(b);
+        }
+        final String message = "A CommandService class can only inject another CommandService, an ApplicationService, a FrameworkService or a Repository";
+        validateBean(b, supplier, message, CommandService.class, ApplicationService.class, FrameworkService.class,
+                Repository.class, ServiceConfig.class);
 
-	private Consumer<Object> commandServiceValidation = b -> {
-		Supplier<Stream<Field>> supplier = null;
-		if (!b.getClass().getAnnotation(CommandService.class).stateful()) {
-			supplier = validateInjection(b);
-		}
-		final String message = "A CommandService class can only inject another CommandService, an ApplicationService, a FrameworkService or a Repository";
-		validateBean(b, supplier, message, CommandService.class, ApplicationService.class, FrameworkService.class,
-				Repository.class, ServiceConfig.class);
+    };
 
-	};
+    private Consumer<Object> queryServiceValidation = b -> {
+        Supplier<Stream<Field>> supplier = null;
+        if (!b.getClass().getAnnotation(QueryService.class).stateful()) {
+            supplier = validateInjection(b);
+        }
+        final String message = "A QueryService class can only inject another QueryService, an ApplicationService, a FrameworkService or a Repository";
+        validateBean(b, supplier, message, QueryService.class, ApplicationService.class, FrameworkService.class,
+                Repository.class, ServiceConfig.class);
+    };
 
-	private Consumer<Object> queryServiceValidation = b -> {
-		Supplier<Stream<Field>> supplier = null;
-		if (!b.getClass().getAnnotation(QueryService.class).stateful()) {
-			supplier = validateInjection(b);
-		}
-		final String message = "A QueryService class can only inject another QueryService, an ApplicationService, a FrameworkService or a Repository";
-		validateBean(b, supplier, message, QueryService.class, ApplicationService.class, FrameworkService.class,
-				Repository.class, ServiceConfig.class);
-	};
+    private Consumer<Object> applicationServiceValidation = b -> {
+        Supplier<Stream<Field>> supplier = null;
+        if (!b.getClass().getAnnotation(ApplicationService.class).stateful()) {
+            supplier = validateInjection(b);
+        }
+        final String message = "An ApplicationService class can only inject another ApplicationService or a FrameworkService";
+        validateBean(b, supplier, message, ApplicationService.class, FrameworkService.class, ServiceConfig.class);
+    };
 
-	private Consumer<Object> applicationServiceValidation = b -> {
-		Supplier<Stream<Field>> supplier = null;
-		if (!b.getClass().getAnnotation(ApplicationService.class).stateful()) {
-			supplier = validateInjection(b);
-		}
-		final String message = "An ApplicationService class can only inject another ApplicationService or a FrameworkService";
-		validateBean(b, supplier, message, ApplicationService.class, FrameworkService.class, ServiceConfig.class);
-	};
+    @SafeVarargs
+    private final void validateBean(Object b, Supplier<Stream<Field>> supplier, String validationMessage,
+            Class<? extends Annotation>... annotationClass) {
+        Supplier<Stream<Field>> s = () -> supplier.get().filter(f -> !f.isAnnotationPresent(Inject.class));
+        if (!s.get().allMatch(c -> CoreUtils.isFieldAnnotatedWithEither(b, c, annotationClass))) {
+            throw new InvalidAnnotationException(validationMessage, b,
+                    s.get().map(f -> f.getName())
+                            .collect(Collectors.toList()));
+        }
+    }
 
-	@SafeVarargs
-	private final void validateBean(Object b, Supplier<Stream<Field>> supplier, String validationMessage,
-			Class<? extends Annotation>... annotationClass) {
-		if (!supplier.get().filter(f -> f.isAnnotationPresent(Inject.class))
-				.allMatch(c -> CoreUtils.isFieldAnnotatedWithEither(b, c, annotationClass)))
-			throw new InvalidAnnotationException(validationMessage, b);
-	}
+    private Supplier<Stream<Field>> validateInjection(Object b) {
+        Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream()
+                .filter(f -> !f.isSynthetic());
+        if (!supplier.get().allMatch(f -> f.isAnnotationPresent(Inject.class)))
+            throw new InvalidAnnotationException("All fields should have @Inject annotated", b);
+        return supplier;
+    }
 
-	private Supplier<Stream<Field>> validateInjection(Object b) {
-		Supplier<Stream<Field>> supplier = () -> Arrays.asList(b.getClass().getDeclaredFields()).stream()
-				.filter(f -> !f.isSynthetic());
-		if (!supplier.get().allMatch(f -> f.isAnnotationPresent(Inject.class)))
-			throw new InvalidAnnotationException("All fields should have proper @Injection", b);
-		return supplier;
-	}
+    /**
+     * 
+     */
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())
+                && !CoreUtils.isFramework(buildProperties.getGroup(), bean)) {
+            Annotation[] annotations = bean.getClass().getAnnotations();
+            Supplier<Stream<Annotation>> supplier = () -> Arrays.asList(annotations).stream();
+            supplier.get().filter(c -> annotationValidationMap.containsKey(c.annotationType()))
+                    .forEach(c -> annotationValidationMap.get(c.annotationType()).accept(bean));
+        }
+        return bean;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		if (buildProperties != null && bean.getClass().getName().startsWith(buildProperties.getGroup())
-				&& !CoreUtils.isFramework(buildProperties.getGroup(), bean)) {
-			Annotation[] annotations = bean.getClass().getAnnotations();
-			Supplier<Stream<Annotation>> supplier = () -> Arrays.asList(annotations).stream();
-			supplier.get().filter(c -> annotationValidationMap.containsKey(c.annotationType()))
-					.forEach(c -> annotationValidationMap.get(c.annotationType()).accept(bean));
-		}
-		return bean;
-	}
-
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
 
 }

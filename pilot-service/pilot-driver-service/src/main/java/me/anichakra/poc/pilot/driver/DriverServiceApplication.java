@@ -7,7 +7,6 @@ import me.anichakra.poc.pilot.framework.web.MicroserviceApplication;
 @Microservice
 @EnableRestConsumers
 public class DriverServiceApplication {
-
 	public static void main(String[] args) {
 		MicroserviceApplication.start(args);
 	}

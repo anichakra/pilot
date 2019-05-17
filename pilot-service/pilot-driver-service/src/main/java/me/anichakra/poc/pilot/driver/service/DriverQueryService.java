@@ -20,6 +20,4 @@ public interface DriverQueryService {
 	
 	Vehicle assignVehicle(Driver driver);
 
-
-
 }

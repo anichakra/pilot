@@ -1,28 +1,24 @@
 server:
   port: ${PORT:8080}
+
 spring:
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        jdbc:
-          lob.non_contextual_creation: true
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DATABASE:postgres}
-    username: ${POSTGRES_USER:anirbanchakraborty}
-    password: ${POSTGRES_PASSWORD:postgres123}
-    driver-class-name: org.postgresql.Driver
+  data:
+    mongodb:
+      host: docker.for.mac.host.internal
+      port: 27017
+#      authentication-database: pilot
+#      username: 
+#      password:
+      database: pilot
   aop:
     auto: true
     proxy-target-class: true
+
 rule:
   file-path: ${RULE_FILE_PATH:rule/vehicle-rules.xls}
   template-class: me.anichakra.poc.pilot.vehicle.rule.VehicleRuleTemplate
   engine: OPENL_TABLETS_ORG
+
 instrumentation:
   filter:
     enabled: true
@@ -45,6 +41,7 @@ instrumentation:
       event-names: none
     aws-sns:
       event-names: sourcing
+
 message:
   validations:
     getVehicle.id: Vehicle Id should be more than ${value}.
@@ -62,4 +59,3 @@ message:
      code: exception.unknown
      http-status: INTERNAL_SERVER_ERROR
      template: Unknown System Exception
-    

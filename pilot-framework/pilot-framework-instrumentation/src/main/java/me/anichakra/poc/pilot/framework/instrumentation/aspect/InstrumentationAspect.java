@@ -20,7 +20,6 @@ import me.anichakra.poc.pilot.framework.annotation.processor.EventAnnotationDete
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationMetric;
 
 /**
  * It intercepts a method of a {@link RestController}, {@link CommandService},

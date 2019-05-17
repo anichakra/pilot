@@ -20,6 +20,10 @@ spring:
     username: ${POSTGRES_USER:anirbanchakraborty}
     password: ${POSTGRES_PASSWORD:postgres123}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 1800000
 
 # Rest consumer calls
 rest:

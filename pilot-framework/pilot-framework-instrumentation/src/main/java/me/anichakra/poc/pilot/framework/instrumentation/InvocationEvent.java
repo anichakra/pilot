@@ -3,7 +3,6 @@ package me.anichakra.poc.pilot.framework.instrumentation;
 import static me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem.SEPARATOR;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashSet;

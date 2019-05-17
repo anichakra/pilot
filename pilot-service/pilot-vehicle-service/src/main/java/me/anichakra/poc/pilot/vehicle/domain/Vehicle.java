@@ -2,19 +2,19 @@ package me.anichakra.poc.pilot.vehicle.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Entity
+@Document(collection = "vehicle")
 public class Vehicle implements Serializable {
 
     /**
@@ -22,14 +22,15 @@ public class Vehicle implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     
     @NotEmpty(message = "vehicle.manufacturer.Empty")
     
+    @Indexed(unique = false)
     @Size(min=4, max=1000)
     private String manufacturer;
     
+    @Indexed(unique = false)
     @Min(value = 1990)
     private int year;
     
