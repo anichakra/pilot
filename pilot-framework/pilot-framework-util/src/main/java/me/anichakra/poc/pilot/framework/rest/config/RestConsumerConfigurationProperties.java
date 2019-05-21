@@ -9,6 +9,12 @@ import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ * @param <T>
+ */
 public class RestConsumerConfigurationProperties<T> {
 	@NotNull
 	private String name;

@@ -13,6 +13,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ * @param <K>
+ * @param <V>
+ */
 @Configuration
 @ConfigurationProperties(prefix = "rest")
 @Validated

@@ -1,5 +1,10 @@
 package me.anichakra.poc.pilot.framework.rest.impl;
 
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ */
 public class InvalidResponseTypeException extends RuntimeException {
 
 	public InvalidResponseTypeException(String responseType) {

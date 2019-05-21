@@ -6,6 +6,13 @@ import org.springframework.http.HttpMethod;
 
 import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.rest.api.DeleteConsumer;
+import me.anichakra.poc.pilot.framework.rest.api.Headers;
+
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ */
 @FrameworkService
 public class DefaultDeleteConsumer extends AbstractRestConsumer implements DeleteConsumer {
 
@@ -14,8 +21,14 @@ public class DefaultDeleteConsumer extends AbstractRestConsumer implements Delet
 	}
 
 	@Override
-	public void consume() {
-		prepareResponseEntity(HttpMethod.DELETE, null, Void.class);
+	public void consume(Object... uriVariables) {
+		prepareResponseEntity(HttpMethod.DELETE, null, Void.class, null, uriVariables);
+	}
+
+	@Override
+	public void consume(Headers header, Object... uriVariables) {
+		prepareResponseEntity(HttpMethod.DELETE, null, Void.class, header);
+		
 	}
 
 }

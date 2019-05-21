@@ -7,6 +7,13 @@ import org.springframework.http.HttpMethod;
 
 import me.anichakra.poc.pilot.framework.annotation.FrameworkService;
 import me.anichakra.poc.pilot.framework.rest.api.GetConsumer;
+import me.anichakra.poc.pilot.framework.rest.api.Headers;
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ * @param <V>
+ */
 @FrameworkService
 public class DefaultGetConsumer<V> extends AbstractRestConsumer implements GetConsumer<V> {
 
@@ -18,8 +25,14 @@ public class DefaultGetConsumer<V> extends AbstractRestConsumer implements GetCo
 	}
 
 	@Override
-	public V consume() {
-		return prepareResponseEntity(HttpMethod.GET, null, responseType).getBody();
+	public V consume(Object... uriVariables) {
+		return prepareResponseEntity(HttpMethod.GET, null, responseType, null, uriVariables).getBody();
+	}
+
+	@Override
+	public V consume(Headers header, Object... uriVariables) {
+		return prepareResponseEntity(HttpMethod.GET, null, responseType, header, uriVariables).getBody();
+
 	}
 
 }

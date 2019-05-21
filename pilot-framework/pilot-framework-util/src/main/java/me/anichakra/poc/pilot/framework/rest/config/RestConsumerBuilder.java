@@ -12,6 +12,7 @@ import me.anichakra.poc.pilot.framework.rest.api.PatchConsumer;
 import me.anichakra.poc.pilot.framework.rest.api.PostConsumer;
 import me.anichakra.poc.pilot.framework.rest.api.PutConsumer;
 import me.anichakra.poc.pilot.framework.rest.api.RestConsumer;
+import me.anichakra.poc.pilot.framework.rest.impl.AbstractRestConsumer;
 import me.anichakra.poc.pilot.framework.rest.impl.DefaultDeleteConsumer;
 import me.anichakra.poc.pilot.framework.rest.impl.DefaultGetConsumer;
 import me.anichakra.poc.pilot.framework.rest.impl.DefaultPatchConsumer;
@@ -19,21 +20,21 @@ import me.anichakra.poc.pilot.framework.rest.impl.DefaultPostConsumer;
 import me.anichakra.poc.pilot.framework.rest.impl.DefaultPutConsumer;
 
 @Component
-public class RestConsumerBuilder<K,V> {
+public class RestConsumerBuilder<K, V> {
 	List<GetConsumer<V>> buildGetConsumerProperties(List<RestConsumerConfigurationProperties<V>> consumers) {
 		return consumers.stream().filter(c -> c.getMethod().equals(HttpMethod.GET)).map(c -> {
 			GetConsumer<V> consumer = new DefaultGetConsumer<>(c.getName(), c.getUrl(), c.getSecured(),
-					 c.getResponseType());
+					c.getResponseType());
 			populateNullableProperties(c, consumer);
 			return consumer;
 		}).collect(Collectors.toList());
 	}
 
-	List<PostConsumer<K,V>> buildPostConsumerProperties(List<RestConsumerConfigurationProperties<V>> consumers) {
+	List<PostConsumer<K, V>> buildPostConsumerProperties(List<RestConsumerConfigurationProperties<V>> consumers) {
 		return consumers.stream().filter(c -> c.getMethod().equals(HttpMethod.POST)).map(c -> {
-			DefaultPostConsumer<K,V> consumer = new DefaultPostConsumer<K,V>(c.getName(), c.getUrl(), c.getSecured(),
-					 c.getResponseType());
-			populateNullableProperties(c, consumer);  
+			DefaultPostConsumer<K, V> consumer = new DefaultPostConsumer<K, V>(c.getName(), c.getUrl(), c.getSecured(),
+					c.getResponseType());
+			populateNullableProperties(c, consumer);
 			return consumer;
 		}).collect(Collectors.toList());
 	}
@@ -54,9 +55,9 @@ public class RestConsumerBuilder<K,V> {
 		}).collect(Collectors.toList());
 	}
 
-	List<PatchConsumer<K,V>> buildPatchConsumerProperties(List<RestConsumerConfigurationProperties<V>> consumers) {
+	List<PatchConsumer<K, V>> buildPatchConsumerProperties(List<RestConsumerConfigurationProperties<V>> consumers) {
 		return consumers.stream().filter(c -> c.getMethod().equals(HttpMethod.PATCH)).map(c -> {
-			DefaultPatchConsumer<K,V> consumer = new DefaultPatchConsumer<K,V>(c.getName(), c.getUrl(),
+			DefaultPatchConsumer<K, V> consumer = new DefaultPatchConsumer<K, V>(c.getName(), c.getUrl(),
 					c.getSecured(), c.getResponseType());
 			populateNullableProperties(c, consumer);
 			return consumer;
@@ -64,10 +65,13 @@ public class RestConsumerBuilder<K,V> {
 	}
 
 	void populateNullableProperties(RestConsumerConfigurationProperties<V> c, final RestConsumer consumer) {
-		consumer.setAccept(c.getAccept());
-		consumer.setContentType(c.getContentType());
-		consumer.setStatusCode(c.getStatusCode());
-		c.getHeaders().entrySet().stream().forEach(e->consumer.addHeader(e.getKey(), e.getValue()));
-		c.getProperties().entrySet().stream().forEach(e->consumer.addProperty(e.getKey(), e.getValue()));
+		if (consumer instanceof AbstractRestConsumer)
+			((AbstractRestConsumer) consumer).setAccept(c.getAccept());
+		((AbstractRestConsumer) consumer).setContentType(c.getContentType());
+		((AbstractRestConsumer) consumer).setStatusCode(c.getStatusCode());
+		c.getHeaders().entrySet().stream()
+				.forEach(e -> ((AbstractRestConsumer) consumer).addHeader(e.getKey(), e.getValue()));
+		c.getProperties().entrySet().stream()
+				.forEach(e -> ((AbstractRestConsumer) consumer).addProperty(e.getKey(), e.getValue()));
 	}
 }

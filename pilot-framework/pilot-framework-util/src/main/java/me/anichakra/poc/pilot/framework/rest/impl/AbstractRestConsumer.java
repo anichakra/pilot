@@ -30,8 +30,14 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import me.anichakra.poc.pilot.framework.rest.api.Headers;
 import me.anichakra.poc.pilot.framework.rest.api.RestConsumer;
 
+/**
+ * 
+ * @author anirbanchakraborty
+ *
+ */
 public class AbstractRestConsumer implements RestConsumer {
 	private String name;
 	private Boolean secured = false;
@@ -41,7 +47,6 @@ public class AbstractRestConsumer implements RestConsumer {
 	protected HttpStatus httpStatusCode;
 	protected HttpHeaders headers = new HttpHeaders();
 	Map<String, String> parameters = new HashMap<>();
-	protected Object[] uriVariables = null;
 	protected RestTemplate restTemplate;
 	private boolean prepared;
 
@@ -115,32 +120,24 @@ public class AbstractRestConsumer implements RestConsumer {
 	public URI getUrl() {
 		return url;
 	}
-	
 
-	@Override
 	public RestConsumer addHeader(String name, String value) {
 		headers.add(name, value);
 		return this;
 	}
-	
-	@Override
+
 	public RestConsumer addProperty(String name, String value) {
-		parameters.put(name,value);
+		parameters.put(name, value);
 		return this;
 	}
 
-	@Override
 	public String getProperty(String name) {
 		return parameters.get(name);
 	}
 
-	@Override
-	public RestConsumer setUriVariables(Object... uriVariables) {
-		this.uriVariables = uriVariables;
-		return this;
-	}
 
-	protected <K, V> ResponseEntity<V> prepareResponseEntity(HttpMethod method, K requestBody, Class<V> responseType) {
+	protected <K, V> ResponseEntity<V> prepareResponseEntity(HttpMethod method, K requestBody, Class<V> responseType,
+			Headers hdr, Object... uriVariables) {
 
 		if (contentType.equals(MediaType.APPLICATION_XML_VALUE)
 				&& (accept.equals(MediaType.TEXT_HTML_VALUE) || accept.equals(MediaType.APPLICATION_XML_VALUE))
@@ -156,6 +153,11 @@ public class AbstractRestConsumer implements RestConsumer {
 				this.restTemplate.setMessageConverters(messageConverters);
 				prepared = true;
 			}
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.addAll(this.headers);
+			Optional.ofNullable(hdr)
+					.ifPresent(hd -> hd.getHeaderNames().forEach(h -> headers.add(h, hdr.getHeader(h))));
 		}
 		ResponseEntity<V> responseEntity = uriVariables != null
 				? this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers),
@@ -166,7 +168,5 @@ public class AbstractRestConsumer implements RestConsumer {
 			throw new InvalidReturnedStatusCodeException(url.toString(), httpStatusCode.value());
 		return responseEntity;
 	}
-
-
 
 }

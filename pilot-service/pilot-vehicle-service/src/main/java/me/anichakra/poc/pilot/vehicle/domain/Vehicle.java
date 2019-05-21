@@ -2,7 +2,6 @@ package me.anichakra.poc.pilot.vehicle.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -36,7 +35,6 @@ public class Vehicle implements Serializable {
     
     private String model;
 
-    @Transient
     private Integer price;
 
     public Long getId() {

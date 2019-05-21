@@ -1,4 +1,4 @@
-FROM openjdk:11-slim as runtime
+FROM amazoncorretto:11.0.3 as runtime
 EXPOSE 8080
 #Set app home folder
 ENV APP_HOME /app
