@@ -154,11 +154,13 @@ public class AbstractRestConsumer implements RestConsumer {
 				prepared = true;
 			}
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.addAll(this.headers);
-			Optional.ofNullable(hdr)
-					.ifPresent(hd -> hd.getHeaderNames().forEach(h -> headers.add(h, hdr.getHeader(h))));
 		}
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.addAll(this.headers);
+		Optional.ofNullable(hdr)
+				.ifPresent(hd -> hd.getHeaderNames().forEach(h -> headers.add(h, hdr.getHeader(h))));
+		
 		ResponseEntity<V> responseEntity = uriVariables != null
 				? this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers),
 						responseType, uriVariables)

@@ -35,8 +35,7 @@ public class DefaultVehicleQueryService implements VehicleQueryService {
 	}
 	
 	@Override
-	public Optional<Vehicle> getVehicle(Long id) {
-		System.out.println("id:" + id);
+	public Optional<Vehicle> getVehicle(String id) {
 		Optional<Vehicle> vehicle = vehicleRepository.findById(id);
 		System.out.println(vehicle);
 		return vehicle;
@@ -61,8 +60,8 @@ public class DefaultVehicleQueryService implements VehicleQueryService {
 
 		int discountedPrice = (int) getRuleTemplate().getDiscountedPrice(preferredVehicle.get().getManufacturer(),
 				price);
-		selectedVehicle.get().setPrice(discountedPrice);
-		return selectedVehicle.get();
+		selectedVehicle.ifPresent(v->v.setPrice(discountedPrice));
+		return selectedVehicle.orElse(null);
 	}
 
 }

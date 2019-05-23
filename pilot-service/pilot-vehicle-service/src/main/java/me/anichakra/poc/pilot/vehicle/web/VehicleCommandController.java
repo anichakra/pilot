@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class VehicleCommandController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Void> deleteVehicle(@RequestParam("id") @NotNull @Min(1) Long id) {
+	public ResponseEntity<Void> deleteVehicle(@RequestParam("id") @NotNull String id) {
 		vehicleCommandService.deleteVehicle(id);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}

@@ -4,7 +4,7 @@ server:
 spring:
   data:
     mongodb:
-      host: docker.for.mac.host.internal
+      host: ${MONGODB_HOST:localhost}
       port: 27017
 #      authentication-database: pilot
 #      username: 
@@ -35,7 +35,7 @@ instrumentation:
       event-names: all
       ignore-parameters: false
       ignore-outcome: true
-      ignore-exception-stack: true
+      ignore-exception-stack: false
       limited: false
     new-relic:
       event-names: none

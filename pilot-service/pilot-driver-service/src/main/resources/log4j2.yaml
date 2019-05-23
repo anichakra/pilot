@@ -4,7 +4,7 @@ Configutation:
   Properties:
     Property:
       name: log-path
-      value: "/Users/anirbanchakraborty/logs/vehicle"
+      value: "/Users/anirbanchakraborty/logs/driver"
  
   Appenders:
     Console:
@@ -51,7 +51,7 @@ Configutation:
         AppenderRef:
           - ref: Console
       Logger:
-        - name: me.anichakra.poc.pilot.vehicle
+        - name: me.anichakra.poc.pilot.driver
           additivity: false
           level: debug
           AppenderRef:

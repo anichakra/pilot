@@ -98,7 +98,7 @@
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId> <version>${spring-cloud-version}</version> 
 			</dependency> -->
 	</dependencies>
-	<build>
+	<!-- <build>
 		<plugins>
 
 			<plugin>
@@ -113,5 +113,5 @@
 
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 </project>

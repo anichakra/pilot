@@ -5,8 +5,9 @@ import me.anichakra.poc.pilot.framework.validation.InvalidValue;
 public class VehicleNotFoundException extends Exception {
 
 	@InvalidValue
-	private Long id;
-	public VehicleNotFoundException(Long id) {
+	private String id;
+
+	public VehicleNotFoundException(String id) {
 		super("Vehicle with id:" + id + " not found!");
 		this.setId(id);
 	}
@@ -14,14 +15,14 @@ public class VehicleNotFoundException extends Exception {
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

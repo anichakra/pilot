@@ -12,5 +12,5 @@ public interface VehicleCommandService {
 	public List<Vehicle> saveVehicles(List<Vehicle> vehicles) ;
 
 
-	public void deleteVehicle(Long id);
+	public void deleteVehicle(String id);
 }

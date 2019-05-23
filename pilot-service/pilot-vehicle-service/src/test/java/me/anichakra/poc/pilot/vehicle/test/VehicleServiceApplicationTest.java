@@ -36,14 +36,15 @@ public class VehicleServiceApplicationTest {
 
 	@Test
 	public void b_deleteVehicle() throws Exception {
-		Vehicle v = mockApi.post("/vehicle").<Vehicle>call(new RequestBody("save_in")).getResultBean(Vehicle.class);
+		Vehicle v = mockApi.post("/vehicle").<Vehicle>call(new RequestBody("delete_in")).getResultBean(Vehicle.class);
 		mockApi.delete("/vehicle?id={id}").setUriVariables(v.getId()).call()
 				.assertResult(AssertableHttpStatusCode.NO_CONTENT);
 	}
 
 	@Test
 	public void c_retrieve() throws Exception {
-		mockApi.get("/vehicle/{id}").setUriVariables(1).call().assertResult(AssertableHttpStatusCode.OK,
+		Vehicle v = mockApi.post("/vehicle").<Vehicle>call(new RequestBody("retrieve_in")).getResultBean(Vehicle.class);
+		mockApi.get("/vehicle/{id}").setUriVariables(v.getId()).call().assertResult(AssertableHttpStatusCode.OK,
 				"retrieve_out");
 	}
 

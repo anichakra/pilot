@@ -20,11 +20,11 @@ public class Vehicle implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
+    
     @Id
-    private Long id;
+    private String id;
     
     @NotEmpty(message = "vehicle.manufacturer.Empty")
-    
     @Indexed(unique = false)
     @Size(min=4, max=1000)
     private String manufacturer;
@@ -37,11 +37,11 @@ public class Vehicle implements Serializable {
 
     private Integer price;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

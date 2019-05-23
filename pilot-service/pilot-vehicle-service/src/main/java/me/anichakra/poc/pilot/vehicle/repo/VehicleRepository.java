@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import me.anichakra.poc.pilot.vehicle.domain.Vehicle;
 
 @Repository
-public interface VehicleRepository extends MongoRepository <Vehicle, Long>{
+public interface VehicleRepository extends MongoRepository <Vehicle, String>{
 
 	List<Vehicle> findByManufacturer(String manufacturer);
 }

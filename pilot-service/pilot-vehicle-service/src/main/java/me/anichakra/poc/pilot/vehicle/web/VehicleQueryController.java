@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -38,7 +37,7 @@ public class VehicleQueryController {
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/{id}")
 	@ResponseBody
-	public Vehicle getVehicle(@PathVariable("id") @Min(1) Long id) throws VehicleNotFoundException {
+	public Vehicle getVehicle(@PathVariable("id") String id) throws VehicleNotFoundException {
 		return vehicleQueryService.getVehicle(id).orElseThrow(() -> new VehicleNotFoundException(id));
 	}
 

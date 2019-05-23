@@ -25,11 +25,34 @@ spring:
       idleTimeout: 600000
       maxLifetime: 1800000
 
+instrumentation:
+  filter:
+    enabled: true
+  aspect:
+    enabled: true
+    ignore-duration-in-millis: 20
+  handlers:
+    log:
+      layers:
+      - FILTER
+      - CONTROLLER
+      - SERVICE
+      - REPOSITORY
+      event-names: all
+      ignore-parameters: false
+      ignore-outcome: true
+      ignore-exception-stack: false
+      limited: false
+    new-relic:
+      event-names: none
+    aws-sns:
+      event-names: sourcing
+
 # Rest consumer calls
 rest:
   consumers:
     - name: vehicle-preference
-      url: http://localhost:8080/pilot-vehicle-service/0.0/vehicle/preference
+      url: http://${VEHICLE_SERVICE_HOST}:8080/pilot-vehicle-service/0.0/vehicle/preference
       secured: false
       contentType: application/json
       responseType: me.anichakra.poc.pilot.driver.domain.Vehicle
