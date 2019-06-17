@@ -1,7 +1,7 @@
 package me.anichakra.poc.pilot.framework.instrumentation;
 
 public enum InvocationMetric {
-	INSTANCE_ID, SESSION_ID,
+	NAME, VERSION, START_TIME, INSTANCE_ID, SESSION_ID,
 	/**
 	 * Sets the correlation id to the invocation. The correlation id is the
 	 * 
@@ -11,5 +11,5 @@ public enum InvocationMetric {
 	 * is starting in the second application exposing ReST service will send the
 	 * invocation id as correlation id to its Invocation instance.
 	 */
-	CORRELATION_ID, USER_ID, LOCAL_ADDRESS, REMOTE_ADDRESS, URI
+	EVENT_ID, CORRELATION_ID, USER_ID, LOCAL_ADDRESS, REMOTE_ADDRESS, URI
 }

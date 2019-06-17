@@ -20,11 +20,12 @@ rule:
   engine: OPENL_TABLETS_ORG
 
 instrumentation:
-  filter:
-    enabled: true
-  aspect:
-    enabled: true
-    ignore-duration-in-millis: 20
+  name: pilot-vehicle-service
+  version: 1.0
+  enabled: true
+  instance-id: 11
+  start-time: 12-May-2019
+  ignore-duration-in-millis: 20
   handlers:
     log:
       layers:
@@ -41,7 +42,20 @@ instrumentation:
       event-names: none
     aws-sns:
       event-names: sourcing
-
+    splunk:
+      metrics: 
+      - NAME
+      - VERSION
+      - INSTANCE_ID
+      - SESSION_ID
+      - EVENT_ID
+      - CORRELATION_ID
+      - USER_ID
+      - LOCAL_ADDRESS
+      - REMOTE_ADDRESS
+      - URI
+      event-names: logging
+      
 message:
   validations:
     getVehicle.id: Vehicle Id should be more than ${value}.

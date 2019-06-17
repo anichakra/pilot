@@ -37,6 +37,14 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	private boolean ignoreOutcome;
 	private boolean limited;
 
+	public boolean isLimited() {
+		return limited;
+	}
+
+	public void setLimited(boolean limited) {
+		this.limited = limited;
+	}
+
 	public void setIgnoreParameters(boolean ignoreParameters) {
 		this.ignoreParameters = ignoreParameters;
 	}
@@ -59,6 +67,8 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	 */
 	@Override
 	public void handleInvocationEvent(InvocationEvent event) {
+		if (!super.getLayers().contains(event.getCurrentLineItem().getLayer()))
+			return; // if any layer is not mentioned do not log
 		StringBuilder sb = new StringBuilder();
 		InvocationLineItem metric = event.getCurrentLineItem();
 		if (ignoreParameters)
@@ -94,13 +104,6 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	 */
 	public void clear() {
 		ThreadContext.clearStack();
-	}
-
-	/**
-	 * @param trim the trim to set
-	 */
-	public void setLimited(boolean trim) {
-		this.limited = limited;
 	}
 
 }

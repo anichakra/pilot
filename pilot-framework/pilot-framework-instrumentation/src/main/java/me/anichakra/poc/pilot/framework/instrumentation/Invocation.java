@@ -46,6 +46,7 @@ public class Invocation {
 		invocationEvent.start(signature, parameters);
 		InvocationLineItem currentInvocationMetric = invocationEvent.getCurrentLineItem();
 		Optional.ofNullable(currentInvocationMetric).ifPresent(c -> c.setEvent(event));
+		Optional.ofNullable(currentInvocationMetric).ifPresent(c -> c.setLayer(layer));
 
 		if (!invocationEvent.isAlreadyMarkedIgnore()) {
 			invocationEventBus.fireInvocationEvent(invocationEvent);

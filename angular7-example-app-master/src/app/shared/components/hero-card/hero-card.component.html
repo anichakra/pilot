@@ -1,0 +1,30 @@
+<mat-card class="hero-card" *ngIf="hero" [@fadeIn]="fadeIn">
+  <mat-card-header>
+    <a mat-card-avatar [routerLink]="hero.default ? ['/' + appConfig.routes.heroes + '/' + hero.id] : []">
+      <img mat-card-avatar [src]="hero.avatarThumbnailUrl">
+    </a>
+    <mat-card-title>
+      <a class="hero-detail-link" [routerLink]="hero.default ? ['/' + appConfig.routes.heroes + '/' + hero.id] : []">
+        {{hero.name}}
+      </a>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <a class="hero-detail-link" [routerLink]="hero.default ? ['/' + appConfig.routes.heroes + '/' + hero.id] : []">
+        {{hero.alterEgo}}
+      </a>
+    </mat-card-subtitle>
+    <div class="flex-spacer"></div>
+    <div class="hero-actions">
+      {{hero.likes}}
+      <mat-icon class="icon__like--red" (click)="like(hero)">favorite
+      </mat-icon>
+    </div>
+  </mat-card-header>
+  <a class="hero-detail-link" [routerLink]="hero.default ? ['/' + appConfig.routes.heroes + '/' + hero.id] : []">
+    <ngx-progressive-image-loader
+      [filter]="'blur(3px) drop-shadow(0 0 0.75rem crimson)'"
+      [placeholderImageSrc]="hero.avatarBlurredUrl">
+      <img src="{{hero.avatarUrl}}" alt="" ngxProgressiveImage/>
+    </ngx-progressive-image-loader>
+  </a>
+</mat-card>

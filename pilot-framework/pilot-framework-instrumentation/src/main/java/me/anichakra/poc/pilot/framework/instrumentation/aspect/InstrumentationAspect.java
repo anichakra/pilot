@@ -20,6 +20,7 @@ import me.anichakra.poc.pilot.framework.annotation.processor.EventAnnotationDete
 import me.anichakra.poc.pilot.framework.instrumentation.Invocation;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.Layer;
+import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationConfig;
 
 /**
  * It intercepts a method of a {@link RestController}, {@link CommandService},
@@ -41,8 +42,8 @@ public class InstrumentationAspect {
 	@Autowired
 	private EventAnnotationDetectionProcessor eventAnnotationDetectionProcessor;
 
-	private boolean enabled;
-	private long ignoreDurationInMillis = 10;
+	@Autowired
+	private InstrumentationConfig config;
 
 	@Around("controllerClassMethods()")
 	public Object instrumentController(final ProceedingJoinPoint pjp) throws Throwable {
@@ -91,7 +92,7 @@ public class InstrumentationAspect {
 	 * @throws Throwable
 	 */
 	public Object instrument(final ProceedingJoinPoint pjp, Layer layer) throws Throwable {
-		if (!enabled)
+		if (!config.isEnabled())
 			return pjp.proceed();
 		String signature = pjp.getSignature().toLongString();
 		Invocation invocation = new Invocation(layer, eventBus);
@@ -107,7 +108,7 @@ public class InstrumentationAspect {
 			invocation.failed(t);
 			throw t;
 		}
-		invocation.setDurationToIgnore(this.ignoreDurationInMillis);
+		invocation.setDurationToIgnore(config.getIgnoreDurationInMillis());
 		invocation.end(outcome);
 		return outcome;
 	}
@@ -133,14 +134,5 @@ public class InstrumentationAspect {
 //		return method.getAnnotation(Event.class);
 //	}
 
-	public void setIgnoreDurationInMillis(int ignoreDurationInMillis) {
-		this.ignoreDurationInMillis = ignoreDurationInMillis;
-	}
 
-	/**
-	 * @param enabled the enabled to set
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
 }

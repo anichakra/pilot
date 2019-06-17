@@ -6,6 +6,9 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+
 import me.anichakra.poc.pilot.driver.domain.Category;
 import me.anichakra.poc.pilot.driver.domain.Driver;
 import me.anichakra.poc.pilot.driver.domain.Vehicle;
@@ -22,8 +25,10 @@ public class DefaultDriverQueryService implements DriverQueryService {
 	private PostConsumer<Category, Vehicle> postConsumer;
 
 	@Inject
-	private DriverRepository driverRepository;
+	private KieContainer kieContainer;
 
+	@Inject
+	private DriverRepository driverRepository;
 
 	@Override
 	public Optional<Driver> getDriver(Long id) {
@@ -37,6 +42,16 @@ public class DefaultDriverQueryService implements DriverQueryService {
 
 	@Override
 	public Vehicle assignVehicle(Driver driver) {
+try {
+		KieSession kieSession = kieContainer.newKieSession();
+		kieSession.setGlobal("driver", driver);
+		kieSession.insert(driver);
+		kieSession.fireAllRules();
+		System.out.println("My driver:" + driver);
+		kieSession.dispose();
+} catch (Exception e) {
+	e.printStackTrace();
+}
 		return postConsumer.consume(driver.getCategory());
 	}
 

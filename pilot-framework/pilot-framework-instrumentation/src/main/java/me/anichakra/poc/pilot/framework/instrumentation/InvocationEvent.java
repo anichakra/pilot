@@ -234,7 +234,7 @@ public class InvocationEvent {
 
 	/**
 	 * 
-	 * @return The event id
+	 * @return T	he event id
 	 */
 	public String getId() {
 		return this.id;

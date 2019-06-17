@@ -1,0 +1,9 @@
+global me.anichakra.poc.pilot.driver.domain.Driver driver;
+dialect  "mvel"
+ 
+rule "Calculate Taxi Fare - Scenario 1"
+    when
+        driverInstance:Driver(yearOfLicense==2017);
+    then
+        driver.setName("new model");
+end

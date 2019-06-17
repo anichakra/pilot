@@ -32,6 +32,9 @@ public class InvocationLineItem {
 
 	private String signature;
 
+	private Layer layer;
+
+
 	/**
 	 * @return The method arguments
 	 */
@@ -184,5 +187,13 @@ public class InvocationLineItem {
 
 	public String getSignature() {
 		return this.signature;
+	}
+
+	public void setLayer(Layer layer) {
+		this.layer= layer;
+	}
+	
+	public Layer getLayer() {
+		return layer;
 	}
 }
