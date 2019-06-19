@@ -24,6 +24,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
+			<exclusions>
+
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-slf4j-impl</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -98,20 +105,7 @@
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId> <version>${spring-cloud-version}</version> 
 			</dependency> -->
 	</dependencies>
-	<!-- <build>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-
-				<configuration>
-					<archive>
-						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
-					</archive>
-				</configuration>
-
-			</plugin>
-		</plugins>
-	</build> -->
+	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-jar-plugin</artifactId> <configuration> <archive> <manifestFile>META-INF/MANIFEST.MF</manifestFile> 
+		</archive> </configuration> </plugin> </plugins> </build> -->
 </project>

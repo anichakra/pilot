@@ -108,8 +108,11 @@ public class InstrumentationAspect {
 			invocation.failed(t);
 			throw t;
 		}
+		
+
 		invocation.setDurationToIgnore(config.getIgnoreDurationInMillis());
 		invocation.end(outcome);
+
 		return outcome;
 	}
 

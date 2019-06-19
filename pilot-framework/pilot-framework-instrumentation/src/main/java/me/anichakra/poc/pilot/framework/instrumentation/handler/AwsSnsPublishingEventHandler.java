@@ -10,19 +10,20 @@ import me.anichakra.poc.pilot.framework.annotation.Event;
 import me.anichakra.poc.pilot.framework.annotation.EventObject;
 import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBuilder;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationStatus;
 
 /**
- * This {@link InvocationEventHandler} handles the {@link InvocationEvent} and
+ * This {@link InvocationEventHandler} handles the {@link InvocationEventBuilder} and
  * checks the event contains an marked {@link Event} that is matched with the
  * configured event-names. If matched the InvocationEvent's method argument
  * object or method return object is published to configured SNS topic.
  * <p>
  * 
- * @see InvocationEvent
+ * @see InvocationEventBuilder
  * @see InvocationEventBus
  * @author anichakra
  *
@@ -46,8 +47,8 @@ public class AwsSnsPublishingEventHandler extends AbstractInvocationEventHandler
 
 	@Override
 	public void handleInvocationEvent(InvocationEvent invocationEvent) {
-		Event event = invocationEvent.getCurrentLineItem().getEvent();
-		InvocationLineItem metric = invocationEvent.getCurrentLineItem();
+		Event event = invocationEvent.getInvocationLineItem().getEvent();
+		InvocationLineItem metric = invocationEvent.getInvocationLineItem();
 		boolean matchFlag = match(event);
 		if (matchFlag && metric.getInvocationStatus().equals(InvocationStatus.Started)
 				&& event.object().equals(EventObject.REQUEST)) {

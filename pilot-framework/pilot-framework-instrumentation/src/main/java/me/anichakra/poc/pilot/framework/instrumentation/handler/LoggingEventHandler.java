@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBuilder;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationLineItem;
@@ -22,14 +23,14 @@ import me.anichakra.poc.pilot.framework.instrumentation.InvocationStatus;
  * registered in the bus will be invoked.
  * <p>
  * 
- * @see InvocationEvent
+ * @see InvocationEventBuilder
  * @see InvocationEventBus
  * @author anichakra
  *
  */
 @Component
 @ConfigurationProperties(prefix = "instrumentation.handlers.log")
-public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
+public class LoggingEventHandler extends AbstractInvocationEventHandler {
 	public static final String LOGGER_NAME = "INSTRUMENTATION_LOG";
 	private static final Logger logger = LogManager.getLogger(LOGGER_NAME);
 	private boolean ignoreParameters;
@@ -59,7 +60,7 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 
 	/**
 	 * Writes current {@link InvocationLineItem} of the passed
-	 * {@link InvocationEvent} object to log in info mode. Also put the entire
+	 * {@link InvocationEventBuilder} object to log in info mode. Also put the entire
 	 * conversation instance to {@link ThreadContext} with a key 'event'.
 	 * <p>
 	 * The corresponding log4j pattern layout recommended is:
@@ -67,29 +68,29 @@ public class LogInvocationEventHandler extends AbstractInvocationEventHandler {
 	 */
 	@Override
 	public void handleInvocationEvent(InvocationEvent event) {
-		if (!super.getLayers().contains(event.getCurrentLineItem().getLayer()))
+		if (!super.getLayers().contains(event.getInvocationLineItem().getLayer()))
 			return; // if any layer is not mentioned do not log
 		StringBuilder sb = new StringBuilder();
-		InvocationLineItem metric = event.getCurrentLineItem();
+		InvocationLineItem metric = event.getInvocationLineItem();
 		if (ignoreParameters)
 			metric.setArguments(null);
 
 		if (ignoreOutcome)
 			metric.setOutcome(null);
-		sb.append(event.getId()).append(SEPARATOR);
+		sb.append(event.getEventId()).append(SEPARATOR);
 
 		if (!limited || (metric.getInvocationStatus().equals(InvocationStatus.Started))) { // for limited the completed
 																							// and failed status
 																							// invocation line items
 																							// should show limited
 																							// metrics.
-			event.getMetricMap().entrySet().forEach(e -> sb.append(e.getValue()).append(SEPARATOR));
+			event.getMetrics().entrySet().forEach(e -> sb.append(e.getValue()).append(SEPARATOR));
 		}
 		sb.append(metric);
-		if (event.getRootCause() == null)
+		if (metric.getRootCause() == null)
 			logger.info(sb);
 		else
-			logger.info(sb, extractRootCause(event.getRootCause()));
+			logger.info(sb, extractRootCause(metric.getRootCause()));
 	}
 
 	private Throwable extractRootCause(Throwable rootCause) {

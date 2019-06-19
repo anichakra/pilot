@@ -22,6 +22,9 @@ rule:
 instrumentation:
   name: pilot-vehicle-service
   version: 1.0
+  environment: DEV
+  remote-address-header: X-Forwarded-For
+  user-header: X-USER
   enabled: true
   instance-id: 11
   start-time: 12-May-2019
@@ -42,19 +45,18 @@ instrumentation:
       event-names: none
     aws-sns:
       event-names: sourcing
-    splunk:
+    tracing:
       metrics: 
       - NAME
       - VERSION
       - INSTANCE_ID
-      - SESSION_ID
-      - EVENT_ID
+      - TRACE_ID
       - CORRELATION_ID
       - USER_ID
       - LOCAL_ADDRESS
       - REMOTE_ADDRESS
       - URI
-      event-names: logging
+      event-names: tracing
       
 message:
   validations:

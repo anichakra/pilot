@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.naming.Context;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -37,6 +38,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationCo
 		"/pilot-*-service/*" }, description = "Instrumentation Filter")
 public class InstrumentationFilter implements Filter {
 
+	private static final String CORRELATION = "INSTRUMENTATION_CORRELATION";
 	private final static Logger logger = LogManager.getLogger();
 	private final String SIGNATURE = this.getClass().getName() + ".doFilter()";
 
@@ -81,7 +83,7 @@ public class InstrumentationFilter implements Filter {
 			throws IOException, ServletException {
 
 		Invocation invocation = null;
-		if (config.isEnabled()) {	
+		if (config.isEnabled()) {
 			Map<String, String[]> parameters = request.getParameterMap();
 			invocation = new Invocation(Layer.FILTER, eventBus);
 			invocation.setEventBus(eventBus);
@@ -107,11 +109,8 @@ public class InstrumentationFilter implements Filter {
 	}
 
 	private void populateInvocationMetric(HttpServletRequest request, Invocation invocation) {
-		String user = Optional.ofNullable(request.getUserPrincipal()).map(s -> s.getName())
-				.orElse(request.getHeader("X-USER-ID"));
-
-		String sessionId = Optional.ofNullable(request.getSession(false)).map(s -> s.getId())
-				.orElse(request.getRequestedSessionId());
+		String user = getUser(request);
+		String traceId = getTraceId(request);
 		String uri = "[" + request.getMethod() + "]" + request.getRequestURI();
 		String remoteAddress = getRemoteAddress(request);
 		String localAddress = request.getLocalAddr() + ":" + request.getLocalPort() + " "
@@ -120,8 +119,9 @@ public class InstrumentationFilter implements Filter {
 				.addMetric(InvocationMetric.VERSION, config.getVersion())
 				.addMetric(InvocationMetric.START_TIME, config.getStartTime())
 				.addMetric(InvocationMetric.INSTANCE_ID, config.getInstanceId())
-				.addMetric(InvocationMetric.SESSION_ID, sessionId)
-				.addMetric(InvocationMetric.CORRELATION_ID, request.getHeader("INSTRUMENTATION_CORRELATION"))
+				.addMetric(InvocationMetric.TRACE_ID, traceId)
+				.addMetric(InvocationMetric.ENVIRONMENT, config.getEnvironment())
+				.addMetric(InvocationMetric.CORRELATION_ID, request.getHeader(CORRELATION))
 				.addMetric(InvocationMetric.REMOTE_ADDRESS, remoteAddress)
 				.addMetric(InvocationMetric.LOCAL_ADDRESS, localAddress).addMetric(InvocationMetric.USER_ID, user)
 				.addMetric(InvocationMetric.URI, uri);
@@ -140,10 +140,22 @@ public class InstrumentationFilter implements Filter {
 		return sb.toString().split(";");
 	}
 
-	public void destroy() {
+	private String getTraceId(HttpServletRequest request) {
+		return Optional.ofNullable(request.getSession(false)).map(s -> s.getId())
+				.orElse(request.getRequestedSessionId());
 	}
 
 	private String getRemoteAddress(HttpServletRequest request) {
-		return Optional.ofNullable(request.getHeader("X-Forwarded-For")).orElse(request.getRemoteAddr());
+		return Optional.ofNullable(request.getHeader(config.getRemoteAddressHeader())).orElse(request.getRemoteAddr());
+	}
+
+	private String getUser(HttpServletRequest request) {
+		if (config.getUserHeader() == null)
+			return request.getUserPrincipal().getName();
+		else
+			return request.getHeader(config.getUserHeader());
+	}
+
+	public void destroy() {
 	}
 }

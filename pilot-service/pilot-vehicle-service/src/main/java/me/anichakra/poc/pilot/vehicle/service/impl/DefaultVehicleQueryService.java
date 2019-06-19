@@ -42,7 +42,7 @@ public class DefaultVehicleQueryService implements VehicleQueryService {
 	}
 
 	@Override
-	@Event(name="logging", object=EventObject.RESPONSE)
+	@Event(name="tracing", object=EventObject.RESPONSE)
 	public List<Vehicle> searchVehicle(String manufacturer) {
 		return vehicleRepository.findByManufacturer(manufacturer);
 	}

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * This is a implementation of {@link InvocationEventBus} for
- * {@link InvocationEvent} instances. This contains a list of
+ * {@link InvocationEventBuilder} instances. This contains a list of
  * {@link InvocationEventHandler}s that is registered from external component.
  *
  * 
@@ -25,9 +25,9 @@ public abstract class AbstractInvocationEventBus implements InvocationEventBus {
 	}
 
 	@Override
-	public void fireInvocationEvent(InvocationEvent invocationEvent) {
+	public void fireInvocationEvent(InvocationEventBuilder invocationEventBuilder) {
 		for (InvocationEventHandler conversationEventHandler : invocationEventHandlers) {
-			conversationEventHandler.handleInvocationEvent(invocationEvent);
+			conversationEventHandler.handleInvocationEvent(invocationEventBuilder.createInvocationEvent());
 		}
 	}
 
@@ -43,7 +43,7 @@ public abstract class AbstractInvocationEventBus implements InvocationEventBus {
 		for (InvocationEventHandler conversationEventHandler : invocationEventHandlers) {
 			conversationEventHandler.clear();
 		}
-		InvocationEvent.clearCurrent();
+		InvocationEventBuilder.clearCurrent();
 	}
 
 	@Override

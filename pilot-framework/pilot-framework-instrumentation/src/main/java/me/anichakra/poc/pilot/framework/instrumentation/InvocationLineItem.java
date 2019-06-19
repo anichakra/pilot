@@ -11,7 +11,7 @@ import me.anichakra.poc.pilot.framework.annotation.Event;
  * @author anichakra
  * @see Invocation
  */
-public class InvocationLineItem {
+public class InvocationLineItem implements Cloneable {
 
 	/**
 	 * The separator for each attribute of this instance. This is used in the
@@ -195,5 +195,10 @@ public class InvocationLineItem {
 	
 	public Layer getLayer() {
 		return layer;
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }

@@ -26,9 +26,9 @@ public class Invocation {
 	public Invocation(Layer layer, InvocationEventBus invocationEventBus) {
 		this.layer = layer;
 		this.invocationEventBus = invocationEventBus;
-		InvocationEvent invocationEvent = Optional.ofNullable(InvocationEvent.getCurrent())
-				.orElse(new InvocationEvent(UUID.randomUUID().toString()));
-		InvocationEvent.setCurrent(invocationEvent);
+		InvocationEventBuilder invocationEvent = Optional.ofNullable(InvocationEventBuilder.getCurrent())
+				.orElse(new InvocationEventBuilder(UUID.randomUUID().toString()));
+		InvocationEventBuilder.setCurrent(invocationEvent);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class Invocation {
 	 * @return
 	 */
 	public void start(String signature, Object[] parameters) {
-		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		InvocationEventBuilder invocationEvent = InvocationEventBuilder.getCurrent();
 //		if (invocationEvent.getLevel() < 0) {
 //			invocationEventBus.clearAll();
 //		}
@@ -60,7 +60,7 @@ public class Invocation {
 	 * @param outcome
 	 */
 	public void end(Object outcome) {
-		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		InvocationEventBuilder invocationEvent = InvocationEventBuilder.getCurrent();
 		if (invocationEvent != null) {
 			invocationEvent.complete(outcome);
 			if (!invocationEvent.isAlreadyMarkedIgnore()) {
@@ -82,7 +82,7 @@ public class Invocation {
 	 *                  happened.
 	 */
 	public void failed(Throwable rootCause) {
-		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		InvocationEventBuilder invocationEvent = InvocationEventBuilder.getCurrent();
 		if (invocationEvent != null) {
 			invocationEvent.fail();
 			invocationEvent.setRootCause(rootCause);
@@ -129,7 +129,7 @@ public class Invocation {
 	}
 
 	public Invocation addMetric(InvocationMetric metric, String value) {
-		InvocationEvent invocationEvent = InvocationEvent.getCurrent();
+		InvocationEventBuilder invocationEvent = InvocationEventBuilder.getCurrent();
 		invocationEvent.addMetric(metric, value);
 		return this;
 	}

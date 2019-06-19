@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import me.anichakra.poc.pilot.framework.instrumentation.AbstractInvocationEventBus;
-import me.anichakra.poc.pilot.framework.instrumentation.InvocationEvent;
+import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBuilder;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventBus;
 import me.anichakra.poc.pilot.framework.instrumentation.InvocationEventHandler;
 
 /**
  * This is a implementation of {@link InvocationEventBus} for
- * {@link InvocationEvent} instances. This contains a list of
+ * {@link InvocationEventBuilder} instances. This contains a list of
  * {@link InvocationEventHandler}s that is registered from external component.
  *
  * 

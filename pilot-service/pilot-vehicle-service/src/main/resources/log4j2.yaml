@@ -33,7 +33,7 @@ Configutation:
           SizeBasedTriggeringPolicy:
             size: 10 MB
         DefaultRollOverStrategy:
-          max: 300 MB
+          max: 30
       - name: InstrumentationAws
         fileName: ${log-path}/aws.log
         filePattern: "${log-path}/archive/aws.log.%d{yyyy-MM-dd-hh-mm}.gz"
@@ -43,7 +43,7 @@ Configutation:
           SizeBasedTriggeringPolicy:
             size: 10 MB
         DefaultRollOverStrategy:
-          max: 300 MB
+          max: 30
           
   Loggers:
       Root:
@@ -83,7 +83,7 @@ Configutation:
               level: info
             - ref: InstrumentationAws
               level: info
-        - name: INSTRUMENTATION_SPLUNK
+        - name: INSTRUMENTATION_TRACING
           additivity: false
           level: INFO
           AppenderRef:
