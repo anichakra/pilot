@@ -26,9 +26,9 @@ public class Invocation {
 	public Invocation(Layer layer, InvocationEventBus invocationEventBus) {
 		this.layer = layer;
 		this.invocationEventBus = invocationEventBus;
-		InvocationEventBuilder invocationEvent = Optional.ofNullable(InvocationEventBuilder.getCurrent())
+		InvocationEventBuilder invocationEventBuilder = Optional.ofNullable(InvocationEventBuilder.getCurrent())
 				.orElse(new InvocationEventBuilder(UUID.randomUUID().toString()));
-		InvocationEventBuilder.setCurrent(invocationEvent);
+		InvocationEventBuilder.setCurrent(invocationEventBuilder);
 	}
 
 	/**

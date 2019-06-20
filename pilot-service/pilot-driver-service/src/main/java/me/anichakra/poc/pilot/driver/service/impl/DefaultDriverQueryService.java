@@ -14,6 +14,7 @@ import me.anichakra.poc.pilot.driver.domain.Driver;
 import me.anichakra.poc.pilot.driver.domain.Vehicle;
 import me.anichakra.poc.pilot.driver.repo.DriverRepository;
 import me.anichakra.poc.pilot.driver.service.DriverQueryService;
+import me.anichakra.poc.pilot.framework.annotation.Event;
 import me.anichakra.poc.pilot.framework.annotation.QueryService;
 import me.anichakra.poc.pilot.framework.rest.api.PostConsumer;
 
@@ -41,6 +42,7 @@ public class DefaultDriverQueryService implements DriverQueryService {
 	}
 
 	@Override
+	@Event(name="tracing")
 	public Vehicle assignVehicle(Driver driver) {
 try {
 		KieSession kieSession = kieContainer.newKieSession();

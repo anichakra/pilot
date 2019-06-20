@@ -16,7 +16,7 @@ Configutation:
     RollingFile:
       - name: ApplicationLog
         fileName: ${log-path}/application.log
-        filePattern: "logs/archive/application.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        filePattern: "${log-path}/archive/application.log.%d{yyyy-MM-dd-hh-mm}.gz"
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
         Policies:
@@ -26,7 +26,7 @@ Configutation:
           max: 30
       - name: InstrumentationLog
         fileName: ${log-path}/instrumentation.log
-        filePattern: "logs/archive/instrumentation.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        filePattern: "${log-path}/archive/instrumentation.log.%d{yyyy-MM-dd-hh-mm}.gz"
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
         Policies:
@@ -43,7 +43,7 @@ Configutation:
           SizeBasedTriggeringPolicy:
             size: 10 MB
         DefaultRollOverStrategy:
-          max: 300 
+          max: 30
           
   Loggers:
       Root:
@@ -83,5 +83,12 @@ Configutation:
               level: info
             - ref: InstrumentationAws
               level: info
+        - name: INSTRUMENTATION_TRACING
+          additivity: false
+          level: INFO
+          AppenderRef:
+            - ref: Console
+              level: info
+
 
               

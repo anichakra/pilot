@@ -48,7 +48,7 @@ public class DefaultVehicleQueryService implements VehicleQueryService {
 	}
 
 	@Override
-	@Event(name="sourcing", object=EventObject.RESPONSE)
+	@Event(name= {"sourcing", "tracing"}, object=EventObject.RESPONSE)
 	public Vehicle getPreference(Category category) {
 		final Optional<Vehicle> preferredVehicle = Optional
 				.ofNullable(getRuleTemplate().getPreference(category, new Vehicle()));

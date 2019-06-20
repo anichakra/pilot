@@ -38,7 +38,7 @@ import me.anichakra.poc.pilot.framework.instrumentation.config.InstrumentationCo
 		"/pilot-*-service/*" }, description = "Instrumentation Filter")
 public class InstrumentationFilter implements Filter {
 
-	private static final String CORRELATION = "INSTRUMENTATION_CORRELATION";
+	public static final String CORRELATION = "INSTRUMENTATION_CORRELATION";
 	private final static Logger logger = LogManager.getLogger();
 	private final String SIGNATURE = this.getClass().getName() + ".doFilter()";
 

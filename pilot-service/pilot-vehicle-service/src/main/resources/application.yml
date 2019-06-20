@@ -46,17 +46,18 @@ instrumentation:
     aws-sns:
       event-names: sourcing
     tracing:
+      event-names: tracing
       metrics: 
       - NAME
       - VERSION
       - INSTANCE_ID
       - TRACE_ID
+      - ENVIRONMENT
       - CORRELATION_ID
       - USER_ID
       - LOCAL_ADDRESS
       - REMOTE_ADDRESS
       - URI
-      event-names: tracing
       
 message:
   validations:

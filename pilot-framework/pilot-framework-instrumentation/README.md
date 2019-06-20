@@ -1,9 +1,9 @@
 # Introduction
-The instrumentation framework keeps all cross cutting concerns separately. This project can be plugged as dependency to a spring boot project and there is no as-such compilation dependency. The instrumentation framework instruments any request to web by handling a client request to introspects the same and do necessary actions like logging, notification, messaging, monitoring (new-relic) etc in an opinionated and configurable way.
+The instrumentation framework keeps all cross cutting concerns separately. This project can be plugged as dependency to a spring boot project and there is no as-such compilation dependency. The instrumentation framework instruments any request to web by handling a client request to introspect the same and do necessary actions like logging, notification, messaging, monitoring (new-relic) etc in an opinionated and configurable way.
 
 #Design
 ## Components
-This framework is based on an event driven architecture, where any invocation is captured and an event is created for the same. The event is then handled and a proper action is taken. A invocation is a single call to the web tier, basically a ReST API call. The invocation can start from a web filter, then proceed to a RestController, a service class and then a repository. Each invocation creates several invocation metric during its traversal through different component. Each method call inside any of the following class is introspected using aspect oriented programming:
+This framework is based on an event driven architecture, where any invocation is captured and an event is created for the same. The event is then handled and a proper action is taken. A invocation is a single call to the web tier, basically a ReST API call. The invocation can start from a web filter, then proceed to a RestController, a service class and then a repository. Each invocation creates several invocation metric during its traversal through different component. Each method call inside any of the following class is introspect using aspect oriented programming:
 1) RestController
 2) CommandService
 3) QueryService

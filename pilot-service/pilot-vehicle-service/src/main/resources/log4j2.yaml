@@ -33,10 +33,10 @@ Configutation:
           SizeBasedTriggeringPolicy:
             size: 10 MB
         DefaultRollOverStrategy:
-          max: 30
+          max: 300
       - name: InstrumentationAws
         fileName: ${log-path}/aws.log
-        filePattern: "${log-path}/archive/aws.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        filePattern: "logs/archive/aws.log.%d{yyyy-MM-dd-hh-mm}.gz"
         PatternLayout:
           pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
         Policies:
@@ -51,7 +51,7 @@ Configutation:
         AppenderRef:
           - ref: Console
       Logger:
-        - name: me.anichakra.poc.pilot.vehicle
+        - name: me.anichakra.poc.pilot.driver
           additivity: false
           level: debug
           AppenderRef:
@@ -89,5 +89,6 @@ Configutation:
           AppenderRef:
             - ref: Console
               level: info
+
 
               

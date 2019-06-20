@@ -8,6 +8,7 @@ import me.anichakra.poc.pilot.driver.domain.Driver;
 import me.anichakra.poc.pilot.driver.repo.DriverRepository;
 import me.anichakra.poc.pilot.driver.service.DriverCommandService;
 import me.anichakra.poc.pilot.framework.annotation.CommandService;
+import me.anichakra.poc.pilot.framework.annotation.Event;
 
 @CommandService
 public class DefaultDriverCommandService implements DriverCommandService {

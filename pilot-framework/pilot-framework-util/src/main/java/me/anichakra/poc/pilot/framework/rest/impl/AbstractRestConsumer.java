@@ -1,5 +1,6 @@
 package me.anichakra.poc.pilot.framework.rest.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
@@ -46,7 +48,7 @@ public class AbstractRestConsumer implements RestConsumer {
 	protected String accept;
 	protected HttpStatus httpStatusCode;
 	protected HttpHeaders headers = new HttpHeaders();
-	Map<String, String> parameters = new HashMap<>();
+	private Map<String, String> parameters = new HashMap<>();
 	protected RestTemplate restTemplate;
 	private boolean prepared;
 
@@ -54,14 +56,7 @@ public class AbstractRestConsumer implements RestConsumer {
 		this.name = name;
 		this.url = url;
 		this.secured = secured;
-		initialize();
-	}
-
-	protected void initialize() {
-		initializeRestTemplate();
-	}
-
-	private void initializeRestTemplate() {
+		this.restTemplate = new RestTemplate();
 		if (secured) {
 			SSLContext sslContext;
 			try {
@@ -71,11 +66,25 @@ public class AbstractRestConsumer implements RestConsumer {
 				HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 				requestFactory.setHttpClient(httpClient);
 				this.restTemplate = new RestTemplate(requestFactory);
+
 			} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
 				throw new RestConsumerInitializationException("Cannot create secured rest consumer", e);
 			}
 		} else {
 			this.restTemplate = new RestTemplate();
+
+		}
+	}
+
+	public void initializeCustomRestTemplate(Class<?> restTemplateImplClass) {
+		ClientHttpRequestFactory requestFactory = this.restTemplate.getRequestFactory();
+
+		try {
+			this.restTemplate = (RestTemplate) restTemplateImplClass
+					.getConstructor(ClientHttpRequestFactory.class).newInstance(requestFactory);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new RestConsumerInitializationException("Cannot create implementation of RestTemplate", e);
 		}
 	}
 
@@ -135,7 +144,6 @@ public class AbstractRestConsumer implements RestConsumer {
 		return parameters.get(name);
 	}
 
-
 	protected <K, V> ResponseEntity<V> prepareResponseEntity(HttpMethod method, K requestBody, Class<V> responseType,
 			Headers hdr, Object... uriVariables) {
 
@@ -153,14 +161,12 @@ public class AbstractRestConsumer implements RestConsumer {
 				this.restTemplate.setMessageConverters(messageConverters);
 				prepared = true;
 			}
-
 		}
-		
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.addAll(this.headers);
-		Optional.ofNullable(hdr)
-				.ifPresent(hd -> hd.getHeaderNames().forEach(h -> headers.add(h, hdr.getHeader(h))));
-		
+		Optional.ofNullable(hdr).ifPresent(hd -> hd.getHeaderNames().forEach(h -> headers.add(h, hdr.getHeader(h))));
+
 		ResponseEntity<V> responseEntity = uriVariables != null
 				? this.restTemplate.exchange(url.toString(), method, new HttpEntity<K>(requestBody, headers),
 						responseType, uriVariables)

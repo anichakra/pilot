@@ -26,11 +26,15 @@ spring:
       maxLifetime: 1800000
 
 instrumentation:
-  filter:
-    enabled: true
-  aspect:
-    enabled: true
-    ignore-duration-in-millis: 20
+  name: pilot-driver-service
+  version: 1.0
+  environment: DEV
+  remote-address-header: X-Forwarded-For
+  user-header: X-USER
+  enabled: true
+  instance-id: 11
+  start-time: 12-May-2019
+  ignore-duration-in-millis: 20
   handlers:
     log:
       layers:
@@ -47,12 +51,27 @@ instrumentation:
       event-names: none
     aws-sns:
       event-names: sourcing
+    tracing:
+      event-names: tracing
+      metrics: 
+      - NAME
+      - VERSION
+      - INSTANCE_ID
+      - TRACE_ID
+      - ENVIRONMENT
+      - CORRELATION_ID
+      - USER_ID
+      - LOCAL_ADDRESS
+      - REMOTE_ADDRESS
+      - URI
+
 
 # Rest consumer calls
 rest:
+  impl-class: me.anichakra.poc.pilot.framework.instrumentation.impl.RestTemplateImpl
   consumers:
     - name: vehicle-preference
-      url: http://${VEHICLE_SERVICE_HOST}:8080/pilot-vehicle-service/0.0/vehicle/preference
+      url: http://${VEHICLE_SERVICE_HOST:localhost}:8080/pilot-vehicle-service/0.0/vehicle/preference
       secured: false
       contentType: application/json
       responseType: me.anichakra.poc.pilot.driver.domain.Vehicle

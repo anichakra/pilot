@@ -1,7 +1,5 @@
 package me.anichakra.poc.pilot.framework.rest.impl;
 
-import java.security.GeneralSecurityException;
-
 /**
  * 
  * @author anirbanchakraborty
@@ -9,7 +7,7 @@ import java.security.GeneralSecurityException;
  */
 public class RestConsumerInitializationException extends RuntimeException {
 
-	public RestConsumerInitializationException(String message, GeneralSecurityException e) {
+	public RestConsumerInitializationException(String message, Exception e) {
 		super(message, e);
 	}
 
