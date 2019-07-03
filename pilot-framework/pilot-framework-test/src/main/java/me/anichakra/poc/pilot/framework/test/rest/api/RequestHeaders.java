@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Optional;
  * API call.
  * 
  * @author anirbanchakraborty
- * @see MockApi
+ * @see MockRestApi
  */
 public class RequestHeaders {
 
@@ -51,7 +51,7 @@ public class RequestHeaders {
 	 * 
 	 * @return
 	 */
-	Map<String, Object> getHeaders() {
+	public Map<String, Object> getHeaders() {
 		return this.headers;
 	}
 

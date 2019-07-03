@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.impl;
+package me.anichakra.poc.pilot.framework.test.rest.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.anichakra.poc.pilot.framework.test.api.ApiCallable;
-import me.anichakra.poc.pilot.framework.test.api.MockApi;
-import me.anichakra.poc.pilot.framework.test.api.ReSTJsonBasedApiCallable;
+import me.anichakra.poc.pilot.framework.test.rest.api.MockRestApi;
+import me.anichakra.poc.pilot.framework.test.rest.api.RestApiCallable;
 
 /**
  * This mocks a microservice environment based on JSON based ReST API. Using
@@ -27,7 +26,7 @@ import me.anichakra.poc.pilot.framework.test.api.ReSTJsonBasedApiCallable;
 @WebAppConfiguration
 @Profile("test")
 @ConfigurationProperties(prefix = "test")
-public class MockApiImpl implements MockApi {
+public class MockRestApiImpl implements MockRestApi {
 
 	private boolean print = false;
 
@@ -46,8 +45,8 @@ public class MockApiImpl implements MockApi {
 	 * @throws Exception
 	 */
 	@Override
-	public ApiCallable post(String uri) throws Exception {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.POST, print);
+	public RestApiCallable post(String uri) throws Exception {
+		return new RestJsonBasedApiCallable(mockMvc, uri, HttpMethod.POST, print);
 	}
 
 	/**
@@ -58,8 +57,8 @@ public class MockApiImpl implements MockApi {
 	 * @throws Exception
 	 */
 	@Override
-	public ApiCallable delete(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.DELETE, print);
+	public RestApiCallable delete(String uri) {
+		return new RestJsonBasedApiCallable(mockMvc, uri, HttpMethod.DELETE, print);
 	}
 
 	/**
@@ -70,8 +69,8 @@ public class MockApiImpl implements MockApi {
 	 * @throws Exception
 	 */
 	@Override
-	public ApiCallable get(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.GET, print);
+	public RestApiCallable get(String uri) {
+		return new RestJsonBasedApiCallable(mockMvc, uri, HttpMethod.GET, print);
 	}
 
 	/**
@@ -82,8 +81,8 @@ public class MockApiImpl implements MockApi {
 	 * @throws Exception
 	 */
 	@Override
-	public ApiCallable put(String uri) {
-		return new ReSTJsonBasedApiCallable(mockMvc, uri, HttpMethod.PUT, print);
+	public RestApiCallable put(String uri) {
+		return new RestJsonBasedApiCallable(mockMvc, uri, HttpMethod.PUT, print);
 	}
 
 }

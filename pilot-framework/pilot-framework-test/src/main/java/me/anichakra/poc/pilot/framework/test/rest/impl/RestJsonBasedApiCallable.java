@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.impl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,6 +18,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import me.anichakra.poc.pilot.framework.test.rest.api.RequestBody;
+import me.anichakra.poc.pilot.framework.test.rest.api.RequestHeaders;
+import me.anichakra.poc.pilot.framework.test.rest.api.RestApiCallable;
+import me.anichakra.poc.pilot.framework.test.rest.api.RestApiResult;
+
 /**
  * This implements the ApiCallable for Rest/Json based API calls. This class
  * uses Spring MVC test framework to create a more opinionated test framework.
@@ -26,7 +31,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
  * @author anirbanchakraborty
  *
  */
-public class ReSTJsonBasedApiCallable implements ApiCallable {
+public class RestJsonBasedApiCallable implements RestApiCallable {
 	private final static class URI {
 		String uri;
 		Object[] uriVariables;
@@ -101,7 +106,7 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	 * @param uri
 	 * @param method
 	 */
-	public ReSTJsonBasedApiCallable(MockMvc mockMvc, String uri, HttpMethod method, boolean print) {
+	public RestJsonBasedApiCallable(MockMvc mockMvc, String uri, HttpMethod method, boolean print) {
 		this.mockMvc = mockMvc;
 		this.uri = uri;
 		this.method = method;
@@ -128,7 +133,7 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	* 
 	*/
 	@Override
-	public ApiCallable setUriVariables(Object... uriVariables) {
+	public RestApiCallable setUriVariables(Object... uriVariables) {
 		this.uriVariables = uriVariables;
 		return this;
 	}
@@ -161,7 +166,7 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	 * 
 	 */
 	@Override
-	public <T> ApiResult<T> call(RequestBody requestBody) {
+	public <T> RestApiResult<T> call(RequestBody requestBody) {
 		return call(requestBody, null);
 	}
 
@@ -169,7 +174,7 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 	 * 
 	 */
 	@Override
-	public <T> ApiResult<T> call(RequestBody requestBody, RequestHeaders requestHeaders) {
+	public <T> RestApiResult<T> call(RequestBody requestBody, RequestHeaders requestHeaders) {
 		RequestBuilder requestBuilder = populateRequestBuilder(uri, method, requestBody, requestHeaders);
 		ResultActions resultActions;
 		try {
@@ -177,16 +182,16 @@ public class ReSTJsonBasedApiCallable implements ApiCallable {
 			if (print)
 				resultActions = resultActions.andDo(print());
 		} catch (Exception e) {
-			throw new ApiException(e);
+			throw new RestApiException(e);
 		}
-		return new ApiResult<>(resultActions);
+		return new RestApiResult<>(resultActions);
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public <T> ApiResult<T> call() {
+	public <T> RestApiResult<T> call() {
 		return call(null, null);
 	}
 

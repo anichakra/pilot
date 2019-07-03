@@ -1,20 +1,20 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.api;
 
 /**
  * This exception is thrown when there is any problem in calling assertion
  * 
- * @see ApiResult
+ * @see RestApiResult
  * @author anirbanchakraborty
  *
  */
-public class AssertionException extends RuntimeException {
+public class TestAssertionException extends RuntimeException {
 
 	/**
 	 * 
 	 * @param message Assertion message
 	 * @param e       Root cause
 	 */
-	public AssertionException(String message, Exception e) {
+	public TestAssertionException(String message, Exception e) {
 		super(message, e);
 	}
 

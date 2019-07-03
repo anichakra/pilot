@@ -1,11 +1,11 @@
-package me.anichakra.poc.pilot.framework.test.util;
+package me.anichakra.poc.pilot.framework.io;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Optional;
 
-import org.assertj.core.util.Files;
 import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -57,7 +57,7 @@ public class JsonFileReader {
 			try {
 				return loadIoFile(path, c);
 			} catch (URISyntaxException | IOException e) {
-				throw new TestDataParsingException(jsonFileName, e);
+				throw new JsonFileParsingException(jsonFileName, e);
 			}
 		}).orElse(null);
 	}
@@ -65,14 +65,16 @@ public class JsonFileReader {
 	private static String loadIoFile(String path, String inputDataFile) throws URISyntaxException, IOException {
 		File ioDir = new File(path);
 		File io = new File(ioDir, inputDataFile + FILE_EXTENSION);
-		final String json = Files.contentOf(ResourceUtils.getFile("classpath:" + io.getPath()), "UTF-8");
+		File file = ResourceUtils.getFile("classpath:" + io.getPath());
+		String json = new String(Files.readAllBytes(file.toPath()));
 		try {
+			
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 			mapper.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
 			mapper.readTree(json);
 		} catch (JsonProcessingException e) {
-			throw new TestDataParsingException(io.getName(), e);
+			throw new JsonFileParsingException(io.getName(), e);
 		}
 		return json;
 	}

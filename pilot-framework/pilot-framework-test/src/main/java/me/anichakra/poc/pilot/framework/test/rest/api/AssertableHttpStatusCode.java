@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.api;
 
 import org.springframework.lang.Nullable;
 
@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
  * <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">List of
  * HTTP Status Codes</a>/
  * 
- * @see ApiResult
+ * @see RestApiResult
  * @author anirbanchakraborty
  *
  */

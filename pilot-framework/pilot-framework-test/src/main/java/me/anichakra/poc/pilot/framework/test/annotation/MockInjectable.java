@@ -13,10 +13,10 @@ import org.springframework.core.annotation.AliasFor;
 
 /**
  * Apply this annotation on all methods inside the classes annotated
- * with @MicroserviceTestConfiguration to load a mock bean in the line of
+ * with @MockConfiguration to load a mock bean in the line of
  * dependency wiring.
  * 
- * @see MicroserviceTestConfiguration
+ * @see MockConfiguration
  * @author anirbanchakraborty
  *
  */

@@ -9,10 +9,10 @@ import org.springframework.context.annotation.DependsOn;
 import me.anichakra.poc.pilot.driver.DriverServiceApplication;
 import me.anichakra.poc.pilot.driver.domain.Driver;
 import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTest;
-import me.anichakra.poc.pilot.framework.test.api.AssertableHttpStatusCode;
-import me.anichakra.poc.pilot.framework.test.api.MockApi;
-import me.anichakra.poc.pilot.framework.test.api.RequestBody;
 import me.anichakra.poc.pilot.framework.test.impl.MicroserviceTestRunner;
+import me.anichakra.poc.pilot.framework.test.rest.api.AssertableHttpStatusCode;
+import me.anichakra.poc.pilot.framework.test.rest.api.MockRestApi;
+import me.anichakra.poc.pilot.framework.test.rest.api.RequestBody;
 
 @MicroserviceTest
 @RunWith(MicroserviceTestRunner.class)
@@ -20,7 +20,7 @@ import me.anichakra.poc.pilot.framework.test.impl.MicroserviceTestRunner;
 public class DriverServiceApplicationTest {
 
 	@Inject
-	private MockApi mockApi;
+	private MockRestApi mockApi;
 	
 	//@Test
 	public void testApplication() throws Exception {

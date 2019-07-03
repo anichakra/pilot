@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.api;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.anichakra.poc.pilot.framework.test.util.JsonFileReader;
+import me.anichakra.poc.pilot.framework.io.JsonFileReader;
 
 /**
  * 
@@ -27,7 +27,7 @@ import me.anichakra.poc.pilot.framework.test.util.JsonFileReader;
  *
  * @param <T>
  */
-public class ApiResult<T> {
+public class RestApiResult<T> {
 	ObjectMapper mapper;
 
 	/**
@@ -35,7 +35,7 @@ public class ApiResult<T> {
 	 * 
 	 * @param resultActions
 	 */
-	ApiResult(ResultActions resultActions) {
+	public RestApiResult(ResultActions resultActions) {
 		this.resultActions = resultActions;
 		mapper = new ObjectMapper();
 	}
@@ -106,7 +106,7 @@ public class ApiResult<T> {
 		try {
 			resultActions.andExpect(MockMvcResultMatchers.content().json(jsonOutput));
 		} catch (Exception e) {
-			throw new AssertionException("Cannot perform response match", e);
+			throw new TestAssertionException("Cannot perform response match", e);
 		}
 	}
 
@@ -116,7 +116,7 @@ public class ApiResult<T> {
 			try {
 				resultActions.andExpect(c);
 			} catch (Exception e) {
-				throw new AssertionException("Cannot perform HTTP Status match", e);
+				throw new TestAssertionException("Cannot perform HTTP Status match", e);
 			}
 		});
 		Optional.ofNullable(json).ifPresent(c -> performResultMatch(resultActions, c));

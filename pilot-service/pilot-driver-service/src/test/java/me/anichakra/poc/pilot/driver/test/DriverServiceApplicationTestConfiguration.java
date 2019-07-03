@@ -6,10 +6,10 @@ import static org.mockito.Mockito.when;
 import me.anichakra.poc.pilot.driver.domain.Category;
 import me.anichakra.poc.pilot.driver.domain.Vehicle;
 import me.anichakra.poc.pilot.framework.rest.api.PostConsumer;
-import me.anichakra.poc.pilot.framework.test.annotation.MicroserviceTestConfiguration;
+import me.anichakra.poc.pilot.framework.test.annotation.MockConfiguration;
 import me.anichakra.poc.pilot.framework.test.annotation.MockInjectable;
 
-@MicroserviceTestConfiguration
+@MockConfiguration
 public class DriverServiceApplicationTestConfiguration {
 
 	@MockInjectable(name="vehicle-preference")

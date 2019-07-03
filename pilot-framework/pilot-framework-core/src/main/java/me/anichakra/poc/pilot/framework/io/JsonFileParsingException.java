@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.util;
+package me.anichakra.poc.pilot.framework.io;
 
 /**
  * The exception is thrown when reading the test data.
@@ -6,7 +6,7 @@ package me.anichakra.poc.pilot.framework.test.util;
  * @author anirbanchakraborty
  *
  */
-public class TestDataParsingException extends RuntimeException {
+public class JsonFileParsingException extends RuntimeException {
 
 	/**
 	 * Creates this exception from the test file and rootcause.
@@ -14,8 +14,8 @@ public class TestDataParsingException extends RuntimeException {
 	 * @param ioFile
 	 * @param e
 	 */
-	public TestDataParsingException(String testDataFile, Exception e) {
-		super("Cannot read or parse file:" + testDataFile, e);
+	public JsonFileParsingException(String dataFile, Exception e) {
+		super("Cannot read or parse file:" + dataFile, e);
 	}
 
 	/**

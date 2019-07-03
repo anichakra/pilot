@@ -1,4 +1,4 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.impl;
 
 /**
  * This exception is thrown when there is an exception in either calling the
@@ -7,9 +7,9 @@ package me.anichakra.poc.pilot.framework.test.api;
  * @author anirbanchakraborty
  *
  */
-public class ApiException extends RuntimeException {
+public class RestApiException extends RuntimeException {
 
-	public ApiException(Exception e) {
+	public RestApiException(Exception e) {
 		super("Exception in performing ReST call", e);
 	}
 

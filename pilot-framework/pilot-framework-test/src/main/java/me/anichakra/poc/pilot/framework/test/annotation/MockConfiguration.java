@@ -18,13 +18,14 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 
 /**
- * Annotate with this on all microservice test configuration classes. Test
- * configuration classes are required if mocking of a service or repository bean
- * is required, that is injected somewhere in the dependency chain.
+ * Each microservice might need to mock any of the layers, for example external
+ * rest call, or data-source. To do that create one class and annotate with this
+ * annotation. To mock any implementation use @MockInjectable on the method
+ * which returns the mock instance.
  * 
  * @author anirbanchakraborty
  *
  */
-public @interface MicroserviceTestConfiguration {
+public @interface MockConfiguration {
 
 }

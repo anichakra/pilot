@@ -11,6 +11,19 @@
 		<artifactId>pilot-framework</artifactId>
 		<version>0.0.1.BUILD-SNAPSHOT</version>
 	</parent>
+	<properties>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPaths>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPaths>
+		<sonar.language>java</sonar.language>
+		<sonar.exclusions>
+			**/domain/*
+		</sonar.exclusions>
+		<surefire.forkNumber>0</surefire.forkNumber>
+		<jacoco.dataFile>${project.basedir}/../target/jacoco.exec</jacoco.dataFile>
+		<jacoco.reporting.outputDirectory>${project.basedir}/../target/reports/jacoco</jacoco.reporting.outputDirectory>
+		<jacoco.inclNoLocationClasses>true</jacoco.inclNoLocationClasses>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>me.anichakra.poc</groupId>
@@ -32,4 +45,51 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.20</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.2</version>
+				<configuration>
+					<destFile>${sonar.jacoco.reportPaths}</destFile>
+					<append>true</append>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${jacoco.reporting.outputDirectory}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-report-aggregate</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report-aggregate</goal>
+						</goals>
+						<configuration>
+							<dataFileIncludes>
+								<dataFileInclude>${jacoco.dataFile}</dataFileInclude>
+							</dataFileIncludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

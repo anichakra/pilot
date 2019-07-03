@@ -1,16 +1,16 @@
-package me.anichakra.poc.pilot.framework.test.api;
+package me.anichakra.poc.pilot.framework.test.rest.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.anichakra.poc.pilot.framework.test.util.JsonFileReader;
+import me.anichakra.poc.pilot.framework.io.JsonFileReader;
 
 /**
  * This contains the information about the request body that need to be sent as
  * part of a ReST API call mainly for post and put calls.
  * 
  * @author anirbanchakraborty
- * @see MockApi
+ * @see MockRestApi
  */
 public class RequestBody {
 	private String json;
