@@ -51,13 +51,13 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sns</artifactId>
-            <version>1.11.407</version>
+            <version>1.12.149</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sts -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sts</artifactId>
-            <version>1.11.407</version>
+            <version>1.12.149</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-api -->
         <dependency>
