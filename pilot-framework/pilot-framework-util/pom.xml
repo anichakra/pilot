@@ -13,7 +13,7 @@
 		<version>0.0.1.BUILD-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<openl-tablets.version>5.21.15</openl-tablets.version>
+		<openl-tablets.version>5.23.0</openl-tablets.version>
 	</properties>
 	<dependencies>
 		<dependency>
