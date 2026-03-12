@@ -1,5 +1,5 @@
 # Introduction
-PILOT is the name of the PoC application. This project demonstrate how to create a microservice using [spring-boot](https://projects.spring.io/spring-boot/). This microservice has ReST based controllers that provides basic CRUD operations and persists data into postgres. This project also shows how to write unit test cases and generate code coverage report.
+PILOT is the name of the PoC application. This project demonstrate how to create a microservice using [spring-boot](https://projects.spring.io/spring-boot/). This microservice has ReST based controllers that provides basic CRUD operations and persists data into postgres. This project also shows how to write unit test cases and generate code coverage report.This framework project serves multiple purposes other than building microservices using CQRS
 
 # Prerequisite
 Following are the softwares to be installed to run the project:
